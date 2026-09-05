@@ -12,10 +12,16 @@ PROMPT_PATH = os.path.join(
 )
 
 
-client = OpenAI(
-    api_key=GROQ_API_KEY,
-    base_url=GROQ_BASE_URL
-)
+_client = None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        if not GROQ_API_KEY:
+            raise ValueError("GROQ_API_KEY is not set in environment or ml_pipeline/.env")
+        _client = OpenAI(api_key=GROQ_API_KEY, base_url=GROQ_BASE_URL)
+    return _client
 
 
 def _load_prompt():
@@ -95,7 +101,7 @@ def extract_concepts(content):
     prompt_template = _load_prompt()
     prompt = prompt_template.replace("{content}", content)
 
-    response = client.chat.completions.create(
+    response = _get_client().chat.completions.create(
         model=GROQ_MODEL_PRIMARY,
         messages=[
             {

@@ -147,7 +147,7 @@ def test_empty_concepts():
         pass
 
 
-if __name__ == "__main__":
+def run_tests() -> bool:
     tests = [
         ("valid mapping shape", test_valid_mapping_shape),
         ("missing field", test_missing_field),
@@ -162,16 +162,19 @@ if __name__ == "__main__":
     ]
 
     passed = 0
-
     for name, test in tests:
         try:
             test()
-            print(f"PASS: {name}")
+            print(f"[PASS] {name}")
             passed += 1
         except Exception as e:
-            print(f"FAIL: {name} -> {e}")
+            print(f"[FAIL] {name} -> {e}")
 
-    print(f"\nResult: {passed}/{len(tests)} tests passed.")
+    print(f"\nCOMPETENCY MAPPER TEST SUITE: {'PASS' if passed == len(tests) else 'FAIL'} ({passed}/{len(tests)} passed)")
+    return passed == len(tests)
 
-    if passed != len(tests):
+
+if __name__ == "__main__":
+    success = run_tests()
+    if not success:
         raise SystemExit(1)
