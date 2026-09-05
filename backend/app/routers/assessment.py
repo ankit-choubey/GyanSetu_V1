@@ -1,0 +1,132 @@
+import json
+from datetime import datetime, timezone
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
+
+from app.dependencies import get_current_user, get_db
+from app.models.assessment import AssessmentItem
+from app.models.competency import Competency
+from app.models.competency_state import CompetencyState
+from app.models.evidence import Evidence, EvidenceType
+from app.models.user import User
+from app.schemas.assessment import AssessmentSubmitRequest, AssessmentSubmitResponse
+
+router = APIRouter(tags=["assessment"])
+
+
+@router.post("/assessment/submit", response_model=AssessmentSubmitResponse)
+def submit_assessment(
+    payload: AssessmentSubmitRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> AssessmentSubmitResponse:
+    if not payload.answers:
+        raise HTTPException(status_code=400, detail="At least one answer is required")
+    question_ids = [answer.question_id for answer in payload.answers]
+    if len(set(question_ids)) != len(question_ids):
+        raise HTTPException(status_code=400, detail="Duplicate question IDs are not valid")
+
+    try:
+        # Current-user resolution may have opened a read transaction on this shared session.
+        db.rollback()
+        with db.begin():
+            competency = db.get(Competency, payload.competency_id)
+            if not competency:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Competency not found")
+            if competency.role_id != user.role_id:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Competency is outside the authenticated user's scope")
+
+            items = db.execute(
+                select(AssessmentItem).where(
+                    AssessmentItem.id.in_(question_ids),
+                    AssessmentItem.competency_id == payload.competency_id,
+                    AssessmentItem.user_id.is_(None),
+                )
+            ).scalars().all()
+            items_by_id = {item.id: item for item in items}
+            if len(items_by_id) != len(question_ids):
+                raise HTTPException(status_code=400, detail="One or more assessment questions are invalid")
+
+            correct = 0
+            snapshots: list[AssessmentItem] = []
+            for answer in payload.answers:
+                source_item = items_by_id[answer.question_id]
+                try:
+                    options = json.loads(source_item.options_json)
+                except json.JSONDecodeError as exc:
+                    raise HTTPException(status_code=500, detail="Stored assessment item is malformed") from exc
+                labels = {str(option).split(".", 1)[0].strip().upper() for option in options}
+                selected = answer.selected.strip().upper()
+                if selected not in labels:
+                    raise HTTPException(status_code=400, detail="Answer does not match the stored question options")
+                if selected == source_item.correct_option.strip().upper():
+                    correct += 1
+                snapshots.append(
+                    AssessmentItem(
+                        user_id=user.id,
+                        competency_id=source_item.competency_id,
+                        subskill_id=source_item.subskill_id,
+                        question_text=source_item.question_text,
+                        options_json=source_item.options_json,
+                        correct_option=source_item.correct_option,
+                        difficulty=source_item.difficulty,
+                        source_reference=source_item.source_reference,
+                    )
+                )
+
+            score = correct / len(payload.answers)
+            db.add_all(snapshots)
+            db.flush()
+            db.add(
+                Evidence(
+                    user_id=user.id,
+                    competency_id=payload.competency_id,
+                    evidence_type=EvidenceType.KNOWLEDGE_ASSESSMENT,
+                    title="Diagnostic assessment submission",
+                    description="Server-scored assessment evidence",
+                    score=score,
+                    weight=1.0,
+                    evidence_metadata=json.dumps({"question_ids": question_ids}),
+                )
+            )
+            db.flush()
+
+            evidence = db.execute(
+                select(Evidence).where(
+                    Evidence.user_id == user.id,
+                    Evidence.competency_id == payload.competency_id,
+                )
+            ).scalars().all()
+            scored_evidence = [entry.score for entry in evidence if entry.score is not None]
+            state = db.execute(
+                select(CompetencyState).where(
+                    CompetencyState.user_id == user.id,
+                    CompetencyState.competency_id == payload.competency_id,
+                )
+            ).scalar_one_or_none()
+            if state is None:
+                state = CompetencyState(user_id=user.id, competency_id=payload.competency_id)
+                db.add(state)
+            state.evidence_count = len(evidence)
+            state.evidence_diversity = len({entry.evidence_type for entry in evidence})
+            state.mastery = sum(scored_evidence) / len(scored_evidence) if scored_evidence else None
+            state.confidence = min(1.0, state.evidence_count / 5)
+            state.coverage = min(1.0, state.evidence_diversity / 6)
+            state.status = "ASSESSED" if state.evidence_count else "UNASSESSED"
+            state.updated_at = datetime.now(timezone.utc)
+            db.flush()
+
+            return AssessmentSubmitResponse(
+                status="success",
+                message="Assessment submitted successfully",
+                assessment_id=snapshots[0].id,
+                score=score,
+            )
+    except HTTPException:
+        raise
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Assessment submission failed; no changes were saved") from exc

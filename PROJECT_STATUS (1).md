@@ -9,9 +9,9 @@
 ## Header — Update Every Time
 
 ```
-LAST UPDATED:     [YYYY-MM-DD HH:MM IST]
-UPDATED BY:       [Ankit / Utkarsh / Frontend owner]
-CURRENT PHASE:    [ Day 0 - Setup | Day 1 - Foundation | Day 2 - Integration | Day 3 - Polish & Demo | Post-Demo ]
+LAST UPDATED:     2026-09-05
+UPDATED BY:       Backend track
+CURRENT PHASE:    Day 1 - Foundation
 HOURS REMAINING UNTIL DEMO: [ __ ]
 ```
 
@@ -24,13 +24,17 @@ Update the emoji, not the prose — this table should be readable in 5 seconds.
 | Area | Status | Notes |
 |---|---|---|
 | Frontend — deployed & reachable | 🔴 Not started | |
-| Backend — deployed & reachable | 🔴 Not started | |
-| ML/AI — Groq key working | 🔴 Not started | |
-| Database — migrated & seeded | 🔴 Not started | |
-| Frontend ↔ Backend integration | 🔴 Not started | |
+| Backend — deployed & reachable | NOT TESTED | Local backend verified; production deployment not tested |
+| ML/AI — Groq key working | NOT TESTED | Groq/ML work not implemented |
+| Database — migrated & seeded | 🟢 Working & verified | Local SQLite migration and seed data verified; PostgreSQL-specific execution not tested |
+| Frontend ↔ Backend integration | NOT TESTED | Frontend not implemented |
 | Backend ↔ ML/AI integration | 🔴 Not started | |
 | Full closed loop (login → assessment → gap → recommendation) | 🔴 Not started | |
-| Demo rehearsed end-to-end | 🔴 Not started | |
+| Demo rehearsed end-to-end | DEFERRED | Five-run full end-to-end reproducibility not tested |
+
+Backend Phase 1 verification: **9 Phase 1 fix tests passed.**
+Local API smoke verification passed for `/health` and protected profile rejection. PostgreSQL-specific migration execution, production deployment, frontend integration, and five-run end-to-end reproducibility are not tested.
+Advanced API contract features such as `/api/v1/` versioning, request IDs, structured error envelopes, assessment-start flow, and detailed next-best-action responses are deferred.
 
 Legend: 🔴 Not started · 🟡 In progress / partially working · 🟢 Working & verified · ⚫ Blocked
 
@@ -60,22 +64,23 @@ Use the Task ID scheme from Build Guide §45: `FE-xxx`, `BE-xxx`, `ML-xxx`, `DB-
 
 | Task ID | Description | Status | Last updated |
 |---|---|---|---|
-| ML-001 | Groq API key working, test call succeeds | PENDING | |
-| ML-002 | PDF/PPT text extraction | PENDING | |
-| ML-003 | MCQ generation function | PENDING | |
-| ML-004 | MCQ validation pipeline | PENDING | |
-| ML-005 | ChromaDB + RAG chatbot | PENDING | |
+| ML-001 | Groq API key working, test call succeeds | NOT TESTED | Groq work not implemented |
+| ML-002 | PDF/PPT text extraction | DEFERRED | ML work not implemented |
+| ML-003 | MCQ generation function | DEFERRED | Later phase |
+| ML-004 | MCQ validation pipeline | DEFERRED | Later phase |
+| ML-005 | ChromaDB + RAG chatbot | DEFERRED | Later phase |
 | *(add rows as needed)* | | | |
 
 ### Backend (Utkarsh)
 
 | Task ID | Description | Status | Last updated |
 |---|---|---|---|
-| DB-001 | Database models + first migration | PENDING | |
-| API-001 | Auth endpoints (register/login) | PENDING | |
-| API-002 | Competency state endpoint | PENDING | |
-| BE-001 | Competency Engine (evidence fusion) | PENDING | |
-| BE-002 | Orchestrator + 3 agents | PENDING | |
+| DB-001 | FastAPI foundation, SQLModel schema, relationships, initial Alembic migrations, and seed data | COMPLETE | 2026-09-05 — local SQLite verified; PostgreSQL-specific execution not tested |
+| API-001 | JWT authentication, registration/login, inactive-user protection, and protected profile | COMPLETE | 2026-09-05 — verified by automated tests |
+| API-002 | Competency API, authorized assessment submission, learner dashboard, and CORS | COMPLETE | 2026-09-05 — verified by automated tests and API smoke checks |
+| TEST-004 | Phase 1 automated verification | COMPLETE | 2026-09-05 — 9 tests passed |
+| BE-001 | Competency Engine (evidence fusion) | DEFERRED | Full competency engine logic not implemented |
+| BE-002 | Orchestrator + 3 agents | DEFERRED | Multi-agent orchestration not implemented |
 | *(add rows as needed)* | | | |
 
 ### Frontend (Frontend owner)
@@ -93,9 +98,9 @@ Use the Task ID scheme from Build Guide §45: `FE-xxx`, `BE-xxx`, `ML-xxx`, `DB-
 
 | Task ID | Description | Status | Last updated |
 |---|---|---|---|
-| TEST-001 | Day 1 integration checkpoint (Build Guide §16) | PENDING | |
+| TEST-001 | Day 1 integration checkpoint (Build Guide §16) | PARTIAL | Backend foundation verified; frontend, ML, deployment, and cross-track integration not tested |
 | TEST-002 | Day 2 integration checkpoint | PENDING | |
-| TEST-003 | Day 3 — 5 consecutive clean demo runs | PENDING | |
+| TEST-003 | Day 3 — 5 consecutive clean demo runs | NOT TESTED | Five-run full end-to-end reproducibility not tested |
 | DEMO-001 | Demo script rehearsed | PENDING | |
 | DEMO-002 | Backup demo video recorded | PENDING | |
 | DOC-001 | Final README / evidence package (Build Guide §38) | PENDING | |
@@ -106,24 +111,24 @@ Use the Task ID scheme from Build Guide §45: `FE-xxx`, `BE-xxx`, `ML-xxx`, `DB-
 
 | Component | Design Status | Owner | Current Status | Last Updated |
 |---|---|---|---|---|
-| Authentication | CORE MVP | Utkarsh | PENDING | |
-| Officer Profile | CORE MVP | Frontend owner | PENDING | |
-| Competency Graph | CORE MVP | Utkarsh | PENDING | |
-| Competency Engine | CORE MVP | Utkarsh | PENDING | |
-| Evidence Engine | CORE MVP | Utkarsh | PENDING | |
-| Diagnostic Agent | CORE MVP | Ankit | PENDING | |
-| Adaptive Assessment | ENHANCEMENT | Ankit | PENDING | |
-| Intervention Agent | CORE MVP | Ankit | PENDING | |
-| Monitoring Agent | CORE MVP | Utkarsh | PENDING | |
-| RAG Chatbot | ENHANCEMENT | Ankit | PENDING | |
-| Document Ingestion | CORE MVP | Ankit | PENDING | |
-| MCQ Generation | CORE MVP | Ankit | PENDING | |
-| MCQ Validation | CORE MVP | Ankit | PENDING | |
-| Content-to-Competency Mapping | CORE MVP | Ankit | PENDING | |
-| Virtual Lab (Scenario Task A) | ENHANCEMENT | Frontend owner | PENDING | |
-| Admin Dashboard | CORE MVP | Frontend owner | PENDING | |
-| Agent Activity Timeline | ENHANCEMENT | Frontend owner | PENDING | |
-| iGOT/NSSTA/TPAC Adapters | RESEARCH CANDIDATE | Utkarsh | PENDING | |
+| Authentication | CORE MVP | Utkarsh | COMPLETE | 2026-09-05 — JWT, password hashing, registration/login, inactive-user protection verified |
+| Officer Profile | CORE MVP | Frontend owner | DEFERRED | Backend protected profile exists; frontend not implemented |
+| Competency Graph | CORE MVP | Utkarsh | COMPLETE | 2026-09-05 — Role, competency, and subskill schema/API foundation verified |
+| Competency Engine | CORE MVP | Utkarsh | DEFERRED | Full competency engine logic not implemented |
+| Evidence Engine | CORE MVP | Utkarsh | DEFERRED | Phase 1 evidence persistence and taxonomy implemented; full evidence fusion deferred |
+| Diagnostic Agent | CORE MVP | Ankit | DEFERRED | Agent orchestration not implemented |
+| Adaptive Assessment | ENHANCEMENT | Ankit | DEFERRED | Not part of the Phase 1 backend fixes |
+| Intervention Agent | CORE MVP | Ankit | DEFERRED | Agent orchestration not implemented |
+| Monitoring Agent | CORE MVP | Utkarsh | DEFERRED | Agent orchestration not implemented |
+| RAG Chatbot | ENHANCEMENT | Ankit | NOT TESTED | ML/RAG work not implemented |
+| Document Ingestion | CORE MVP | Ankit | NOT TESTED | ML work not implemented |
+| MCQ Generation | CORE MVP | Ankit | DEFERRED | Seeded assessment bank only; generation not implemented |
+| MCQ Validation | CORE MVP | Ankit | DEFERRED | Assessment answer validation exists; MCQ generation pipeline not implemented |
+| Content-to-Competency Mapping | CORE MVP | Ankit | DEFERRED | ML work not implemented |
+| Virtual Lab (Scenario Task A) | ENHANCEMENT | Frontend owner | DEFERRED | Frontend not implemented |
+| Admin Dashboard | CORE MVP | Frontend owner | NOT TESTED | Frontend not implemented |
+| Agent Activity Timeline | ENHANCEMENT | Frontend owner | DEFERRED | Frontend and agents not implemented |
+| iGOT/NSSTA/TPAC Adapters | RESEARCH CANDIDATE | Utkarsh | DEFERRED | Later integration work |
 
 > Design Status (CORE MVP / ENHANCEMENT / RESEARCH CANDIDATE) comes from the frozen plan and doesn't change. Current Status is the only column you update here.
 
