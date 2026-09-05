@@ -3,8 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.routers.assessment import router as assessment_router
+from app.routers.admin import router as admin_router
 from app.routers.auth import router as auth_router
+from app.routers.chatbot import router as chatbot_router
 from app.routers.competency import router as competency_router
+from app.routers.content import router as content_router
 from app.routers.dashboard import router as dashboard_router
 from app.routers.users import router as users_router
 
@@ -28,6 +31,9 @@ app.include_router(users_router, prefix="/api")
 app.include_router(competency_router, prefix="/api")
 app.include_router(assessment_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
+app.include_router(chatbot_router, prefix="/api")
+app.include_router(content_router, prefix="/api")
+app.include_router(admin_router, prefix="/api")
 
 
 @app.get("/health")

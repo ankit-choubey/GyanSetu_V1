@@ -1,5 +1,4 @@
 import json
-from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -9,10 +8,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.dependencies import get_current_user, get_db
 from app.models.assessment import AssessmentItem
 from app.models.competency import Competency
-from app.models.competency_state import CompetencyState
 from app.models.evidence import Evidence, EvidenceType
 from app.models.user import User
 from app.schemas.assessment import AssessmentSubmitRequest, AssessmentSubmitResponse
+from app.services.orchestrator import recalculate_competency_state
 
 router = APIRouter(tags=["assessment"])
 
@@ -94,30 +93,11 @@ def submit_assessment(
             )
             db.flush()
 
-            evidence = db.execute(
-                select(Evidence).where(
-                    Evidence.user_id == user.id,
-                    Evidence.competency_id == payload.competency_id,
-                )
-            ).scalars().all()
-            scored_evidence = [entry.score for entry in evidence if entry.score is not None]
-            state = db.execute(
-                select(CompetencyState).where(
-                    CompetencyState.user_id == user.id,
-                    CompetencyState.competency_id == payload.competency_id,
-                )
-            ).scalar_one_or_none()
-            if state is None:
-                state = CompetencyState(user_id=user.id, competency_id=payload.competency_id)
-                db.add(state)
-            state.evidence_count = len(evidence)
-            state.evidence_diversity = len({entry.evidence_type for entry in evidence})
-            state.mastery = sum(scored_evidence) / len(scored_evidence) if scored_evidence else None
-            state.confidence = min(1.0, state.evidence_count / 5)
-            state.coverage = min(1.0, state.evidence_diversity / 6)
-            state.status = "ASSESSED" if state.evidence_count else "UNASSESSED"
-            state.updated_at = datetime.now(timezone.utc)
-            db.flush()
+            orchestration = recalculate_competency_state(
+                db,
+                user.id,
+                payload.competency_id,
+            )
 
             return AssessmentSubmitResponse(
                 status="success",

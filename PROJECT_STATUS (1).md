@@ -11,7 +11,7 @@
 ```
 LAST UPDATED:     2026-09-05
 UPDATED BY:       Backend track
-CURRENT PHASE:    Day 1 - Foundation
+CURRENT PHASE:    Day 2 - Integration (Evening)
 HOURS REMAINING UNTIL DEMO: [ __ ]
 ```
 
@@ -29,12 +29,18 @@ Update the emoji, not the prose — this table should be readable in 5 seconds.
 | Database — migrated & seeded | 🟢 Working & verified | Local SQLite migration and seed data verified; PostgreSQL-specific execution not tested |
 | Frontend ↔ Backend integration | NOT TESTED | Frontend not implemented |
 | Backend ↔ ML/AI integration | 🔴 Not started | |
-| Full closed loop (login → assessment → gap → recommendation) | 🔴 Not started | |
+| Full closed loop (login → assessment → gap → recommendation) | 🟡 In progress / partially working | Morning, Afternoon, analytics, and integration boundaries complete; ML/RAG/document processors remain unavailable |
 | Demo rehearsed end-to-end | DEFERRED | Five-run full end-to-end reproducibility not tested |
 
 Backend Phase 1 verification: **9 Phase 1 fix tests passed.**
 Local API smoke verification passed for `/health` and protected profile rejection. PostgreSQL-specific migration execution, production deployment, frontend integration, and five-run end-to-end reproducibility are not tested.
 Advanced API contract features such as `/api/v1/` versioning, request IDs, structured error envelopes, assessment-start flow, and detailed next-best-action responses are deferred.
+Phase 2 Morning verification: **16 tests passed, 2 warnings** across the Competency Engine, Orchestrator, and locked Phase 1 suites.
+Command: `python -m pytest tests/test_phase2_morning.py tests/test_phase1_fixes.py -q --tb=short` — result: `16 passed, 2 warnings`.
+Phase 2 Afternoon verification: **23 tests passed, 2 warnings** across Phase 1, Morning, and Afternoon suites.
+Command: `python -m pytest tests/test_phase1_fixes.py tests/test_phase2_morning.py tests/test_phase2_afternoon.py -q --tb=short` — result: `23 passed, 2 warnings`.
+Phase 2 Evening verification: **29 tests passed, 2 warnings** across Phase 1, Morning, Afternoon, and Evening suites.
+Command: `python -m pytest tests/test_phase1_fixes.py tests/test_phase2_morning.py tests/test_phase2_afternoon.py tests/test_phase2_evening.py -q --tb=short` — result: `29 passed, 2 warnings`.
 
 Legend: 🔴 Not started · 🟡 In progress / partially working · 🟢 Working & verified · ⚫ Blocked
 
@@ -79,8 +85,13 @@ Use the Task ID scheme from Build Guide §45: `FE-xxx`, `BE-xxx`, `ML-xxx`, `DB-
 | API-001 | JWT authentication, registration/login, inactive-user protection, and protected profile | COMPLETE | 2026-09-05 — verified by automated tests |
 | API-002 | Competency API, authorized assessment submission, learner dashboard, and CORS | COMPLETE | 2026-09-05 — verified by automated tests and API smoke checks |
 | TEST-004 | Phase 1 automated verification | COMPLETE | 2026-09-05 — 9 tests passed |
-| BE-001 | Competency Engine (evidence fusion) | DEFERRED | Full competency engine logic not implemented |
-| BE-002 | Orchestrator + 3 agents | DEFERRED | Multi-agent orchestration not implemented |
+| BE-001 | Competency Engine (evidence fusion) | COMPLETE | 2026-09-05 — deterministic E0-compatible engine and gap detection tested |
+| BE-002 | Orchestrator | COMPLETE | 2026-09-05 — assessment → evidence → state → gap coordination tested; agents remain deferred |
+| BE-003 | Diagnostic Agent backend workflow | COMPLETE | 2026-09-06 — deterministic stopping, gap targeting, ML boundary validation, and integration tested |
+| BE-004 | Intervention Agent | COMPLETE | 2026-09-06 — existing intervention model ranking and no-match handling tested |
+| API-003 | Chatbot, document-upload, admin analytics, and sandbox seed integration | PARTIAL | 2026-09-06 — endpoints and boundaries tested; RAG/document ML processors unavailable |
+| TEST-005 | Phase 2 Morning Engine + Orchestrator verification | COMPLETE | 2026-09-05 — 16 tests passed, 2 warnings |
+| TEST-006 | Phase 2 Afternoon Diagnostic + Intervention verification | COMPLETE | 2026-09-06 — 23 combined tests passed, 2 warnings |
 | *(add rows as needed)* | | | |
 
 ### Frontend (Frontend owner)
@@ -99,7 +110,7 @@ Use the Task ID scheme from Build Guide §45: `FE-xxx`, `BE-xxx`, `ML-xxx`, `DB-
 | Task ID | Description | Status | Last updated |
 |---|---|---|---|
 | TEST-001 | Day 1 integration checkpoint (Build Guide §16) | PARTIAL | Backend foundation verified; frontend, ML, deployment, and cross-track integration not tested |
-| TEST-002 | Day 2 integration checkpoint | PENDING | |
+| TEST-002 | Day 2 integration checkpoint | IN_PROGRESS | Backend Evening boundaries and analytics complete; live RAG, document ingestion, MCQ generation, and frontend flow remain |
 | TEST-003 | Day 3 — 5 consecutive clean demo runs | NOT TESTED | Five-run full end-to-end reproducibility not tested |
 | DEMO-001 | Demo script rehearsed | PENDING | |
 | DEMO-002 | Backup demo video recorded | PENDING | |
@@ -114,19 +125,19 @@ Use the Task ID scheme from Build Guide §45: `FE-xxx`, `BE-xxx`, `ML-xxx`, `DB-
 | Authentication | CORE MVP | Utkarsh | COMPLETE | 2026-09-05 — JWT, password hashing, registration/login, inactive-user protection verified |
 | Officer Profile | CORE MVP | Frontend owner | DEFERRED | Backend protected profile exists; frontend not implemented |
 | Competency Graph | CORE MVP | Utkarsh | COMPLETE | 2026-09-05 — Role, competency, and subskill schema/API foundation verified |
-| Competency Engine | CORE MVP | Utkarsh | DEFERRED | Full competency engine logic not implemented |
-| Evidence Engine | CORE MVP | Utkarsh | DEFERRED | Phase 1 evidence persistence and taxonomy implemented; full evidence fusion deferred |
-| Diagnostic Agent | CORE MVP | Ankit | DEFERRED | Agent orchestration not implemented |
+| Competency Engine | CORE MVP | Utkarsh | COMPLETE | 2026-09-05 — deterministic evidence fusion, state calculation, and gap detection tested |
+| Evidence Engine | CORE MVP | Utkarsh | COMPLETE | 2026-09-05 — Phase 1 persistence plus Morning evidence fusion path verified |
+| Diagnostic Agent | CORE MVP | Ankit | COMPLETE | 2026-09-06 — backend workflow and future ML question-selector boundary tested; ML implementation deferred |
 | Adaptive Assessment | ENHANCEMENT | Ankit | DEFERRED | Not part of the Phase 1 backend fixes |
-| Intervention Agent | CORE MVP | Ankit | DEFERRED | Agent orchestration not implemented |
+| Intervention Agent | CORE MVP | Ankit | COMPLETE | 2026-09-06 — deterministic ranking over existing interventions tested |
 | Monitoring Agent | CORE MVP | Utkarsh | DEFERRED | Agent orchestration not implemented |
-| RAG Chatbot | ENHANCEMENT | Ankit | NOT TESTED | ML/RAG work not implemented |
-| Document Ingestion | CORE MVP | Ankit | NOT TESTED | ML work not implemented |
+| RAG Chatbot | ENHANCEMENT | Ankit | PARTIAL | Authenticated endpoint and explicit abstention boundary implemented; RAG component unavailable |
+| Document Ingestion | CORE MVP | Ankit | PARTIAL | Authenticated upload validation and ingestion boundary implemented; processor unavailable |
 | MCQ Generation | CORE MVP | Ankit | DEFERRED | Seeded assessment bank only; generation not implemented |
 | MCQ Validation | CORE MVP | Ankit | DEFERRED | Assessment answer validation exists; MCQ generation pipeline not implemented |
 | Content-to-Competency Mapping | CORE MVP | Ankit | DEFERRED | ML work not implemented |
 | Virtual Lab (Scenario Task A) | ENHANCEMENT | Frontend owner | DEFERRED | Frontend not implemented |
-| Admin Dashboard | CORE MVP | Frontend owner | NOT TESTED | Frontend not implemented |
+| Admin Dashboard | CORE MVP | Frontend owner | PARTIAL | Aggregate backend analytics endpoint implemented; frontend not implemented |
 | Agent Activity Timeline | ENHANCEMENT | Frontend owner | DEFERRED | Frontend and agents not implemented |
 | iGOT/NSSTA/TPAC Adapters | RESEARCH CANDIDATE | Utkarsh | DEFERRED | Later integration work |
 
