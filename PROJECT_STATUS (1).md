@@ -25,7 +25,7 @@ Update the emoji, not the prose — this table should be readable in 5 seconds.
 |---|---|---|
 | Frontend — deployed & reachable | 🔴 Not started | |
 | Backend — deployed & reachable | 🔴 Not started | |
-| ML/AI — Groq key working | 🔴 Not started | |
+| ML/AI — Groq key working | 🟢 Working & verified | 70/70 automated tests PASS + 50 manual |
 | Database — migrated & seeded | 🔴 Not started | |
 | Frontend ↔ Backend integration | 🔴 Not started | |
 | Backend ↔ ML/AI integration | 🔴 Not started | |
@@ -60,12 +60,18 @@ Use the Task ID scheme from Build Guide §45: `FE-xxx`, `BE-xxx`, `ML-xxx`, `DB-
 
 | Task ID | Description | Status | Last updated |
 |---|---|---|---|
-| ML-001 | Groq API key working, test call succeeds | PENDING | |
-| ML-002 | PDF/PPT text extraction | PENDING | |
-| ML-003 | MCQ generation function | PENDING | |
-| ML-004 | MCQ validation pipeline | PENDING | |
-| ML-005 | ChromaDB + RAG chatbot | PENDING | |
-| *(add rows as needed)* | | | |
+| ML-001 | Groq API key working, test call succeeds | DONE | 2026-09-06 |
+| ML-002 | PDF/PPT text extraction, tables & OCR fallback | DONE | 2026-09-06 |
+| ML-003 | MCQ generation function & schema validation | DONE | 2026-09-06 |
+| ML-004 | MCQ validation pipeline (grounding, distractor, dupes) | DONE | 2026-09-06 |
+| ML-005 | ChromaDB local vector store & dense embeddings | DONE | 2026-09-06 |
+| ML-006 | Grounded RAG chatbot with strict abstention | DONE | 2026-09-06 |
+| ML-007 | Token-aware semantic chunker engine | DONE | 2026-09-06 |
+| ML-008 | 3-tier Adaptive question selector & remediation | DONE | 2026-09-06 |
+| ML-009 | Multi-metric MCQ quality scorer & option shuffler | DONE | 2026-09-06 |
+| ML-010 | Assessment explanation & feedback generator | DONE | 2026-09-06 |
+| ML-011 | FastAPI typed interface contracts | DONE | 2026-09-06 |
+| TEST-ML | 70 Automated Tests (10/10 PASS) + 50 Manual Tests | DONE | 2026-09-06 |
 
 ### Backend (Utkarsh)
 
