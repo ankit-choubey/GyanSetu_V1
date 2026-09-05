@@ -35,3 +35,6 @@ Thumbs.db
 # Logs and local artifacts
 *.log
 /tmp/
+
+# Local test documents
+test_data/
