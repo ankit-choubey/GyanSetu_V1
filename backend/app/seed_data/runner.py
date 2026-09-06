@@ -14,6 +14,7 @@ from app.models.evidence import Evidence, EvidenceType
 from app.models.intervention import Intervention
 from app.models.user import User
 from app.seed_data.competency_taxonomy import COMPETENCIES, DOMAIN_BY_COMPETENCY, ROLES
+from app.seed_data.question_bank_loader import load_question_bank
 from app.utils.security import hash_password
 
 
@@ -202,6 +203,8 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                         source_reference="sample-data-quality",
                     )
                 )
+
+            load_question_bank(db)
 
             for competency in competency_map.values():
                 subskill = db.execute(
