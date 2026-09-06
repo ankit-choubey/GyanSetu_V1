@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.dependencies import get_current_user, get_db
 from app.models.assessment import AssessmentItem
-from app.models.competency import Competency
+from app.models.competency import Competency, RoleCompetency
 from app.models.evidence import Evidence, EvidenceType
 from app.models.user import User
 from app.schemas.assessment import AssessmentSubmitRequest, AssessmentSubmitResponse
@@ -35,7 +35,13 @@ def submit_assessment(
             competency = db.get(Competency, payload.competency_id)
             if not competency:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Competency not found")
-            if competency.role_id != user.role_id:
+            authorized = db.execute(
+                select(RoleCompetency.id).where(
+                    RoleCompetency.role_id == user.role_id,
+                    RoleCompetency.competency_id == competency.id,
+                )
+            ).scalar_one_or_none()
+            if authorized is None:
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Competency is outside the authenticated user's scope")
 
             items = db.execute(

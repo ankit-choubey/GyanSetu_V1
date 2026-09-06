@@ -7,7 +7,7 @@ from sqlalchemy.pool import StaticPool
 from sqlmodel import SQLModel
 
 from app.main import app
-from app.models.competency import Competency, Role
+from app.models.competency import Competency, Role, RoleCompetency
 from app.models.competency_state import CompetencyState
 from app.models.user import User
 from app.routers import admin as admin_router
@@ -113,6 +113,7 @@ def test_admin_analytics_is_aggregate_and_authorized():
     learner = User(email="analytics-learner@example.com", full_name="Learner", password_hash="hashed", role_id=learner_role.id)
     session.add_all([competency, learner])
     session.flush()
+    session.add(RoleCompetency(role_id=learner_role.id, competency_id=competency.id))
     session.add(CompetencyState(user_id=learner.id, competency_id=competency.id, mastery=0.8, confidence=0.4, coverage=0.2, evidence_count=2, status="ASSESSED"))
     session.commit()
     app.dependency_overrides[admin_router.get_current_admin] = lambda: User(id=99, email="admin@example.com", full_name="Admin", password_hash="hashed", role_id=admin_role.id)
@@ -136,7 +137,8 @@ def test_seed_evening_data_is_transactional_and_idempotent(monkeypatch):
     engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     SQLModel.metadata.create_all(engine)
     factory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    monkeypatch.setattr("app.seed.SessionLocal", factory)
+    monkeypatch.setattr("app.seed_data.runner.SessionLocal", factory)
+    SQLModel.metadata.create_all(engine)
     seed_data("evening-test-password")
     seed_data("evening-test-password")
     with factory() as session:

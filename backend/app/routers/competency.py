@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_current_user, get_db
-from app.models.competency import Competency, Role
+from app.models.competency import Competency, Role, RoleCompetency
 from app.models.user import User
 
 router = APIRouter(tags=["competency"])
@@ -23,7 +23,12 @@ def get_role_competencies(
     if user.role_id != role_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Role is outside the authenticated user's scope")
 
-    competencies = db.execute(select(Competency).where(Competency.role_id == role_id)).scalars().all()
+    competencies = db.execute(
+        select(Competency)
+        .join(RoleCompetency, RoleCompetency.competency_id == Competency.id)
+        .where(RoleCompetency.role_id == role_id)
+        .order_by(Competency.id)
+    ).scalars().all()
     return {
         "role_id": role.id,
         "role_name": role.name,
