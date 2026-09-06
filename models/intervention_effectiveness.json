@@ -1,0 +1,122 @@
+[
+  {
+    "mastery_band": "high",
+    "intervention_type": "video_lesson",
+    "improvement": 0.027880327868852462,
+    "retention_success": 0.8688524590163934,
+    "completed": 0.9180327868852459,
+    "score": 0.45820245901639345
+  },
+  {
+    "mastery_band": "high",
+    "intervention_type": "targeted_practice",
+    "improvement": 0.03800612244897959,
+    "retention_success": 0.8571428571428571,
+    "completed": 0.8367346938775511,
+    "score": 0.44349285714285713
+  },
+  {
+    "mastery_band": "high",
+    "intervention_type": "adaptive_quiz",
+    "improvement": 0.030584745762711866,
+    "retention_success": 0.864406779661017,
+    "completed": 0.7796610169491526,
+    "score": 0.4305466101694916
+  },
+  {
+    "mastery_band": "high",
+    "intervention_type": "peer_discussion",
+    "improvement": 0.021831372549019606,
+    "retention_success": 0.8235294117647058,
+    "completed": 0.803921568627451,
+    "score": 0.41875882352941174
+  },
+  {
+    "mastery_band": "high",
+    "intervention_type": "worked_example",
+    "improvement": 0.031515625,
+    "retention_success": 0.765625,
+    "completed": 0.796875,
+    "score": 0.4048203125
+  },
+  {
+    "mastery_band": "low",
+    "intervention_type": "worked_example",
+    "improvement": 0.10216666666666667,
+    "retention_success": 0.9523809523809523,
+    "completed": 0.8095238095238095,
+    "score": 0.49870238095238095
+  },
+  {
+    "mastery_band": "low",
+    "intervention_type": "adaptive_quiz",
+    "improvement": 0.09190799999999999,
+    "retention_success": 0.88,
+    "completed": 0.92,
+    "score": 0.493954
+  },
+  {
+    "mastery_band": "low",
+    "intervention_type": "targeted_practice",
+    "improvement": 0.1114,
+    "retention_success": 0.8421052631578947,
+    "completed": 0.8947368421052632,
+    "score": 0.48727894736842103
+  },
+  {
+    "mastery_band": "low",
+    "intervention_type": "peer_discussion",
+    "improvement": 0.06898260869565218,
+    "retention_success": 0.8695652173913043,
+    "completed": 0.782608695652174,
+    "score": 0.4518826086956522
+  },
+  {
+    "mastery_band": "low",
+    "intervention_type": "video_lesson",
+    "improvement": 0.07048125,
+    "retention_success": 0.6875,
+    "completed": 0.75,
+    "score": 0.391490625
+  },
+  {
+    "mastery_band": "medium",
+    "intervention_type": "video_lesson",
+    "improvement": 0.05301627906976744,
+    "retention_success": 0.8255813953488372,
+    "completed": 0.8837209302325582,
+    "score": 0.45092674418604656
+  },
+  {
+    "mastery_band": "medium",
+    "intervention_type": "targeted_practice",
+    "improvement": 0.071405,
+    "retention_success": 0.83,
+    "completed": 0.83,
+    "score": 0.4507025
+  },
+  {
+    "mastery_band": "medium",
+    "intervention_type": "adaptive_quiz",
+    "improvement": 0.05852083333333333,
+    "retention_success": 0.8333333333333334,
+    "completed": 0.8194444444444444,
+    "score": 0.44314930555555554
+  },
+  {
+    "mastery_band": "medium",
+    "intervention_type": "worked_example",
+    "improvement": 0.06399125,
+    "retention_success": 0.8,
+    "completed": 0.8125,
+    "score": 0.43449562499999994
+  },
+  {
+    "mastery_band": "medium",
+    "intervention_type": "peer_discussion",
+    "improvement": 0.04343703703703703,
+    "retention_success": 0.7777777777777778,
+    "completed": 0.7777777777777778,
+    "score": 0.4106074074074074
+  }
+]
