@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import CheckConstraint
+from sqlalchemy import CheckConstraint, Index
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -12,12 +12,22 @@ if TYPE_CHECKING:
 
 class Misconception(SQLModel, table=True):
     __tablename__ = "misconceptions"
-    __table_args__ = (CheckConstraint("occurrences >= 0", name="ck_misconception_occurrences_nonnegative"),)
+    __table_args__ = (
+        CheckConstraint("occurrences >= 0", name="ck_misconception_occurrences_nonnegative"),
+        Index(
+            "ix_misconception_pattern_scope",
+            "learner_id",
+            "competency_id",
+            "subskill_id",
+            "pattern_key",
+        ),
+    )
 
     id: int | None = Field(default=None, primary_key=True)
     learner_id: int = Field(foreign_key="users.id", index=True)
     competency_id: int = Field(foreign_key="competencies.id", index=True)
     subskill_id: int | None = Field(default=None, foreign_key="subskills.id", index=True)
+    pattern_key: str | None = Field(default=None, max_length=255)
     misconception_type: str = Field(max_length=100, index=True)
     description: str = Field(max_length=4000)
     occurrences: int = Field(default=0, ge=0)

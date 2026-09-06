@@ -6,11 +6,14 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.dependencies import get_current_user, get_db
-from app.models.assessment import AssessmentItem
+from datetime import datetime, timezone
+
+from app.models.assessment import AssessmentAttempt, AssessmentItem, AssessmentResponse
 from app.models.competency import Competency, RoleCompetency
 from app.models.evidence import Evidence, EvidenceType
 from app.models.user import User
 from app.schemas.assessment import AssessmentSubmitRequest, AssessmentSubmitResponse
+from app.services.misconception_tracker import track_response
 from app.services.orchestrator import recalculate_competency_state
 
 router = APIRouter(tags=["assessment"])
@@ -55,8 +58,12 @@ def submit_assessment(
             if len(items_by_id) != len(question_ids):
                 raise HTTPException(status_code=400, detail="One or more assessment questions are invalid")
 
+            attempt = AssessmentAttempt(user_id=user.id, competency_id=payload.competency_id)
+            db.add(attempt)
+            db.flush()
             correct = 0
             snapshots: list[AssessmentItem] = []
+            responses: list[AssessmentResponse] = []
             for answer in payload.answers:
                 source_item = items_by_id[answer.question_id]
                 try:
@@ -69,6 +76,17 @@ def submit_assessment(
                     raise HTTPException(status_code=400, detail="Answer does not match the stored question options")
                 if selected == source_item.correct_option.strip().upper():
                     correct += 1
+                responses.append(
+                    AssessmentResponse(
+                        attempt_id=attempt.id,
+                        assessment_item_id=source_item.id,
+                        competency_id=source_item.competency_id,
+                        subskill_id=source_item.subskill_id,
+                        selected_option=selected,
+                        is_correct=selected == source_item.correct_option.strip().upper(),
+                        answered_at=datetime.now(timezone.utc),
+                    )
+                )
                 snapshots.append(
                     AssessmentItem(
                         user_id=user.id,
@@ -83,8 +101,13 @@ def submit_assessment(
                 )
 
             score = correct / len(payload.answers)
+            attempt.score = score
+            attempt.completed_at = datetime.now(timezone.utc)
+            db.add_all(responses)
             db.add_all(snapshots)
             db.flush()
+            for response in responses:
+                track_response(db, response)
             db.add(
                 Evidence(
                     user_id=user.id,

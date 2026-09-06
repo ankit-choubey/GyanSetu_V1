@@ -16,10 +16,11 @@ from sqlmodel import SQLModel
 
 from app.database import SessionLocal, engine
 from app.main import app
-from app.models.assessment import AssessmentItem
+from app.models.assessment import AssessmentAttempt, AssessmentItem, AssessmentResponse
 from app.models.competency import Competency, Role
 from app.models.competency_state import CompetencyState
 from app.models.evidence import Evidence
+from app.models.misconception import Misconception
 from app.models.user import User
 from app.routers import assessment as assessment_router
 from app.seed import seed_data
@@ -67,6 +68,25 @@ def test_successful_submission_scores_on_server_and_updates_state(client):
     assert response.json()["score"] == 1.0
 
     with SessionLocal() as db:
+        source_item = db.get(AssessmentItem, bank_question_id())
+        attempt = db.execute(
+            select(AssessmentAttempt).where(
+                AssessmentAttempt.user_id == 1,
+                AssessmentAttempt.competency_id == 2,
+            ).order_by(AssessmentAttempt.id.desc())
+        ).scalars().first()
+        assert attempt is not None
+        assert attempt.score == 1.0
+        responses = db.execute(
+            select(AssessmentResponse).where(AssessmentResponse.attempt_id == attempt.id)
+        ).scalars().all()
+        assert len(responses) == 1
+        assert responses[0].assessment_item_id == source_item.id
+        assert responses[0].competency_id == source_item.competency_id == 2
+        assert responses[0].subskill_id == source_item.subskill_id
+        assert responses[0].selected_option == "B"
+        assert responses[0].is_correct is True
+        assert responses[0].answered_at is not None
         state = db.execute(
             select(CompetencyState).where(CompetencyState.user_id == 1, CompetencyState.competency_id == 2)
         ).scalar_one()
@@ -98,6 +118,9 @@ def test_wrong_answer_is_scored_by_server(client):
     )
     assert response.status_code == 200
     assert response.json()["score"] == 0.0
+    with SessionLocal() as db:
+        misconception = db.execute(select(Misconception).where(Misconception.learner_id == 1)).scalar_one()
+        assert misconception.occurrences == 1
 
 
 def test_transaction_rolls_back_when_commit_fails(client):
@@ -114,6 +137,12 @@ def test_transaction_rolls_back_when_commit_fails(client):
     app.dependency_overrides[assessment_router.get_db] = override_db
     try:
         before = counts_for_competency(2)
+        with SessionLocal() as db:
+            before_normalized = (
+                db.scalar(select(func.count()).select_from(AssessmentAttempt).where(AssessmentAttempt.user_id == 1, AssessmentAttempt.competency_id == 2)),
+                db.scalar(select(func.count()).select_from(AssessmentResponse).join(AssessmentAttempt).where(AssessmentAttempt.user_id == 1, AssessmentAttempt.competency_id == 2)),
+                db.scalar(select(func.count()).select_from(Misconception).where(Misconception.learner_id == 1, Misconception.competency_id == 2)),
+            )
         response = client.post(
             "/api/assessment/submit",
             headers={"Authorization": f"Bearer {token}"},
@@ -121,6 +150,13 @@ def test_transaction_rolls_back_when_commit_fails(client):
         )
         assert response.status_code == 500
         assert counts_for_competency(2) == before
+        with SessionLocal() as db:
+            after_normalized = (
+                db.scalar(select(func.count()).select_from(AssessmentAttempt).where(AssessmentAttempt.user_id == 1, AssessmentAttempt.competency_id == 2)),
+                db.scalar(select(func.count()).select_from(AssessmentResponse).join(AssessmentAttempt).where(AssessmentAttempt.user_id == 1, AssessmentAttempt.competency_id == 2)),
+                db.scalar(select(func.count()).select_from(Misconception).where(Misconception.learner_id == 1, Misconception.competency_id == 2)),
+            )
+        assert after_normalized == before_normalized
     finally:
         app.dependency_overrides.pop(assessment_router.get_db, None)
 
