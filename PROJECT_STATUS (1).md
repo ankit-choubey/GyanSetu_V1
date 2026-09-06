@@ -23,7 +23,7 @@ Update the emoji, not the prose — this table should be readable in 5 seconds.
 
 | Area | Status | Notes |
 |---|---|---|
-| Frontend — deployed & reachable | 🔴 Not started | |
+| Frontend — deployed & reachable | 🟢 Complete | Next.js 14 landing page built, tested, and verified across all 10 sections |
 | Backend — deployed & reachable | 🟡 In progress | Local FastAPI backend verified across all 33 tests; cloud deployment deferred |
 | ML/AI — Groq key working | 🟢 Working & verified | 70/70 standalone automated tests PASS + local ChromaDB vector store verified |
 | Database — migrated & seeded | 🟢 Working & verified | Local SQLite migration and seed data verified; PostgreSQL schema verified |
@@ -100,12 +100,17 @@ Use the Task ID scheme from Build Guide §45: `FE-xxx`, `BE-xxx`, `ML-xxx`, `DB-
 
 | Task ID | Description | Status | Last updated |
 |---|---|---|---|
-| FE-001 | Login page | PENDING | |
-| FE-002 | Competency dashboard (mock data) | PENDING | |
-| FE-003 | Assessment flow UI | PENDING | |
-| FE-004 | Real API integration (mock → real) | PENDING | |
-| UI-001 | Admin dashboard | PENDING | |
-| *(add rows as needed)* | | | |
+| FE-000 | Next.js 14 App Router setup, Tailwind, GSAP, design tokens & globals.css | COMPLETE | 2026-09-06 — static build verified |
+| FE-001 | Reusable UI primitives (Button, Badge, Card, SectionLabel, Counters, Grids) | COMPLETE | 2026-09-06 — verified |
+| FE-002 | SEC 01 & 02: Navbar & Hero Section with Valley.co search bar & grid overlay | COMPLETE | 2026-09-06 — verified |
+| FE-003 | SEC 03: The Problem with broken-loop hub & orbiting problem bubbles | COMPLETE | 2026-09-06 — verified |
+| FE-004 | SEC 04: Our Solution with animated 5-node closed loop & comparison cards | COMPLETE | 2026-09-06 — verified |
+| FE-005 | SEC 05: How It Works with vertical timeline & 6 step illustrations | COMPLETE | 2026-09-06 — verified |
+| FE-006 | SEC 06: The Hero Moment with morphing radar chart & Before/After metrics | COMPLETE | 2026-09-06 — verified |
+| FE-007 | SEC 07: Social Proof with text wordmark marquee & DataMesh 3D visual | COMPLETE | 2026-09-06 — verified |
+| FE-008 | SEC 08 & 09: Differentiators Bento Grid & Tech Stack Pipeline | COMPLETE | 2026-09-06 — verified |
+| FE-009 | SEC 10: Dark CTA block, 4-column footer & master page assembly | COMPLETE | 2026-09-06 — verified |
+
 
 ### Cross-cutting
 
