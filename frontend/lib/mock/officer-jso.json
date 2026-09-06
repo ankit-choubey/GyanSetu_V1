@@ -1,0 +1,174 @@
+{
+  "_meta": {
+    "source": "SANDBOX DATA",
+    "persona": "Junior Statistical Officer (JSO) — Sampling Design Diagnostic",
+    "version": "1.0.0"
+  },
+  "officer": {
+    "name": "Ramesh Kumar",
+    "role": "Junior Statistical Officer",
+    "cadre": "Subordinate Statistical Service (SSS)",
+    "designation": "JSO (Field Operations Division)",
+    "organization": "MoSPI / NSSO Regional Office",
+    "posting": "Bhopal Regional Office"
+  },
+  "kpi_summary": {
+    "mastery_avg": 0.42,
+    "confidence_level": "Low",
+    "confidence_score": 0.35,
+    "coverage_pct": 0.25,
+    "recency_label": "3 days ago",
+    "diversity_count": 2,
+    "diversity_total": 6
+  },
+  "competencies": [
+    {
+      "id": "C-101",
+      "name": "Sampling Design & Methodology",
+      "domain": "Survey Statistics",
+      "mastery": 0.42,
+      "confidence": 0.35,
+      "coverage": 0.25,
+      "last_assessed": "2026-09-03T10:30:00Z",
+      "gap": "Variance Estimation in Stratified Sampling",
+      "gap_severity": "high",
+      "status": "needs_improvement",
+      "conflicting_evidence": false
+    },
+    {
+      "id": "C-102",
+      "name": "Field Data Scrutiny & Validation",
+      "domain": "Data Operations",
+      "mastery": 0.78,
+      "confidence": 0.82,
+      "coverage": 0.65,
+      "last_assessed": "2026-08-28T14:15:00Z",
+      "gap": "Complex Skip-Pattern Reconciliation",
+      "gap_severity": "medium",
+      "status": "proficient",
+      "conflicting_evidence": false
+    },
+    {
+      "id": "C-103",
+      "name": "Official Statistics Governance & DPDPA",
+      "domain": "Compliance & Ethics",
+      "mastery": 0.64,
+      "confidence": 0.60,
+      "coverage": 0.50,
+      "last_assessed": "2026-08-15T09:00:00Z",
+      "gap": "Anonymization Standards in Microdata Release",
+      "gap_severity": "low",
+      "status": "proficient",
+      "conflicting_evidence": true
+    },
+    {
+      "id": "C-104",
+      "name": "Price Index & CPI Compilation",
+      "domain": "Economic Statistics",
+      "mastery": 0.38,
+      "confidence": 0.30,
+      "coverage": 0.20,
+      "last_assessed": "2026-07-20T11:45:00Z",
+      "gap": "Geometric Mean Weighting in Urban Outlets",
+      "gap_severity": "high",
+      "status": "needs_improvement",
+      "conflicting_evidence": false
+    },
+    {
+      "id": "C-105",
+      "name": "National Accounts & SUT Analysis",
+      "domain": "Macroeconomic Frameworks",
+      "mastery": null,
+      "confidence": 0.0,
+      "coverage": 0.0,
+      "last_assessed": null,
+      "gap": null,
+      "status": "unassessed",
+      "conflicting_evidence": false
+    }
+  ],
+  "radar_data": [
+    {
+      "axis": "Mastery",
+      "current": 42,
+      "target": 80,
+      "fullMark": 100
+    },
+    {
+      "axis": "Confidence",
+      "current": 35,
+      "target": 75,
+      "fullMark": 100
+    },
+    {
+      "axis": "Coverage",
+      "current": 25,
+      "target": 70,
+      "fullMark": 100
+    },
+    {
+      "axis": "Recency",
+      "current": 90,
+      "target": 85,
+      "fullMark": 100
+    },
+    {
+      "axis": "Diversity",
+      "current": 33,
+      "target": 67,
+      "fullMark": 100
+    }
+  ],
+  "active_gap": {
+    "title": "Variance Estimation in Stratified Sampling",
+    "competency_name": "Sampling Design & Methodology",
+    "severity": "high",
+    "evidence_basis": "Based on 2 diagnostic attempts (Diagnostic Diagnostic-04 & FOD Scrutiny Drill). Measurement confidence: Medium (0.35).",
+    "impact": "Impairs standard error computation in rural socio-economic schedules for NSS Round 80.",
+    "recommendation_action": "Complete NSSTA Interactive Lab: Finite Population Correction & Jackknife Variance."
+  },
+  "next_best_action": {
+    "selected_action": "NSSTA Lab 04: Finite Population Correction & Stratified Variance Estimation",
+    "justification": "Officer scored 42% on stratified variance estimation questions with low confidence (0.35) and 25% subskill coverage. Resolving this gap directly unblocks NSS Round 80 field scrutiny approval.",
+    "role_relevance": "Direct requirement for JSO cadre under MoSPI SSS Competency Model Section 3.2 (Field Sampling & Estimation).",
+    "competency_alignment": "Sampling Design & Methodology (KCM-STAT-101) → Subskill: Stratified Standard Errors",
+    "subskill_coverage": "Variance estimation, Finite Population Correction (fpc), Stratum weighting, Multi-stage cluster adjustments",
+    "prerequisites": "Basic Probability & Descriptive Statistics (Completed 2026-05)",
+    "gap_severity": "High",
+    "evidence_confidence": "Medium",
+    "learner_state": "Active / Low Cognitive Overload (Last assessment completed 3 days ago; 0 active overdue tasks)",
+    "modality": "iGOT Karmayogi",
+    "availability": "Immediate",
+    "expected_outcome": "Projected +28% mastery gain (from 0.42 to 0.70) and confidence increase to High (≥0.75), meeting the JSO field deployment threshold."
+  },
+  "agent_activity": [
+    {
+      "id": "ACT-01",
+      "agent": "Diagnostic",
+      "action": "Administered 12-item adaptive diagnostic test on Sampling Design & Estimation.",
+      "timestamp": "3 days ago",
+      "status": "completed"
+    },
+    {
+      "id": "ACT-02",
+      "agent": "Competency Engine",
+      "action": "Updated belief state: Mastery 0.42, Confidence 0.35. Flagged 'Variance Estimation' gap.",
+      "timestamp": "3 days ago",
+      "status": "completed"
+    },
+    {
+      "id": "ACT-03",
+      "agent": "Intervention",
+      "action": "Synthesized Next-Best-Action: Mapped NSSTA Lab 04 via iGOT Karmayogi with 12 explainability facets.",
+      "timestamp": "2 days ago",
+      "status": "completed"
+    },
+    {
+      "id": "ACT-04",
+      "agent": "Monitoring",
+      "action": "Scheduled retention verification check 14 days post-intervention completion.",
+      "timestamp": "In queue",
+      "status": "pending"
+    }
+  ]
+}

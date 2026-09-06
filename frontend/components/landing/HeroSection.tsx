@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Search, ShieldCheck } from "lucide-react";
 import { GridOverlay } from "@/components/ui/GridOverlay";
@@ -85,16 +86,12 @@ export function HeroSection() {
             </span>
           </div>
 
-          <button
-            type="button"
+          <Link
+            href="/dashboard"
             className="shrink-0 bg-[#0F172A] hover:bg-[#1E293B] text-white font-body text-xs font-semibold px-4 py-2.5 rounded-[8px] transition-transform active:scale-95"
-            onClick={() => {
-              const el = document.getElementById("problem");
-              el?.scrollIntoView({ behavior: "smooth" });
-            }}
           >
             Find my gap
-          </button>
+          </Link>
         </motion.div>
 
         {/* Social Proof Line (Valley.co Pattern A / §2.9) */}

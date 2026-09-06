@@ -9,6 +9,7 @@ import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const NAV_LINKS = [
+  { label: "Dashboard", href: "/dashboard" },
   { label: "Features", href: "#features" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "Technology", href: "#technology" },
@@ -36,7 +37,7 @@ export function Navbar() {
         <div className="max-w-[1280px] h-full mx-auto px-6 flex items-center justify-between">
           {/* Logo */}
           <Link
-            href="#"
+            href="/"
             className="font-heading text-2xl tracking-[0.02em] text-[#3B82F6] hover:opacity-90 transition-opacity select-none"
           >
             GYANSETU
@@ -57,23 +58,14 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4">
             <Link
-              href="#login"
-              className="font-body text-[15px] font-medium text-[#475569] hover:text-[#0F172A] transition-colors"
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-[#0F172A] hover:bg-[#1E293B] text-white transition shadow-sm"
             >
-              Login
+              <span>Launch Dashboard</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                const el = document.getElementById("features");
-                el?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              Get Started
-            </Button>
           </div>
 
           {/* Mobile Hamburger Icon */}
@@ -138,24 +130,12 @@ export function Navbar() {
 
               <div className="flex flex-col gap-3 pt-6 border-t border-[#E2E8F0]">
                 <Link
-                  href="#login"
+                  href="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 font-medium text-[#475569] hover:text-[#0F172A] text-sm"
+                  className="w-full text-center py-2.5 font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition"
                 >
-                  Login
+                  Launch Dashboard
                 </Link>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="w-full justify-center"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    const el = document.getElementById("features");
-                    el?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                >
-                  Get Started
-                </Button>
               </div>
             </motion.div>
           </motion.div>
