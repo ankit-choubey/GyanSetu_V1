@@ -5,7 +5,6 @@ import { SolutionSection } from "@/components/landing/SolutionSection";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { HeroMomentSection } from "@/components/landing/HeroMomentSection";
 import { SocialProofSection } from "@/components/landing/SocialProofSection";
-import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { TechStackSection } from "@/components/landing/TechStackSection";
 import { Footer } from "@/components/landing/Footer";
 
@@ -47,12 +46,6 @@ export default function Home() {
 
       {/* SECTION 07 — Social Proof + 3D DataMesh Visual */}
       <SocialProofSection />
-
-      {/* Subtle Horizontal Gradient Divider */}
-      <div className="section-divider" />
-
-      {/* SECTION 08 — Differentiators (Bento Grid) */}
-      <FeaturesSection />
 
       {/* Subtle Horizontal Gradient Divider */}
       <div className="section-divider" />
