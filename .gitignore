@@ -38,3 +38,5 @@ Thumbs.db
 
 # Local test documents
 test_data/
+# Seed content source PDFs are kept locally and not committed
+ml_pipeline/seed_content/raw/*.pdf

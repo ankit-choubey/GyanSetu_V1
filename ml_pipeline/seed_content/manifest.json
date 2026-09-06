@@ -1,0 +1,64 @@
+{
+  "documents": [
+    {
+      "document_id": "unsd_census_principles_rev4_2025",
+      "filename": "unsd_census_principles_rev4_2025.pdf",
+      "title": "Principles and Recommendations for Population and Housing Censuses, Revision 4",
+      "source": "United Nations Statistics Division",
+      "source_url": "https://unstats.un.org/unsd/publication/SeriesM/Series_M67rev4en.pdf",
+      "topic": "Population and housing census methodology",
+      "license_or_access_note": "Official UN publication available publicly from the United Nations Statistics Division.",
+      "processed_file": "ml_pipeline/seed_content/processed/unsd_census_principles_rev4_2025.json",
+      "page_count": 457,
+      "total_characters": 1590650,
+      "ocr_pages": 0,
+      "table_pages": 17,
+      "status": "processed"
+    },
+    {
+      "document_id": "unsd_census_management_rev2",
+      "filename": "unsd_census_management_rev2.pdf",
+      "title": "Handbook on the Management of Population and Housing Censuses, Revision 2",
+      "source": "United Nations Statistics Division",
+      "source_url": "https://unstats.un.org/unsd/publication/seriesf/series_f83rev2en.pdf",
+      "topic": "Census management and operations",
+      "license_or_access_note": "Official UN publication available publicly from the United Nations Statistics Division.",
+      "processed_file": "ml_pipeline/seed_content/processed/unsd_census_management_rev2.json",
+      "page_count": 386,
+      "total_characters": 1208114,
+      "ocr_pages": 0,
+      "table_pages": 35,
+      "status": "processed"
+    },
+    {
+      "document_id": "unsd_electronic_data_collection_census_2019",
+      "filename": "unsd_electronic_data_collection_census_2019.pdf",
+      "title": "Guidelines on the Use of Electronic Data Collection Technologies in Population and Housing Censuses",
+      "source": "United Nations Statistics Division",
+      "source_url": "https://unstats.un.org/unsd/demographic/standmeth/handbooks/data-collection-census-201901.pdf",
+      "topic": "Electronic data collection and census technology",
+      "license_or_access_note": "Official UN publication available publicly from the United Nations Statistics Division.",
+      "processed_file": "ml_pipeline/seed_content/processed/unsd_electronic_data_collection_census_2019.json",
+      "page_count": 239,
+      "total_characters": 884355,
+      "ocr_pages": 0,
+      "table_pages": 37,
+      "status": "processed"
+    },
+    {
+      "document_id": "unsd_registers_based_census_2022",
+      "filename": "unsd_registers_based_census_2022.pdf",
+      "title": "Handbook on Registers-based Population and Housing Censuses",
+      "source": "United Nations Statistics Division",
+      "source_url": "https://unstats.un.org/unsd/demographic-social/publication/handbook-registers-phc.pdf",
+      "topic": "Registers-based census methodology and administrative data",
+      "license_or_access_note": "Official UN publication available publicly from the United Nations Statistics Division.",
+      "processed_file": "ml_pipeline/seed_content/processed/unsd_registers_based_census_2022.json",
+      "page_count": 136,
+      "total_characters": 433373,
+      "ocr_pages": 0,
+      "table_pages": 21,
+      "status": "processed"
+    }
+  ]
+}
