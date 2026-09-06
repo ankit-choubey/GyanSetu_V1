@@ -1,0 +1,22 @@
+{
+  "source_name": "iGOT Karmayogi",
+  "organization": "Capacity Building Commission, Government of India",
+  "platform": "iGOT Karmayogi",
+  "source_url": "https://www.igotkarmayogi.gov.in/",
+  "data_type": "Public learning-resource metadata",
+  "access_type": "Public web access",
+  "intended_use": "Reference and recommendation-resource catalogue for GyanSetu Real/Public mode",
+  "fields_to_collect": [
+    "course_id",
+    "course_title",
+    "provider",
+    "duration",
+    "description",
+    "competencies",
+    "tags",
+    "course_url"
+  ],
+  "privacy_scope": "Public course/resource information only; no learner or personal data",
+  "data_source": "[REAL/PUBLIC DATA]",
+  "verified_on": "2026-09-06"
+}

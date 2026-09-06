@@ -1,0 +1,26 @@
+{
+  "source_name": "National Statistical Systems Training Academy (NSSTA)",
+  "organization": "Ministry of Statistics and Programme Implementation, Government of India",
+  "document_type": "Training Programme Approval Committee (TPAC) documents",
+  "source_url": "https://nssta.gov.in/document",
+  "primary_reference": "Minutes of the Meeting of TPAC FY 2026-27",
+  "reference_no": "L-14011/02/TPAC/2022-23/NSSTA(e-56443)",
+  "date_of_issue": "2026-04-17",
+  "data_type": "Public training programme metadata",
+  "access_type": "Public web access",
+  "intended_use": "Reference catalogue for NSSTA TPAC recommended training programmes in GyanSetu Real/Public mode",
+  "fields_to_collect": [
+    "programme_title",
+    "topic",
+    "target_audience",
+    "duration",
+    "institute",
+    "training_type",
+    "year",
+    "source_document",
+    "source_url"
+  ],
+  "privacy_scope": "Public programme/training information only; no participant personal data",
+  "data_source": "[REAL/PUBLIC DATA]",
+  "verified_on": "2026-09-06"
+}

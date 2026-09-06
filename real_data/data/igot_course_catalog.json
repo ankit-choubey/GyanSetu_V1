@@ -1,0 +1,80 @@
+{
+  "source": "iGOT Karmayogi",
+  "organization": "Capacity Building Commission, Government of India",
+  "source_url": "https://www.igotkarmayogi.gov.in/",
+  "data_source": "[REAL/PUBLIC DATA]",
+  "collection_type": "Manually curated public course metadata",
+  "courses": [
+    {
+      "catalogue_id": "IGOT-PUBLIC-001",
+      "course_title": "Data Driven Decision Making For Government",
+      "provider": "Capacity Building Commission",
+      "duration": "2h 30m",
+      "description": null,
+      "competencies": [],
+      "tags": [],
+      "course_url": "https://www.igotkarmayogi.gov.in/",
+      "metadata_status": "catalogue metadata verified; detailed course-page metadata not yet collected",
+      "data_source": "[REAL/PUBLIC DATA]"
+    },
+    {
+      "catalogue_id": "IGOT-PUBLIC-002",
+      "course_title": "Microsoft Excel for Beginners",
+      "provider": "Microsoft",
+      "duration": "7h 4m",
+      "description": null,
+      "competencies": [
+        "Digital Tools",
+        "Data Analytics"
+      ],
+      "tags": [],
+      "course_url": "https://www.igotkarmayogi.gov.in/",
+      "metadata_status": "catalogue and competency metadata verified",
+      "data_source": "[REAL/PUBLIC DATA]"
+    },
+    {
+      "catalogue_id": "IGOT-PUBLIC-003",
+      "course_title": "Public Procurement Framework of GOI",
+      "provider": "Department of Expenditure",
+      "duration": null,
+      "description": null,
+      "competencies": [],
+      "tags": [],
+      "course_url": "https://portal.igotkarmayogi.gov.in/",
+      "metadata_status": "public course page verified; detailed metadata requires further extraction",
+      "data_source": "[REAL/PUBLIC DATA]"
+    },
+    {
+      "catalogue_id": "IGOT-PUBLIC-004",
+      "course_title": "Introduction to Bharatiya Sakshya Adhiniyam, 2023",
+      "provider": "Karmayogi Bharat",
+      "duration": "16m",
+      "description": "Overview of reforms introduced by the Bharatiya Sakshya Adhiniyam, 2023, including changes relating to evidence and electronic evidence.",
+      "competencies": [],
+      "tags": [
+        "Law",
+        "IEA",
+        "Indian Evidence Act",
+        "Bharatiya Sakshya Adhiniyam, 2023",
+        "BSA",
+        "Criminal law",
+        "Criminal procedure"
+      ],
+      "course_url": "https://portal.igotkarmayogi.gov.in/viewer/pdf/do_1139954359692083201106",
+      "metadata_status": "detailed public course-page metadata verified",
+      "data_source": "[REAL/PUBLIC DATA]"
+    },
+    {
+      "catalogue_id": "IGOT-PUBLIC-005",
+      "course_title": "Digital safety essentials",
+      "provider": "Microsoft",
+      "duration": "1h 15m",
+      "description": "Introduction to safe internet practices covering common online threats, password security, privacy settings and safe browsing.",
+      "competencies": [],
+      "tags": [],
+      "course_url": "https://portal.igotkarmayogi.gov.in/",
+      "metadata_status": "public course-page content verified; detailed metadata URL has changed",
+      "data_source": "[REAL/PUBLIC DATA]"
+    }
+  ]
+}
