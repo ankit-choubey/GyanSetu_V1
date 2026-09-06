@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from .assessment import AssessmentItem
+    from .assessment import AssessmentAttempt, AssessmentItem
     from .competency import Competency, Role
     from .competency_state import CompetencyState
     from .evidence import Evidence
@@ -26,6 +26,7 @@ class User(SQLModel, table=True):
     role: Optional["Role"] = Relationship(back_populates="users")
     evidence: list["Evidence"] = Relationship(back_populates="user")
     assessments: list["AssessmentItem"] = Relationship(back_populates="user")
+    assessment_attempts: list["AssessmentAttempt"] = Relationship(back_populates="user")
     interventions: list["Intervention"] = Relationship(back_populates="user")
     competency_states: list["CompetencyState"] = Relationship(back_populates="user")
 

@@ -6,7 +6,7 @@ from sqlalchemy import Column, Enum as SAEnum, UniqueConstraint
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from .assessment import AssessmentItem
+    from .assessment import AssessmentAttempt, AssessmentItem
     from .competency_state import CompetencyState
     from .evidence import Evidence
     from .intervention import Intervention
@@ -61,6 +61,7 @@ class Competency(SQLModel, table=True):
     subskills: list["SubSkill"] = Relationship(back_populates="competency")
     evidence: list["Evidence"] = Relationship(back_populates="competency")
     assessments: list["AssessmentItem"] = Relationship(back_populates="competency")
+    assessment_attempts: list["AssessmentAttempt"] = Relationship(back_populates="competency")
     interventions: list["Intervention"] = Relationship(back_populates="competency")
     competency_states: list["CompetencyState"] = Relationship(back_populates="competency")
     role_competency_links: list["RoleCompetency"] = Relationship(back_populates="competency")
