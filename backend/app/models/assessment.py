@@ -33,12 +33,17 @@ class AssessmentAttempt(SQLModel, table=True):
     __tablename__ = "assessment_attempts"
     __table_args__ = (
         CheckConstraint("score IS NULL OR (score >= 0 AND score <= 1)", name="ck_attempt_score_range"),
+        CheckConstraint(
+            "self_confidence IS NULL OR (self_confidence >= 0 AND self_confidence <= 1)",
+            name="ck_attempt_self_confidence_range",
+        ),
     )
 
     id: int | None = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="users.id", index=True)
     competency_id: int = Field(foreign_key="competencies.id", index=True)
     score: float | None = Field(default=None, ge=0.0, le=1.0)
+    self_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
     started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: datetime | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
