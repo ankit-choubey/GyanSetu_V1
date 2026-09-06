@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { bebasNeue, inter, jetbrainsMono } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,10 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${bebasNeue.variable} ${inter.variable} ${jetbrainsMono.variable} scroll-smooth`}
-    >
+    <html lang="en" className="scroll-smooth">
       <body className="min-h-screen bg-white text-[#0F172A] font-body antialiased overflow-x-hidden">
         {children}
       </body>
