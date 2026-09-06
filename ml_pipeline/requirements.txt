@@ -1,0 +1,16 @@
+openai>=1.0.0
+python-dotenv>=1.0.0
+
+# ML-002 — document extraction
+pymupdf>=1.23.0
+python-pptx>=0.6.23
+
+# ML-002 enhancement — table extraction (pure-Python, no external binary)
+pdfplumber>=0.10.0
+
+# ML-002 enhancement — OCR fallback for scanned PDF pages
+# NOTE: pytesseract is a wrapper — the Tesseract OCR *binary* must also
+# be installed on the machine (apt install tesseract-ocr / brew install
+# tesseract / Windows installer). Not a pip-only dependency.
+pytesseract>=0.3.10
+Pillow>=10.0.0
