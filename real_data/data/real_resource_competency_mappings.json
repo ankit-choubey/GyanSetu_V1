@@ -1,0 +1,2074 @@
+[
+  {
+    "resource_type": "iGOT course",
+    "title": "Data Driven Decision Making For Government",
+    "source_url": null,
+    "course_url": "https://www.igotkarmayogi.gov.in/",
+    "year": null,
+    "target_audience": null,
+    "data_source": "[REAL/PUBLIC DATA]",
+    "status": "success",
+    "concepts": [
+      {
+        "concept": "Data Driven Decision Making",
+        "description": "Applying data-driven decision-making processes within government contexts.",
+        "subskills": []
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Data Driven Decision Making",
+        "competency": "Data-Driven Decision Making",
+        "subskills": [],
+        "confidence": 0.95,
+        "rationale": "The concept directly describes the ability to apply data-driven decision-making processes in government, which aligns precisely with the competency of making decisions based on data analysis."
+      }
+    ]
+  },
+  {
+    "resource_type": "iGOT course",
+    "title": "Microsoft Excel for Beginners",
+    "source_url": null,
+    "course_url": "https://www.igotkarmayogi.gov.in/",
+    "year": null,
+    "target_audience": null,
+    "data_source": "[REAL/PUBLIC DATA]",
+    "status": "success",
+    "concepts": [
+      {
+        "concept": "Microsoft Excel Basics",
+        "description": "Fundamental skills for using Microsoft Excel as a beginner, covering the core interface and essential functions.",
+        "subskills": [
+          "Navigating the Excel ribbon and worksheets",
+          "Entering and editing data in cells",
+          "Applying basic formatting (fonts, colors, borders)",
+          "Creating simple formulas and functions (SUM, AVERAGE)",
+          "Sorting and filtering data",
+          "Generating basic charts and graphs"
+        ]
+      },
+      {
+        "concept": "Digital Tools Overview",
+        "description": "Introduction to common digital tools that support productivity and collaboration in a beginner-friendly context.",
+        "subskills": [
+          "Understanding file types and storage options",
+          "Using cloud‑based collaboration platforms",
+          "Managing files and folders efficiently",
+          "Applying basic keyboard shortcuts for productivity"
+        ]
+      },
+      {
+        "concept": "Data Analytics Fundamentals",
+        "description": "Basic concepts and techniques for analyzing data, suitable for beginners learning to work with data in Excel and other tools.",
+        "subskills": [
+          "Collecting and importing data into spreadsheets",
+          "Cleaning and organizing data for analysis",
+          "Performing simple descriptive statistics",
+          "Creating visual representations of data (charts, tables)",
+          "Interpreting basic analytical results"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Microsoft Excel Basics",
+        "competency": "Basic Spreadsheet Proficiency",
+        "subskills": [
+          "Navigating the Excel ribbon and worksheets",
+          "Entering and editing data in cells",
+          "Applying basic formatting (fonts, colors, borders)",
+          "Creating simple formulas and functions (SUM, AVERAGE)",
+          "Sorting and filtering data",
+          "Generating basic charts and graphs"
+        ],
+        "confidence": 0.96,
+        "rationale": "The listed subskills cover core Excel operations that together demonstrate the ability to create, format, and analyze simple spreadsheets."
+      },
+      {
+        "concept": "Digital Tools Overview",
+        "competency": "Digital Productivity and Collaboration Skills",
+        "subskills": [
+          "Understanding file types and storage options",
+          "Using cloud‑based collaboration platforms",
+          "Managing files and folders efficiently",
+          "Applying basic keyboard shortcuts for productivity"
+        ],
+        "confidence": 0.94,
+        "rationale": "These subskills reflect competence in selecting, organizing, and using digital resources to work efficiently and collaborate with others."
+      },
+      {
+        "concept": "Data Analytics Fundamentals",
+        "competency": "Foundational Data Analysis Skills",
+        "subskills": [
+          "Collecting and importing data into spreadsheets",
+          "Cleaning and organizing data for analysis",
+          "Performing simple descriptive statistics",
+          "Creating visual representations of data (charts, tables)",
+          "Interpreting basic analytical results"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills describe the end‑to‑end process of preparing, analyzing, visualizing, and interpreting data, which together constitute basic data analysis capability."
+      }
+    ]
+  },
+  {
+    "resource_type": "iGOT course",
+    "title": "Public Procurement Framework of GOI",
+    "source_url": null,
+    "course_url": "https://portal.igotkarmayogi.gov.in/",
+    "year": null,
+    "target_audience": null,
+    "data_source": "[REAL/PUBLIC DATA]",
+    "status": "success",
+    "concepts": [
+      {
+        "concept": "Public Procurement Framework of GOI",
+        "description": "The set of policies, regulations, and procedures that govern public procurement activities in the Government of India.",
+        "subskills": []
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Public Procurement Framework of GOI",
+        "competency": "Knowledge of Government Procurement Policies and Procedures",
+        "subskills": [],
+        "confidence": 0.88,
+        "rationale": "The concept describes the set of policies, regulations, and procedures governing public procurement in India, directly reflecting the ability to understand and apply government procurement rules."
+      }
+    ]
+  },
+  {
+    "resource_type": "iGOT course",
+    "title": "Introduction to Bharatiya Sakshya Adhiniyam, 2023",
+    "source_url": null,
+    "course_url": "https://portal.igotkarmayogi.gov.in/viewer/pdf/do_1139954359692083201106",
+    "year": null,
+    "target_audience": null,
+    "data_source": "[REAL/PUBLIC DATA]",
+    "status": "success",
+    "concepts": [
+      {
+        "concept": "Bharatiya Sakshya Adhiniyam 2023",
+        "description": "The 2023 legislation that reforms evidence law in India, introducing new rules for both traditional and electronic evidence.",
+        "subskills": [
+          "Understanding the objectives of the BSA",
+          "Identifying key reforms introduced by the BSA",
+          "Comparing BSA provisions with the earlier Indian Evidence Act"
+        ]
+      },
+      {
+        "concept": "Evidence Law Reforms",
+        "description": "Changes to the principles governing admissibility, burden of proof, and witness testimony introduced by the BSA.",
+        "subskills": [
+          "Revised admissibility criteria for evidence",
+          "Updated burden of proof provisions",
+          "New rules for witness testimony and examination"
+        ]
+      },
+      {
+        "concept": "Electronic Evidence",
+        "description": "Provisions under the BSA that define, authenticate, preserve, and admit digital and electronic records as evidence.",
+        "subskills": [
+          "Definition and scope of electronic evidence",
+          "Methods for authenticating electronic documents",
+          "Standards for preservation and admissibility of digital data"
+        ]
+      },
+      {
+        "concept": "Indian Evidence Act (IEA)",
+        "description": "The existing statutory framework for evidence in India, which is amended and supplemented by the BSA.",
+        "subskills": [
+          "Core principles of the Indian Evidence Act",
+          "Sections of the IEA amended by the BSA",
+          "Interaction between the IEA and the new BSA provisions"
+        ]
+      },
+      {
+        "concept": "Criminal Law Context",
+        "description": "The impact of BSA reforms on substantive criminal law, affecting how evidence is used in criminal cases.",
+        "subskills": [
+          "Application of evidence reforms in criminal prosecutions",
+          "Effect on defense strategies and rights",
+          "Implications for criminal liability and sentencing"
+        ]
+      },
+      {
+        "concept": "Criminal Procedure",
+        "description": "Procedural aspects of criminal cases that are affected by the BSA, from investigation through trial and appeal.",
+        "subskills": [
+          "Handling of evidence during investigation",
+          "Presentation of evidence at trial",
+          "Evidentiary review in appellate proceedings"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Bharatiya Sakshya Adhiniyam 2023",
+        "competency": "Understanding of the BSA legislative framework",
+        "subskills": [
+          "Understanding the objectives of the BSA",
+          "Identifying key reforms introduced by the BSA",
+          "Comparing BSA provisions with the earlier Indian Evidence Act"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills focus on the purpose, reforms, and comparison of the BSA, directly reflecting the ability to comprehend the new legislation."
+      },
+      {
+        "concept": "Evidence Law Reforms",
+        "competency": "Application of reformed evidence principles",
+        "subskills": [
+          "Revised admissibility criteria for evidence",
+          "Updated burden of proof provisions",
+          "New rules for witness testimony and examination"
+        ],
+        "confidence": 0.94,
+        "rationale": "Subskills describe specific changes to admissibility, burden, and testimony, indicating competence in applying the reformed rules."
+      },
+      {
+        "concept": "Electronic Evidence",
+        "competency": "Management of electronic evidence",
+        "subskills": [
+          "Definition and scope of electronic evidence",
+          "Methods for authenticating electronic documents",
+          "Standards for preservation and admissibility of digital data"
+        ],
+        "confidence": 0.96,
+        "rationale": "The subskills cover definition, authentication, and preservation, which together constitute the capability to handle electronic evidence."
+      },
+      {
+        "concept": "Indian Evidence Act (IEA)",
+        "competency": "Knowledge of foundational evidence law",
+        "subskills": [
+          "Core principles of the Indian Evidence Act",
+          "Sections of the IEA amended by the BSA",
+          "Interaction between the IEA and the new BSA provisions"
+        ],
+        "confidence": 0.93,
+        "rationale": "Understanding core principles, amendments, and interaction with the BSA reflects mastery of the foundational statutory framework."
+      },
+      {
+        "concept": "Criminal Law Context",
+        "competency": "Integration of evidence reforms into criminal substantive law",
+        "subskills": [
+          "Application of evidence reforms in criminal prosecutions",
+          "Effect on defense strategies and rights",
+          "Implications for criminal liability and sentencing"
+        ],
+        "confidence": 0.9,
+        "rationale": "Subskills address how evidence reforms affect prosecution, defense, and sentencing, showing competence in linking reforms to substantive criminal law."
+      },
+      {
+        "concept": "Criminal Procedure",
+        "competency": "Procedural handling of evidence in criminal cases",
+        "subskills": [
+          "Handling of evidence during investigation",
+          "Presentation of evidence at trial",
+          "Evidentiary review in appellate proceedings"
+        ],
+        "confidence": 0.92,
+        "rationale": "The subskills map to the stages of investigation, trial, and appeal, indicating ability to manage evidence procedurally."
+      }
+    ]
+  },
+  {
+    "resource_type": "iGOT course",
+    "title": "Digital safety essentials",
+    "source_url": null,
+    "course_url": "https://portal.igotkarmayogi.gov.in/",
+    "year": null,
+    "target_audience": null,
+    "data_source": "[REAL/PUBLIC DATA]",
+    "status": "success",
+    "concepts": [
+      {
+        "concept": "Common Online Threats",
+        "description": "Awareness of typical dangers encountered while using the internet, such as scams, malware, and phishing attempts.",
+        "subskills": [
+          "Identify common online threats",
+          "Recognize signs of phishing",
+          "Understand basic malware risks"
+        ]
+      },
+      {
+        "concept": "Password Security",
+        "description": "Practices for creating, managing, and protecting passwords to safeguard online accounts.",
+        "subskills": [
+          "Create strong, unique passwords",
+          "Store passwords securely",
+          "Update passwords regularly"
+        ]
+      },
+      {
+        "concept": "Privacy Settings",
+        "description": "Configuring account and platform options to control the visibility and sharing of personal information.",
+        "subskills": [
+          "Adjust privacy settings on social platforms",
+          "Limit data sharing with third parties",
+          "Review and manage app permissions"
+        ]
+      },
+      {
+        "concept": "Safe Browsing",
+        "description": "Techniques for navigating the web securely, avoiding malicious sites, and protecting personal data while online.",
+        "subskills": [
+          "Identify secure (HTTPS) websites",
+          "Avoid clicking on suspicious links",
+          "Use browser security features"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Common Online Threats",
+        "competency": "Identify and assess online security threats",
+        "subskills": [
+          "Identify common online threats",
+          "Recognize signs of phishing",
+          "Understand basic malware risks"
+        ],
+        "confidence": 0.96,
+        "rationale": "The subskills directly involve recognizing and understanding typical internet dangers, which together constitute the ability to identify and assess online security threats."
+      },
+      {
+        "concept": "Password Security",
+        "competency": "Create and maintain secure authentication credentials",
+        "subskills": [
+          "Create strong, unique passwords",
+          "Store passwords securely",
+          "Update passwords regularly"
+        ],
+        "confidence": 0.97,
+        "rationale": "All listed subskills focus on generating, protecting, and refreshing passwords, reflecting the broader capability of managing secure authentication credentials."
+      },
+      {
+        "concept": "Privacy Settings",
+        "competency": "Manage personal data privacy across digital platforms",
+        "subskills": [
+          "Adjust privacy settings on social platforms",
+          "Limit data sharing with third parties",
+          "Review and manage app permissions"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills describe configuring platform options and controlling data exposure, which together represent the competency of managing personal data privacy."
+      },
+      {
+        "concept": "Safe Browsing",
+        "competency": "Navigate the web securely and protect personal information",
+        "subskills": [
+          "Identify secure (HTTPS) websites",
+          "Avoid clicking on suspicious links",
+          "Use browser security features"
+        ],
+        "confidence": 0.96,
+        "rationale": "These subskills cover recognizing secure sites, avoiding malicious content, and leveraging browser tools, all essential for the ability to browse the web safely."
+      }
+    ]
+  },
+  {
+    "resource_type": "NSSTA TPAC programme",
+    "title": "Application of remote sensing, GIS in official statistics",
+    "source_url": "https://nssta.gov.in/document",
+    "course_url": null,
+    "year": "FY 2026-27",
+    "target_audience": "In-service JSOs",
+    "data_source": "[REAL/PUBLIC DATA]",
+    "concepts": [
+      {
+        "concept": "Remote Sensing",
+        "description": "Use of satellite and airborne sensors to collect data for official statistics and various applications.",
+        "subskills": [
+          "Acquisition of satellite imagery",
+          "Interpretation of remote sensing data",
+          "Integration with GIS for mapping",
+          "Application in disaster management and policy formulation"
+        ]
+      },
+      {
+        "concept": "Geographic Information Systems (GIS)",
+        "description": "Software and methods for storing, visualizing, and analyzing spatial data in official statistics.",
+        "subskills": [
+          "GIS mapping and visualization",
+          "Spatial data integration",
+          "Layer overlay and analysis",
+          "GIS-based census data analysis"
+        ]
+      },
+      {
+        "concept": "Global Positioning System (GPS)",
+        "description": "Satellite-based positioning technology used for field data collection and geospatial operations.",
+        "subskills": [
+          "GPS data collection in the field",
+          "Coordinate accuracy assessment",
+          "Integration of GPS points with GIS layers"
+        ]
+      },
+      {
+        "concept": "Digital Image Processing",
+        "description": "Techniques for enhancing and extracting information from remote sensing images.",
+        "subskills": [
+          "Image enhancement",
+          "Classification of land cover",
+          "Feature extraction",
+          "Pre‑processing for GIS analysis"
+        ]
+      },
+      {
+        "concept": "Geospatial Technology",
+        "description": "Combined use of remote sensing, GIS, GPS, and related tools for statistical and governance purposes.",
+        "subskills": [
+          "Integration of multiple geospatial data sources",
+          "Spatial decision support",
+          "Application in smart sampling and governance"
+        ]
+      },
+      {
+        "concept": "Multi‑Criteria Analysis (MCA) using GIS",
+        "description": "Method for evaluating multiple spatial criteria to support decision‑making.",
+        "subskills": [
+          "Selection of evaluation criteria",
+          "Weight assignment and normalization",
+          "Overlay analysis in GIS",
+          "Result ranking and mapping"
+        ]
+      },
+      {
+        "concept": "Smart Sampling with Geospatial Technology",
+        "description": "Design of statistically efficient samples using spatial information.",
+        "subskills": [
+          "Sample frame creation from GIS layers",
+          "Stratification based on spatial attributes",
+          "Optimization of sample locations",
+          "Integration of sampling results with GIS"
+        ]
+      },
+      {
+        "concept": "Crop Acreage Estimation using Geospatial Technology",
+        "description": "Estimation of cultivated area through remote sensing and GIS techniques.",
+        "subskills": [
+          "Land‑cover classification for crops",
+          "Area calculation from raster data",
+          "Validation with ground truth data",
+          "Reporting for agricultural statistics"
+        ]
+      },
+      {
+        "concept": "Space Technology Applications in Crop Cutting Experiments",
+        "description": "Use of satellite‑based data to support crop cutting experiments for yield estimation.",
+        "subskills": [
+          "Satellite imagery selection for experiment periods",
+          "Spatial delineation of experiment plots",
+          "Integration of remote sensing data with field measurements"
+        ]
+      },
+      {
+        "concept": "GIS Analysis of Census Data",
+        "description": "Spatial examination of population and demographic data using GIS tools.",
+        "subskills": [
+          "Geocoding of census records",
+          "Thematic mapping of demographic variables",
+          "Spatial correlation analysis",
+          "Visualization for policy insights"
+        ]
+      },
+      {
+        "concept": "Geospatial Technology for Smart Governance",
+        "description": "Application of GIS, remote sensing, and related data to improve public administration and policy making.",
+        "subskills": [
+          "Spatial planning for service delivery",
+          "Monitoring of infrastructure using satellite data",
+          "Data‑driven policy formulation",
+          "Public‑facing geo‑portals"
+        ]
+      },
+      {
+        "concept": "UAV Remote Sensing Applications",
+        "description": "Use of unmanned aerial vehicles to capture high‑resolution spatial data for statistical and operational purposes.",
+        "subskills": [
+          "Flight planning and data acquisition",
+          "Processing of UAV imagery",
+          "Integration of UAV data with GIS",
+          "Application in disaster assessment and agriculture"
+        ]
+      },
+      {
+        "concept": "Alternate Data Sources for Official Statistics",
+        "description": "Non‑traditional data streams such as scanner, mobile, night‑light, and web‑scraped data used to complement official statistics.",
+        "subskills": [
+          "Acquisition of scanner and point‑of‑sale data",
+          "Processing of mobile phone location data",
+          "Use of night‑light satellite imagery as economic proxy",
+          "Web‑scraping techniques for statistical indicators",
+          "Data integration and validation for policy use"
+        ]
+      },
+      {
+        "concept": "Disaster Management with Remote Sensing and GIS",
+        "description": "Application of geospatial tools to map, assess, and respond to natural and man‑made disasters.",
+        "subskills": [
+          "Hazard mapping using satellite imagery",
+          "Damage assessment through change detection",
+          "Real‑time GIS dashboards for emergency response",
+          "Planning of relief operations using spatial analysis"
+        ]
+      },
+      {
+        "concept": "UFS Applications",
+        "description": "Specific uses of remote sensing and GIS mapping tools within the UFS (Unified Financial System) context for disaster management and related tasks.",
+        "subskills": [
+          "Mapping of UFS assets and infrastructure",
+          "Integration of disaster risk data with UFS databases",
+          "Spatial reporting for financial decision support"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Remote Sensing",
+        "competency": "Acquisition and Interpretation of Remote Sensing Data",
+        "subskills": [
+          "Acquisition of satellite imagery",
+          "Interpretation of remote sensing data",
+          "Integration with GIS for mapping",
+          "Application in disaster management and policy formulation"
+        ],
+        "confidence": 0.95,
+        "rationale": "All subskills involve collecting, interpreting, and applying satellite/airborne imagery, which defines the ability to acquire and use remote sensing data."
+      },
+      {
+        "concept": "Geographic Information Systems (GIS)",
+        "competency": "Spatial Data Management and Visualization using GIS",
+        "subskills": [
+          "GIS mapping and visualization",
+          "Spatial data integration",
+          "Layer overlay and analysis",
+          "GIS-based census data analysis"
+        ],
+        "confidence": 0.95,
+        "rationale": "Subskills focus on storing, visualizing, integrating, and analyzing spatial layers, representing core GIS data management and visualization capability."
+      },
+      {
+        "concept": "Global Positioning System (GPS)",
+        "competency": "Field Geolocation and Integration of GPS Data",
+        "subskills": [
+          "GPS data collection in the field",
+          "Coordinate accuracy assessment",
+          "Integration of GPS points with GIS layers"
+        ],
+        "confidence": 0.94,
+        "rationale": "The subskills describe collecting precise location points, assessing their accuracy, and linking them to GIS, which together form field geolocation competence."
+      },
+      {
+        "concept": "Digital Image Processing",
+        "competency": "Processing and Extraction of Information from Remote Sensing Imagery",
+        "subskills": [
+          "Image enhancement",
+          "Classification of land cover",
+          "Feature extraction",
+          "Pre‑processing for GIS analysis"
+        ],
+        "confidence": 0.93,
+        "rationale": "Enhancement, classification, and feature extraction are core image‑processing tasks that prepare remote sensing data for GIS use."
+      },
+      {
+        "concept": "Geospatial Technology",
+        "competency": "Integrated Geospatial Solutions for Statistical and Governance Applications",
+        "subskills": [
+          "Integration of multiple geospatial data sources",
+          "Spatial decision support",
+          "Application in smart sampling and governance"
+        ],
+        "confidence": 0.9,
+        "rationale": "Combines remote sensing, GIS, GPS, and related tools to support statistical and governance decisions, reflecting an integrated technology competency."
+      },
+      {
+        "concept": "Multi‑Criteria Analysis (MCA) using GIS",
+        "competency": "Multi‑Criteria Spatial Decision‑Making",
+        "subskills": [
+          "Selection of evaluation criteria",
+          "Weight assignment and normalization",
+          "Overlay analysis in GIS",
+          "Result ranking and mapping"
+        ],
+        "confidence": 0.92,
+        "rationale": "The steps describe evaluating several spatial criteria and ranking outcomes, which is the essence of multi‑criteria decision making."
+      },
+      {
+        "concept": "Smart Sampling with Geospatial Technology",
+        "competency": "Design of Spatially Optimized Statistical Samples",
+        "subskills": [
+          "Sample frame creation from GIS layers",
+          "Stratification based on spatial attributes",
+          "Optimization of sample locations",
+          "Integration of sampling results with GIS"
+        ],
+        "confidence": 0.91,
+        "rationale": "Subskills cover building a sample frame, stratifying, and optimizing locations using GIS, indicating competence in spatially informed sampling design."
+      },
+      {
+        "concept": "Crop Acreage Estimation using Geospatial Technology",
+        "competency": "Agricultural Area Estimation through Geospatial Methods",
+        "subskills": [
+          "Land‑cover classification for crops",
+          "Area calculation from raster data",
+          "Validation with ground truth data",
+          "Reporting for agricultural statistics"
+        ],
+        "confidence": 0.92,
+        "rationale": "The tasks involve classifying crops, measuring area, validating, and reporting—key steps for estimating cultivated acreage."
+      },
+      {
+        "concept": "Space Technology Applications in Crop Cutting Experiments",
+        "competency": "Satellite‑Supported Crop Yield Experimentation",
+        "subskills": [
+          "Satellite imagery selection for experiment periods",
+          "Spatial delineation of experiment plots",
+          "Integration of remote sensing data with field measurements"
+        ],
+        "confidence": 0.88,
+        "rationale": "Selecting imagery, defining plots, and merging satellite data with field measurements constitute a competency in using space technology for yield experiments."
+      },
+      {
+        "concept": "GIS Analysis of Census Data",
+        "competency": "Spatial Demographic Analysis using GIS",
+        "subskills": [
+          "Geocoding of census records",
+          "Thematic mapping of demographic variables",
+          "Spatial correlation analysis",
+          "Visualization for policy insights"
+        ],
+        "confidence": 0.94,
+        "rationale": "Geocoding, thematic mapping, and spatial correlation of census information reflect the ability to perform demographic analysis in a GIS environment."
+      },
+      {
+        "concept": "Geospatial Technology for Smart Governance",
+        "competency": "Geospatial‑Driven Public Policy and Service Planning",
+        "subskills": [
+          "Spatial planning for service delivery",
+          "Monitoring of infrastructure using satellite data",
+          "Data‑driven policy formulation",
+          "Public‑facing geo‑portals"
+        ],
+        "confidence": 0.93,
+        "rationale": "The subskills describe using spatial data to plan services, monitor assets, shape policy, and provide public portals, which together define smart governance competence."
+      },
+      {
+        "concept": "UAV Remote Sensing Applications",
+        "competency": "Unmanned Aerial Vehicle Data Acquisition and Integration",
+        "subskills": [
+          "Flight planning and data acquisition",
+          "Processing of UAV imagery",
+          "Integration of UAV data with GIS",
+          "Application in disaster assessment and agriculture"
+        ],
+        "confidence": 0.92,
+        "rationale": "Planning flights, capturing and processing UAV imagery, and linking it to GIS for various applications capture the UAV remote sensing competency."
+      },
+      {
+        "concept": "Alternate Data Sources for Official Statistics",
+        "competency": "Integration of Non‑Traditional Data Streams for Official Statistics",
+        "subskills": [
+          "Acquisition of scanner and point‑of‑sale data",
+          "Processing of mobile phone location data",
+          "Use of night‑light satellite imagery as economic proxy",
+          "Web‑scraping techniques for statistical indicators",
+          "Data integration and validation for policy use"
+        ],
+        "confidence": 0.9,
+        "rationale": "Collecting, processing, and validating scanner, mobile, night‑light, and web‑scraped data for statistical purposes defines a competency in using alternate data sources."
+      },
+      {
+        "concept": "Disaster Management with Remote Sensing and GIS",
+        "competency": "Geospatial Disaster Risk Mapping and Response",
+        "subskills": [
+          "Hazard mapping using satellite imagery",
+          "Damage assessment through change detection",
+          "Real‑time GIS dashboards for emergency response",
+          "Planning of relief operations using spatial analysis"
+        ],
+        "confidence": 0.95,
+        "rationale": "Hazard mapping, damage assessment, real‑time dashboards, and relief planning illustrate the ability to manage disasters through geospatial tools."
+      },
+      {
+        "concept": "UFS Applications",
+        "competency": "Geospatial Financial Asset Management within Unified Financial System",
+        "subskills": [
+          "Mapping of UFS assets and infrastructure",
+          "Integration of disaster risk data with UFS databases",
+          "Spatial reporting for financial decision support"
+        ],
+        "confidence": 0.88,
+        "rationale": "Mapping assets, linking risk data, and producing spatial reports for financial decisions show a competency in applying geospatial technology to the UFS context."
+      }
+    ],
+    "status": "success"
+  },
+  {
+    "resource_type": "NSSTA TPAC programme",
+    "title": "Data security and appropriate use of AI in the Government setup",
+    "source_url": "https://nssta.gov.in/document",
+    "course_url": null,
+    "year": "FY 2026-27",
+    "target_audience": "In-service JSOs",
+    "data_source": "[REAL/PUBLIC DATA]",
+    "concepts": [
+      {
+        "concept": "Data Security",
+        "description": "Understanding the importance of data in government operations and how to protect it from unauthorized access or loss.",
+        "subskills": [
+          "Identify the significance of data for government functions",
+          "Apply methods to ensure confidentiality, integrity, and availability of data",
+          "Implement basic data protection measures and best practices"
+        ]
+      },
+      {
+        "concept": "Artificial Intelligence Fundamentals",
+        "description": "Basic knowledge of AI, including what it is, how it works, and its role in government settings.",
+        "subskills": [
+          "Define artificial intelligence and its core components",
+          "Explain the basic principles behind AI technologies",
+          "Recognize common AI applications in government operations"
+        ]
+      },
+      {
+        "concept": "AI Capabilities and Limitations",
+        "description": "Awareness of what AI can realistically achieve and the constraints that affect its performance in government contexts.",
+        "subskills": [
+          "Identify strengths and useful capabilities of AI systems",
+          "Recognize technical, data‑related, and operational limitations of AI",
+          "Assess when AI is appropriate or inappropriate for a given task"
+        ]
+      },
+      {
+        "concept": "Ethical Use of AI in Government",
+        "description": "Understanding ethical considerations and challenges when deploying AI within government operations.",
+        "subskills": [
+          "Identify ethical principles relevant to AI use in the public sector",
+          "Evaluate potential biases, fairness, and accountability issues",
+          "Develop guidelines for responsible and transparent AI deployment"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Data Security",
+        "competency": "Secure Data Management",
+        "subskills": [
+          "Identify the significance of data for government functions",
+          "Apply methods to ensure confidentiality, integrity, and availability of data",
+          "Implement basic data protection measures and best practices"
+        ],
+        "confidence": 0.96,
+        "rationale": "The subskills describe recognizing data importance and applying protection methods, which together constitute the ability to manage data securely."
+      },
+      {
+        "concept": "Artificial Intelligence Fundamentals",
+        "competency": "Foundational Understanding of AI",
+        "subskills": [
+          "Define artificial intelligence and its core components",
+          "Explain the basic principles behind AI technologies",
+          "Recognize common AI applications in government operations"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills focus on defining AI, explaining its principles, and identifying its uses, directly supporting a basic competency in AI fundamentals."
+      },
+      {
+        "concept": "AI Capabilities and Limitations",
+        "competency": "Critical Evaluation of AI Applicability",
+        "subskills": [
+          "Identify strengths and useful capabilities of AI systems",
+          "Recognize technical, data‑related, and operational limitations of AI",
+          "Assess when AI is appropriate or inappropriate for a given task"
+        ],
+        "confidence": 0.94,
+        "rationale": "These subskills enable learners to judge where AI can be effectively applied and where it cannot, reflecting a competency in evaluating AI suitability."
+      },
+      {
+        "concept": "Ethical Use of AI in Government",
+        "competency": "Ethical Governance of AI",
+        "subskills": [
+          "Identify ethical principles relevant to AI use in the public sector",
+          "Evaluate potential biases, fairness, and accountability issues",
+          "Develop guidelines for responsible and transparent AI deployment"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills involve recognizing ethical standards, assessing bias and fairness, and creating responsible guidelines, which together form the competency of governing AI ethically."
+      }
+    ],
+    "status": "success"
+  },
+  {
+    "resource_type": "NSSTA TPAC programme",
+    "title": "Application of remote sensing, GIS in official statistics",
+    "source_url": "https://nssta.gov.in/document",
+    "course_url": null,
+    "year": "FY 2026-27",
+    "target_audience": "In-service SSOs",
+    "data_source": "[REAL/PUBLIC DATA]",
+    "concepts": [
+      {
+        "concept": "Remote Sensing in Official Statistics",
+        "description": "Use of satellite and aerial sensors to collect data that support the production and analysis of official statistics.",
+        "subskills": [
+          "Understanding remote sensing principles",
+          "Selecting appropriate sensor types for statistical needs",
+          "Integrating remote sensing data with statistical workflows"
+        ]
+      },
+      {
+        "concept": "Geographic Information Systems (GIS) for Official Statistics",
+        "description": "Application of GIS tools to map, analyze, and visualize statistical data geographically.",
+        "subskills": [
+          "GIS data acquisition and management",
+          "Spatial data visualization for statistical outputs",
+          "Linking GIS layers with census and survey data"
+        ]
+      },
+      {
+        "concept": "Global Positioning System (GPS) Fundamentals",
+        "description": "Basic concepts and operations of GPS technology as a source of geolocation data for statistical applications.",
+        "subskills": [
+          "GPS data collection techniques",
+          "Accuracy assessment and error correction",
+          "Integrating GPS coordinates into GIS databases"
+        ]
+      },
+      {
+        "concept": "Digital Image Processing for Geospatial Data",
+        "description": "Processing of digital images from remote sensors to extract usable information for statistical analysis.",
+        "subskills": [
+          "Image pre‑processing (radiometric and geometric correction)",
+          "Feature extraction and classification",
+          "Change detection for temporal statistical studies"
+        ]
+      },
+      {
+        "concept": "Geospatial Technology for Smart Sampling",
+        "description": "Use of spatial data and analysis to design efficient, cost‑effective sampling strategies for surveys.",
+        "subskills": [
+          "Designing spatially balanced sample frames",
+          "Applying stratification based on GIS layers",
+          "Evaluating sample representativeness with geospatial metrics"
+        ]
+      },
+      {
+        "concept": "Multi‑Criteria Analysis (MCA) using GIS",
+        "description": "Applying GIS‑based MCA techniques to evaluate and prioritize alternatives in policy and planning contexts.",
+        "subskills": [
+          "Defining criteria and weighting schemes",
+          "Overlay analysis and suitability mapping",
+          "Interpreting MCA results for decision making"
+        ]
+      },
+      {
+        "concept": "Crop Acreage Estimation with Geospatial Technology",
+        "description": "Estimating cultivated area using remote sensing and GIS methods to support agricultural statistics.",
+        "subskills": [
+          "Land‑cover classification for crop identification",
+          "Calculating area statistics from raster data",
+          "Validating estimates with ground truth data"
+        ]
+      },
+      {
+        "concept": "Space Technology Applications in Crop Cutting Experiments",
+        "description": "Leveraging satellite‑based observations to enhance the design and analysis of crop cutting experiments.",
+        "subskills": [
+          "Selecting satellite imagery for pre‑experiment planning",
+          "Monitoring crop growth stages from space",
+          "Integrating satellite metrics with field measurements"
+        ]
+      },
+      {
+        "concept": "GIS Analysis of Census Data",
+        "description": "Spatial examination of census information to reveal geographic patterns and support policy formulation.",
+        "subskills": [
+          "Geocoding census records",
+          "Creating thematic maps of demographic variables",
+          "Performing spatial statistics (e.g., hotspot analysis)"
+        ]
+      },
+      {
+        "concept": "Geospatial Technology for Smart Governance",
+        "description": "Applying GIS, remote sensing, and related tools to improve public administration and service delivery.",
+        "subskills": [
+          "Mapping public assets and infrastructure",
+          "Using spatial analytics for resource allocation",
+          "Developing web‑based GIS dashboards for decision makers"
+        ]
+      },
+      {
+        "concept": "UAV Remote Sensing Applications",
+        "description": "Utilization of unmanned aerial vehicles to capture high‑resolution imagery for statistical and monitoring purposes.",
+        "subskills": [
+          "Planning UAV flight missions",
+          "Processing UAV imagery (orthomosaics, point clouds)",
+          "Extracting statistical indicators from UAV data"
+        ]
+      },
+      {
+        "concept": "Alternate Data Sources for Policy Formulation",
+        "description": "Incorporating non‑traditional datasets such as scanner data, mobile phone data, night‑light imagery, and web‑scraped information into statistical analysis.",
+        "subskills": [
+          "Acquiring and cleaning scanner and mobile datasets",
+          "Deriving socioeconomic proxies from night‑light data",
+          "Web scraping techniques for relevant policy indicators"
+        ]
+      },
+      {
+        "concept": "Disaster Management Tools using Remote Sensing and GIS",
+        "description": "Use of geospatial technologies to map, assess, and respond to natural and man‑made disasters.",
+        "subskills": [
+          "Hazard mapping with satellite imagery",
+          "Damage assessment through change detection",
+          "Supporting emergency response with real‑time GIS dashboards"
+        ]
+      },
+      {
+        "concept": "UFS Applications",
+        "description": "Application of the UFS (Urban Flood Simulation) framework within GIS and remote sensing contexts for official statistics.",
+        "subskills": [
+          "Modeling flood risk using spatial data",
+          "Integrating flood simulation outputs with statistical reporting",
+          "Evaluating mitigation strategies through GIS analysis"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Remote Sensing in Official Statistics",
+        "competency": "Integrating remote sensing data into official statistical production",
+        "subskills": [
+          "Understanding remote sensing principles",
+          "Selecting appropriate sensor types for statistical needs",
+          "Integrating remote sensing data with statistical workflows"
+        ],
+        "confidence": 0.96,
+        "rationale": "The subskills describe knowledge of sensors, selection for statistical purposes, and workflow integration, directly supporting the ability to incorporate remote sensing into official statistics."
+      },
+      {
+        "concept": "Geographic Information Systems (GIS) for Official Statistics",
+        "competency": "Applying GIS tools for geographic analysis and visualization of statistical data",
+        "subskills": [
+          "GIS data acquisition and management",
+          "Spatial data visualization for statistical outputs",
+          "Linking GIS layers with census and survey data"
+        ],
+        "confidence": 0.95,
+        "rationale": "All subskills focus on acquiring, managing, visualizing, and linking GIS data with statistical datasets, which defines the competency of using GIS for official statistics."
+      },
+      {
+        "concept": "Global Positioning System (GPS) Fundamentals",
+        "competency": "Collecting and validating geolocation data for statistical applications",
+        "subskills": [
+          "GPS data collection techniques",
+          "Accuracy assessment and error correction",
+          "Integrating GPS coordinates into GIS databases"
+        ],
+        "confidence": 0.94,
+        "rationale": "The subskills cover GPS data capture, quality assessment, and integration into GIS, matching the capability to obtain reliable geolocation data for statistics."
+      },
+      {
+        "concept": "Digital Image Processing for Geospatial Data",
+        "competency": "Processing digital imagery to extract statistical information",
+        "subskills": [
+          "Image pre‑processing (radiometric and geometric correction)",
+          "Feature extraction and classification",
+          "Change detection for temporal statistical studies"
+        ],
+        "confidence": 0.95,
+        "rationale": "The listed subskills describe the full image‑processing chain needed to turn raw sensor data into usable statistical indicators."
+      },
+      {
+        "concept": "Geospatial Technology for Smart Sampling",
+        "competency": "Designing spatially optimized sampling frames for surveys",
+        "subskills": [
+          "Designing spatially balanced sample frames",
+          "Applying stratification based on GIS layers",
+          "Evaluating sample representativeness with geospatial metrics"
+        ],
+        "confidence": 0.96,
+        "rationale": "Each subskill directly relates to using geospatial information to create and assess efficient, representative survey samples."
+      },
+      {
+        "concept": "Multi‑Criteria Analysis (MCA) using GIS",
+        "competency": "Conducting GIS‑based multi‑criteria evaluation for policy and planning decisions",
+        "subskills": [
+          "Defining criteria and weighting schemes",
+          "Overlay analysis and suitability mapping",
+          "Interpreting MCA results for decision making"
+        ],
+        "confidence": 0.94,
+        "rationale": "The subskills outline the steps of MCA within GIS, indicating the ability to evaluate alternatives and inform decisions."
+      },
+      {
+        "concept": "Crop Acreage Estimation with Geospatial Technology",
+        "competency": "Estimating agricultural area statistics using remote sensing and GIS",
+        "subskills": [
+          "Land‑cover classification for crop identification",
+          "Calculating area statistics from raster data",
+          "Validating estimates with ground truth data"
+        ],
+        "confidence": 0.95,
+        "rationale": "Subskills focus on classifying crops, quantifying area, and validating results, which together constitute the competency of producing crop‑acreage statistics."
+      },
+      {
+        "concept": "Space Technology Applications in Crop Cutting Experiments",
+        "competency": "Integrating satellite observations into crop experiment design and analysis",
+        "subskills": [
+          "Selecting satellite imagery for pre‑experiment planning",
+          "Monitoring crop growth stages from space",
+          "Integrating satellite metrics with field measurements"
+        ],
+        "confidence": 0.93,
+        "rationale": "The subskills describe using space‑based data before, during, and after experiments, matching the competency of enhancing crop cutting studies with satellite information."
+      },
+      {
+        "concept": "GIS Analysis of Census Data",
+        "competency": "Performing spatial analysis of census information for demographic insight",
+        "subskills": [
+          "Geocoding census records",
+          "Creating thematic maps of demographic variables",
+          "Performing spatial statistics (e.g., hotspot analysis)"
+        ],
+        "confidence": 0.96,
+        "rationale": "All subskills are centered on converting census data to spatial form, visualizing it, and applying spatial statistics, defining this competency."
+      },
+      {
+        "concept": "Geospatial Technology for Smart Governance",
+        "competency": "Applying geospatial tools to improve public administration and service delivery",
+        "subskills": [
+          "Mapping public assets and infrastructure",
+          "Using spatial analytics for resource allocation",
+          "Developing web‑based GIS dashboards for decision makers"
+        ],
+        "confidence": 0.94,
+        "rationale": "The subskills emphasize asset mapping, analytics for allocation, and dashboard creation, which together represent the capability to use geospatial technology for governance."
+      },
+      {
+        "concept": "UAV Remote Sensing Applications",
+        "competency": "Acquiring and processing UAV imagery for statistical indicator generation",
+        "subskills": [
+          "Planning UAV flight missions",
+          "Processing UAV imagery (orthomosaics, point clouds)",
+          "Extracting statistical indicators from UAV data"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills cover mission planning, data processing, and indicator extraction, directly mapping to the competency of using UAVs for statistical purposes."
+      },
+      {
+        "concept": "Alternate Data Sources for Policy Formulation",
+        "competency": "Leveraging non‑traditional big data for socioeconomic statistical analysis",
+        "subskills": [
+          "Acquiring and cleaning scanner and mobile datasets",
+          "Deriving socioeconomic proxies from night‑light data",
+          "Web scraping techniques for relevant policy indicators"
+        ],
+        "confidence": 0.93,
+        "rationale": "These subskills involve obtaining, cleaning, and converting alternative datasets into policy‑relevant statistical proxies, defining the competency."
+      },
+      {
+        "concept": "Disaster Management Tools using Remote Sensing and GIS",
+        "competency": "Utilizing geospatial technologies for disaster risk mapping, assessment, and response",
+        "subskills": [
+          "Hazard mapping with satellite imagery",
+          "Damage assessment through change detection",
+          "Supporting emergency response with real‑time GIS dashboards"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills describe the full workflow from hazard identification to real‑time response support, matching this disaster‑management competency."
+      },
+      {
+        "concept": "UFS Applications",
+        "competency": "Modeling urban flood risk and integrating results into statistical reporting",
+        "subskills": [
+          "Modeling flood risk using spatial data",
+          "Integrating flood simulation outputs with statistical reporting",
+          "Evaluating mitigation strategies through GIS analysis"
+        ],
+        "confidence": 0.94,
+        "rationale": "Subskills focus on flood modeling, statistical integration, and mitigation evaluation, which together constitute the competency of applying UFS within official statistics."
+      }
+    ],
+    "status": "success"
+  },
+  {
+    "resource_type": "NSSTA TPAC programme",
+    "title": "Handling Large-Scale Data & Data Analysis using R",
+    "source_url": "https://nssta.gov.in/document",
+    "course_url": null,
+    "year": "FY 2026-27",
+    "target_audience": "In-service SSOs",
+    "data_source": "[REAL/PUBLIC DATA]",
+    "concepts": [
+      {
+        "concept": "Large-Scale Data Handling in R",
+        "description": "Techniques for importing, managing, and processing very large unit‑level datasets (e.g., NSSO, Census) within the R environment.",
+        "subskills": [
+          "Efficient data import for massive files",
+          "Memory management and data chunking",
+          "Use of data.table/dplyr for high‑performance manipulation",
+          "Applying survey multipliers and weighting schemes"
+        ]
+      },
+      {
+        "concept": "Statistical Analysis in R",
+        "description": "Applying core statistical methods to large survey datasets using R.",
+        "subskills": [
+          "Basic descriptive statistics and summary tables",
+          "Linear regression modeling",
+          "Logistic regression and log‑linear models",
+          "Factor analysis for dimensionality reduction",
+          "Cluster analysis for grouping observations"
+        ]
+      },
+      {
+        "concept": "Unit‑Level NSSO Data Management",
+        "description": "Understanding the structure, concepts, and estimation procedures specific to National Sample Survey Office (NSSO) unit‑level data.",
+        "subskills": [
+          "Interpretation of NSSO data documentation",
+          "Application of survey multipliers",
+          "Implementation of NSSO estimation procedures in R",
+          "Integration of live NSSO or Census data for analysis"
+        ]
+      },
+      {
+        "concept": "Practical R Workflow for In‑Service Analysts",
+        "description": "Hands‑on orientation for staff service officers (SSOs) to conduct end‑to‑end data analysis projects in R.",
+        "subskills": [
+          "Setting up R environment for large‑scale analysis",
+          "Reproducible scripting and reporting",
+          "Visualization of survey results",
+          "Communicating statistical findings to stakeholders"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Large-Scale Data Handling in R",
+        "competency": "Efficient large‑scale data processing in R",
+        "subskills": [
+          "Efficient data import for massive files",
+          "Memory management and data chunking",
+          "Use of data.table/dplyr for high‑performance manipulation",
+          "Applying survey multipliers and weighting schemes"
+        ],
+        "confidence": 0.96,
+        "rationale": "The subskills focus on importing, managing memory, and high‑performance manipulation of massive datasets, which together define the ability to process large data efficiently in R."
+      },
+      {
+        "concept": "Statistical Analysis in R",
+        "competency": "Applied statistical modeling and analysis using R",
+        "subskills": [
+          "Basic descriptive statistics and summary tables",
+          "Linear regression modeling",
+          "Logistic regression and log‑linear models",
+          "Factor analysis for dimensionality reduction",
+          "Cluster analysis for grouping observations"
+        ],
+        "confidence": 0.97,
+        "rationale": "All listed subskills are core statistical techniques that a learner must apply to survey data, representing the competency of conducting statistical analysis in R."
+      },
+      {
+        "concept": "Unit‑Level NSSO Data Management",
+        "competency": "Specialized survey data management and estimation for NSSO datasets",
+        "subskills": [
+          "Interpretation of NSSO data documentation",
+          "Application of survey multipliers",
+          "Implementation of NSSO estimation procedures in R",
+          "Integration of live NSSO or Census data for analysis"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills address understanding NSSO documentation, applying its weighting, executing its estimation methods, and integrating live data, which together constitute expertise in managing NSSO unit‑level data."
+      },
+      {
+        "concept": "Practical R Workflow for In‑Service Analysts",
+        "competency": "End‑to‑end reproducible analytical workflow implementation in R",
+        "subskills": [
+          "Setting up R environment for large‑scale analysis",
+          "Reproducible scripting and reporting",
+          "Visualization of survey results",
+          "Communicating statistical findings to stakeholders"
+        ],
+        "confidence": 0.96,
+        "rationale": "These subskills cover environment setup, reproducible coding, result visualization, and stakeholder communication, which together define a complete analytical workflow competency for analysts."
+      }
+    ],
+    "status": "success"
+  },
+  {
+    "resource_type": "NSSTA TPAC programme",
+    "title": "Course on Machine Learning using Python",
+    "source_url": "https://nssta.gov.in/document",
+    "course_url": null,
+    "year": "FY 2026-27",
+    "target_audience": "In-service SSOs",
+    "data_source": "[REAL/PUBLIC DATA]",
+    "concepts": [
+      {
+        "concept": "Python Programming Fundamentals",
+        "description": "Core Python syntax and basic commands used for programming.",
+        "subskills": [
+          "Commands in Python",
+          "String formatting"
+        ]
+      },
+      {
+        "concept": "Python Data Structures",
+        "description": "Built‑in collection types and their mutability characteristics.",
+        "subskills": [
+          "Tuples",
+          "Lists",
+          "Dictionaries",
+          "Sets",
+          "Mutability"
+        ]
+      },
+      {
+        "concept": "Functional Programming in Python",
+        "description": "Use of anonymous functions and higher‑order functions for data processing.",
+        "subskills": [
+          "Lambda function",
+          "Map",
+          "Filter",
+          "Reduce"
+        ]
+      },
+      {
+        "concept": "Python Comprehensions",
+        "description": "Concise syntax for constructing lists and dictionaries.",
+        "subskills": [
+          "List comprehensions",
+          "Dictionary comprehensions"
+        ]
+      },
+      {
+        "concept": "File Operations in Python",
+        "description": "Reading from and writing to files using Python's built‑in I/O facilities.",
+        "subskills": [
+          "Opening files",
+          "Reading files",
+          "Writing files",
+          "File handling"
+        ]
+      },
+      {
+        "concept": "Modules and Packages in Python",
+        "description": "Organizing code into reusable modules and leveraging external packages.",
+        "subskills": [
+          "Creating modules",
+          "Importing modules",
+          "Using packages",
+          "Package management"
+        ]
+      },
+      {
+        "concept": "Error and Exception Handling",
+        "description": "Managing runtime errors using Python's exception mechanisms.",
+        "subskills": [
+          "Try/except blocks",
+          "Raising exceptions",
+          "Handling specific exceptions"
+        ]
+      },
+      {
+        "concept": "Data Science Packages",
+        "description": "Core Python libraries for numerical computing, data manipulation, and machine learning.",
+        "subskills": [
+          "NumPy",
+          "Pandas",
+          "scikit-learn"
+        ]
+      },
+      {
+        "concept": "Data Importing and Pre‑processing",
+        "description": "Techniques for loading data into Python and preparing it for analysis.",
+        "subskills": [
+          "Importing data",
+          "Data cleaning",
+          "Handling missing values",
+          "Data transformation"
+        ]
+      },
+      {
+        "concept": "Exploratory Data Analysis (EDA)",
+        "description": "Initial investigation of data to discover patterns and insights using Python tools.",
+        "subskills": [
+          "Using pandas for EDA",
+          "Using scikit-learn for EDA"
+        ]
+      },
+      {
+        "concept": "Types of Learning",
+        "description": "Different categories of machine‑learning approaches covered in the course.",
+        "subskills": [
+          "Supervised learning",
+          "Unsupervised learning",
+          "Reinforcement learning"
+        ]
+      },
+      {
+        "concept": "Types of Models",
+        "description": "Various categories of machine‑learning models discussed.",
+        "subskills": [
+          "Regression models",
+          "Classification models",
+          "Clustering models"
+        ]
+      },
+      {
+        "concept": "Model Building",
+        "description": "Process of creating, training, and evaluating machine‑learning models using Python.",
+        "subskills": [
+          "Model selection",
+          "Training models",
+          "Evaluating performance",
+          "Hyperparameter tuning"
+        ]
+      },
+      {
+        "concept": "Mini Project",
+        "description": "Applied hands‑on project that integrates Python programming and machine‑learning concepts.",
+        "subskills": [
+          "Project planning",
+          "Data acquisition",
+          "Model implementation",
+          "Result presentation"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Python Programming Fundamentals",
+        "competency": "Fundamental Python coding skills",
+        "subskills": [
+          "Commands in Python",
+          "String formatting"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills cover basic syntax and commands, which directly demonstrate the ability to write simple Python code."
+      },
+      {
+        "concept": "Python Data Structures",
+        "competency": "Understanding and using Python built-in data structures",
+        "subskills": [
+          "Tuples",
+          "Lists",
+          "Dictionaries",
+          "Sets",
+          "Mutability"
+        ],
+        "confidence": 0.95,
+        "rationale": "All listed subskills describe core collection types and their mutability, reflecting competence in selecting and manipulating data structures."
+      },
+      {
+        "concept": "Functional Programming in Python",
+        "competency": "Applying functional programming techniques in Python",
+        "subskills": [
+          "Lambda function",
+          "Map",
+          "Filter",
+          "Reduce"
+        ],
+        "confidence": 0.9,
+        "rationale": "The subskills are specific functional constructs, indicating the learner can employ higher‑order functions for data processing."
+      },
+      {
+        "concept": "Python Comprehensions",
+        "competency": "Creating concise data structures using comprehensions",
+        "subskills": [
+          "List comprehensions",
+          "Dictionary comprehensions"
+        ],
+        "confidence": 0.9,
+        "rationale": "Both subskills involve the compact syntax for building collections, showing ability to write efficient Python code."
+      },
+      {
+        "concept": "File Operations in Python",
+        "competency": "Performing file I/O operations in Python",
+        "subskills": [
+          "Opening files",
+          "Reading files",
+          "Writing files",
+          "File handling"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills cover the full lifecycle of interacting with files, demonstrating competence in Python file I/O."
+      },
+      {
+        "concept": "Modules and Packages in Python",
+        "competency": "Organizing and reusing code with modules and packages",
+        "subskills": [
+          "Creating modules",
+          "Importing modules",
+          "Using packages",
+          "Package management"
+        ],
+        "confidence": 0.95,
+        "rationale": "These subskills reflect the ability to structure code modularly and manage external dependencies."
+      },
+      {
+        "concept": "Error and Exception Handling",
+        "competency": "Managing runtime errors with exception handling",
+        "subskills": [
+          "Try/except blocks",
+          "Raising exceptions",
+          "Handling specific exceptions"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills directly describe mechanisms for detecting, raising, and handling errors in Python."
+      },
+      {
+        "concept": "Data Science Packages",
+        "competency": "Utilizing core data science libraries in Python",
+        "subskills": [
+          "NumPy",
+          "Pandas",
+          "scikit-learn"
+        ],
+        "confidence": 0.95,
+        "rationale": "The listed packages are the primary tools for numerical computing, data manipulation, and machine learning, indicating proficiency with them."
+      },
+      {
+        "concept": "Data Importing and Pre‑processing",
+        "competency": "Importing and preparing data for analysis",
+        "subskills": [
+          "Importing data",
+          "Data cleaning",
+          "Handling missing values",
+          "Data transformation"
+        ],
+        "confidence": 0.95,
+        "rationale": "All subskills relate to acquiring raw data and converting it into a clean, analysis‑ready format."
+      },
+      {
+        "concept": "Exploratory Data Analysis (EDA)",
+        "competency": "Conducting exploratory data analysis using Python tools",
+        "subskills": [
+          "Using pandas for EDA",
+          "Using scikit-learn for EDA"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills specify applying pandas and scikit-learn to explore data, reflecting the ability to perform EDA."
+      },
+      {
+        "concept": "Types of Learning",
+        "competency": "Identifying machine learning learning paradigms",
+        "subskills": [
+          "Supervised learning",
+          "Unsupervised learning",
+          "Reinforcement learning"
+        ],
+        "confidence": 0.9,
+        "rationale": "The subskills enumerate the main categories of ML approaches, showing knowledge of learning paradigms."
+      },
+      {
+        "concept": "Types of Models",
+        "competency": "Classifying machine learning model categories",
+        "subskills": [
+          "Regression models",
+          "Classification models",
+          "Clustering models"
+        ],
+        "confidence": 0.9,
+        "rationale": "These subskills describe distinct model families, indicating the ability to differentiate model types."
+      },
+      {
+        "concept": "Model Building",
+        "competency": "Developing and evaluating machine learning models",
+        "subskills": [
+          "Model selection",
+          "Training models",
+          "Evaluating performance",
+          "Hyperparameter tuning"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills cover the end‑to‑end process of creating, training, and assessing ML models."
+      },
+      {
+        "concept": "Mini Project",
+        "competency": "Integrating programming and ML skills in a comprehensive project",
+        "subskills": [
+          "Project planning",
+          "Data acquisition",
+          "Model implementation",
+          "Result presentation"
+        ],
+        "confidence": 0.9,
+        "rationale": "The subskills reflect the full project lifecycle, requiring synthesis of coding, data handling, modeling, and communication."
+      }
+    ],
+    "status": "success"
+  },
+  {
+    "resource_type": "NSSTA TPAC programme",
+    "title": "Data security and appropriate use of AI in the Government setup",
+    "source_url": "https://nssta.gov.in/document",
+    "course_url": null,
+    "year": "FY 2026-27",
+    "target_audience": "In-service SSOs",
+    "data_source": "[REAL/PUBLIC DATA]",
+    "concepts": [
+      {
+        "concept": "Data Security",
+        "description": "Ensuring the protection and integrity of data within government operations.",
+        "subskills": [
+          "Understanding the importance of data for government functions",
+          "Identifying threats to data confidentiality, integrity, and availability",
+          "Implementing security controls and best practices",
+          "Monitoring and responding to data security incidents"
+        ]
+      },
+      {
+        "concept": "Fundamentals of Artificial Intelligence",
+        "description": "Basic principles and components that define AI technology used in government settings.",
+        "subskills": [
+          "Defining AI and its core concepts",
+          "Recognizing common AI techniques (e.g., machine learning, natural language processing)",
+          "Understanding data requirements for AI models",
+          "Differentiating between AI and traditional software solutions"
+        ]
+      },
+      {
+        "concept": "AI Capabilities and Limitations",
+        "description": "Assessing what AI can achieve in government operations and the constraints that affect its performance.",
+        "subskills": [
+          "Identifying tasks suitable for AI automation or augmentation",
+          "Evaluating accuracy, bias, and reliability of AI outputs",
+          "Recognizing scalability and resource constraints",
+          "Understanding the need for human oversight in AI-driven decisions"
+        ]
+      },
+      {
+        "concept": "Ethics and Challenges of AI in Government",
+        "description": "Recognizing ethical considerations and potential challenges when deploying AI within public sector activities.",
+        "subskills": [
+          "Assessing fairness, transparency, and accountability of AI systems",
+          "Addressing privacy concerns and data protection in AI applications",
+          "Evaluating compliance with legal and policy frameworks",
+          "Managing public trust and societal impact of AI use"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Data Security",
+        "competency": "Data Security Management in Government Operations",
+        "subskills": [
+          "Understanding the importance of data for government functions",
+          "Identifying threats to data confidentiality, integrity, and availability",
+          "Implementing security controls and best practices",
+          "Monitoring and responding to data security incidents"
+        ],
+        "confidence": 0.96,
+        "rationale": "The subskills describe knowledge of data value, threat identification, control implementation, and incident response, which together constitute the ability to manage data security for government."
+      },
+      {
+        "concept": "Fundamentals of Artificial Intelligence",
+        "competency": "Foundational Understanding of AI Technologies",
+        "subskills": [
+          "Defining AI and its core concepts",
+          "Recognizing common AI techniques (e.g., machine learning, natural language processing)",
+          "Understanding data requirements for AI models",
+          "Differentiating between AI and traditional software solutions"
+        ],
+        "confidence": 0.95,
+        "rationale": "The listed subskills cover basic definitions, techniques, data needs, and distinctions from traditional software, directly supporting a competency of grasping AI fundamentals."
+      },
+      {
+        "concept": "AI Capabilities and Limitations",
+        "competency": "Evaluating AI Suitability and Operational Constraints",
+        "subskills": [
+          "Identifying tasks suitable for AI automation or augmentation",
+          "Evaluating accuracy, bias, and reliability of AI outputs",
+          "Recognizing scalability and resource constraints",
+          "Understanding the need for human oversight in AI-driven decisions"
+        ],
+        "confidence": 0.94,
+        "rationale": "These subskills focus on assessing where AI can be applied, its performance characteristics, resource limits, and oversight needs, which together form the ability to evaluate AI capabilities and limitations."
+      },
+      {
+        "concept": "Ethics and Challenges of AI in Government",
+        "competency": "Applying Ethical and Legal Principles to Government AI Deployments",
+        "subskills": [
+          "Assessing fairness, transparency, and accountability of AI systems",
+          "Addressing privacy concerns and data protection in AI applications",
+          "Evaluating compliance with legal and policy frameworks",
+          "Managing public trust and societal impact of AI use"
+        ],
+        "confidence": 0.93,
+        "rationale": "The subskills address fairness, privacy, legal compliance, and public trust, which collectively define the competency of ethically and legally managing AI in the public sector."
+      }
+    ],
+    "status": "success"
+  },
+  {
+    "resource_type": "NSSTA TPAC programme",
+    "title": "Course on Machine Learning using Python",
+    "source_url": "https://nssta.gov.in/document",
+    "course_url": null,
+    "year": "FY 2026-27",
+    "target_audience": "In-service JSOs",
+    "data_source": "[REAL/PUBLIC DATA]",
+    "status": "success",
+    "concepts": [
+      {
+        "concept": "Python Programming Fundamentals",
+        "description": "Core syntax and commands used to write Python programs.",
+        "subskills": [
+          "Writing basic commands",
+          "String formatting",
+          "Using lambda functions"
+        ]
+      },
+      {
+        "concept": "Python Data Structures",
+        "description": "Built‑in collection types and their mutability characteristics.",
+        "subskills": [
+          "Tuples",
+          "Lists",
+          "Dictionaries",
+          "Sets",
+          "Understanding mutability"
+        ]
+      },
+      {
+        "concept": "Functional Programming in Python",
+        "description": "Applying functional constructs for data transformation.",
+        "subskills": [
+          "Using map",
+          "Using filter",
+          "Using reduce"
+        ]
+      },
+      {
+        "concept": "Python Comprehensions",
+        "description": "Compact syntax for creating lists and dictionaries.",
+        "subskills": [
+          "List comprehensions",
+          "Dictionary comprehensions"
+        ]
+      },
+      {
+        "concept": "File Operations and Packages",
+        "description": "Reading, writing, and organizing code with modules and packages.",
+        "subskills": [
+          "File I/O operations",
+          "Creating and importing modules",
+          "Managing packages"
+        ]
+      },
+      {
+        "concept": "Error and Exception Handling",
+        "description": "Techniques for detecting and managing runtime errors in Python.",
+        "subskills": [
+          "Raising exceptions",
+          "Catching exceptions",
+          "Using try/except blocks"
+        ]
+      },
+      {
+        "concept": "Data Science Libraries",
+        "description": "Key Python packages used for scientific computing and data analysis.",
+        "subskills": [
+          "NumPy",
+          "Pandas",
+          "scikit‑learn"
+        ]
+      },
+      {
+        "concept": "Data Importing and Pre‑Processing",
+        "description": "Methods for loading data into Python and preparing it for analysis.",
+        "subskills": [
+          "Importing data from files",
+          "Cleaning data",
+          "Transforming data types",
+          "Handling missing values"
+        ]
+      },
+      {
+        "concept": "Machine Learning Fundamentals",
+        "description": "Basic concepts of learning paradigms and model categories.",
+        "subskills": [
+          "Types of learning (supervised, unsupervised, etc.)",
+          "Types of models"
+        ]
+      },
+      {
+        "concept": "Model Building and Evaluation",
+        "description": "Steps to construct, train, and assess machine‑learning models using Python.",
+        "subskills": [
+          "Model building with scikit‑learn",
+          "Training models",
+          "Evaluating model performance"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "Python Programming Fundamentals",
+        "competency": "Develop basic Python programs",
+        "subskills": [
+          "Writing basic commands",
+          "String formatting",
+          "Using lambda functions"
+        ],
+        "confidence": 0.96,
+        "rationale": "The subskills cover core syntax, output formatting, and simple anonymous functions, which together demonstrate the ability to write fundamental Python code."
+      },
+      {
+        "concept": "Python Data Structures",
+        "competency": "Manipulate built-in Python data structures",
+        "subskills": [
+          "Tuples",
+          "Lists",
+          "Dictionaries",
+          "Sets",
+          "Understanding mutability"
+        ],
+        "confidence": 0.96,
+        "rationale": "All listed subskills describe knowledge of Python's primary collection types and their mutability, directly supporting competence in data‑structure manipulation."
+      },
+      {
+        "concept": "Functional Programming in Python",
+        "competency": "Apply functional programming constructs in Python",
+        "subskills": [
+          "Using map",
+          "Using filter",
+          "Using reduce"
+        ],
+        "confidence": 0.95,
+        "rationale": "Map, filter, and reduce are core functional tools; mastering them shows the learner can employ functional programming techniques for data transformation."
+      },
+      {
+        "concept": "Python Comprehensions",
+        "competency": "Construct concise data collections using Python comprehensions",
+        "subskills": [
+          "List comprehensions",
+          "Dictionary comprehensions"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills focus on the compact syntax for generating lists and dictionaries, indicating proficiency in creating efficient collection expressions."
+      },
+      {
+        "concept": "File Operations and Packages",
+        "competency": "Perform file input/output and organize code with modules and packages",
+        "subskills": [
+          "File I/O operations",
+          "Creating and importing modules",
+          "Managing packages"
+        ],
+        "confidence": 0.96,
+        "rationale": "Reading/writing files and handling modules/packages together represent the ability to manage external resources and structure Python projects."
+      },
+      {
+        "concept": "Error and Exception Handling",
+        "competency": "Implement error detection and exception handling in Python",
+        "subskills": [
+          "Raising exceptions",
+          "Catching exceptions",
+          "Using try/except blocks"
+        ],
+        "confidence": 0.96,
+        "rationale": "These subskills cover the full lifecycle of exception management, showing competence in writing robust, fault‑tolerant code."
+      },
+      {
+        "concept": "Data Science Libraries",
+        "competency": "Utilize core Python data science libraries for analysis",
+        "subskills": [
+          "NumPy",
+          "Pandas",
+          "scikit‑learn"
+        ],
+        "confidence": 0.95,
+        "rationale": "Familiarity with NumPy, Pandas, and scikit‑learn reflects the ability to employ the primary tools used in scientific computing and data analysis."
+      },
+      {
+        "concept": "Data Importing and Pre‑Processing",
+        "competency": "Import and preprocess data for analysis in Python",
+        "subskills": [
+          "Importing data from files",
+          "Cleaning data",
+          "Transforming data types",
+          "Handling missing values"
+        ],
+        "confidence": 0.96,
+        "rationale": "The subskills describe the end‑to‑end workflow of loading raw data, cleaning it, and preparing it for downstream analysis, which defines data preprocessing competence."
+      },
+      {
+        "concept": "Machine Learning Fundamentals",
+        "competency": "Explain fundamental machine learning concepts and model categories",
+        "subskills": [
+          "Types of learning (supervised, unsupervised, etc.)",
+          "Types of models"
+        ],
+        "confidence": 0.94,
+        "rationale": "Understanding learning paradigms and model families provides the conceptual foundation required to discuss machine‑learning basics."
+      },
+      {
+        "concept": "Model Building and Evaluation",
+        "competency": "Build, train, and evaluate machine learning models using scikit-learn",
+        "subskills": [
+          "Model building with scikit‑learn",
+          "Training models",
+          "Evaluating model performance"
+        ],
+        "confidence": 0.96,
+        "rationale": "These subskills encompass the practical steps of constructing, fitting, and assessing models, demonstrating applied machine‑learning capability."
+      }
+    ]
+  },
+  {
+    "resource_type": "NSSTA TPAC programme",
+    "title": "National Security System and Cyber Security",
+    "source_url": "https://nssta.gov.in/document",
+    "course_url": null,
+    "year": "FY 2026-27",
+    "target_audience": "In-service JSOs",
+    "data_source": "[REAL/PUBLIC DATA]",
+    "status": "success",
+    "concepts": [
+      {
+        "concept": "National Security",
+        "description": "Understanding the overall concept of national security as presented in the curriculum.",
+        "subskills": [
+          "Definition and scope of national security",
+          "Relationship between national security and cyber security",
+          "Policy considerations for protecting national interests"
+        ]
+      },
+      {
+        "concept": "Cyber Security",
+        "description": "Tools, techniques, and best practices used to protect information systems and networks.",
+        "subskills": [
+          "Threat identification and classification",
+          "Use of security tools and technologies",
+          "Incident response and mitigation",
+          "Implementation of cyber hygiene practices"
+        ]
+      },
+      {
+        "concept": "Data Security",
+        "description": "Methods for safeguarding data from unauthorized access, alteration, or loss.",
+        "subskills": [
+          "Encryption and decryption techniques",
+          "Access control mechanisms",
+          "Data backup and recovery procedures",
+          "Ensuring data integrity and confidentiality"
+        ]
+      },
+      {
+        "concept": "Privacy and Anonymity",
+        "description": "Introduction to privacy concepts and the importance of anonymity on the Internet.",
+        "subskills": [
+          "Principles of online privacy",
+          "Techniques for maintaining anonymity",
+          "Legal and ethical considerations of privacy",
+          "Impact of anonymity on digital interactions"
+        ]
+      },
+      {
+        "concept": "Social Network Crimes",
+        "description": "Types of social networks and the cyber crimes associated with them.",
+        "subskills": [
+          "Classification of social networking platforms",
+          "Common crimes on social media (e.g., phishing, impersonation)",
+          "Detection and reporting of social network offenses",
+          "Preventive measures for users and organizations"
+        ]
+      },
+      {
+        "concept": "Prevention of Corruption Act",
+        "description": "Key aspects of the legal framework aimed at preventing corruption.",
+        "subskills": [
+          "Major provisions of the act",
+          "Enforcement and compliance mechanisms",
+          "Roles and responsibilities of stakeholders",
+          "Case studies of anti‑corruption initiatives"
+        ]
+      },
+      {
+        "concept": "Personal Device Security",
+        "description": "Tools and techniques to secure personal devices and the data they contain.",
+        "subskills": [
+          "Device hardening and secure configuration",
+          "Mobile security best practices",
+          "Data wiping and secure disposal",
+          "Use of security applications and updates"
+        ]
+      },
+      {
+        "concept": "Financial Fraud",
+        "description": "Types of financial frauds and their modus operandi.",
+        "subskills": [
+          "Identification of fraud categories (e.g., phishing, identity theft, money laundering)",
+          "Analysis of fraud schemes and tactics",
+          "Detection and reporting procedures",
+          "Preventive controls for financial transactions"
+        ]
+      },
+      {
+        "concept": "Cyber Hygiene",
+        "description": "Best practices for maintaining a secure digital environment.",
+        "subskills": [
+          "Password management and authentication",
+          "Regular software updates and patch management",
+          "Safe browsing habits",
+          "Awareness of phishing and social engineering"
+        ]
+      },
+      {
+        "concept": "Forensic Science",
+        "description": "Introduction to forensic science and its role in crime investigation.",
+        "subskills": [
+          "Evidence collection and preservation",
+          "Forensic analysis techniques",
+          "Integration of forensic findings in investigations",
+          "Collaboration with statistical methods"
+        ]
+      },
+      {
+        "concept": "Statistics in Criminal Justice",
+        "description": "Use of statistical methods as partners in the criminal justice system.",
+        "subskills": [
+          "Statistical analysis of crime data",
+          "Application of quantitative methods to forensic evidence",
+          "Interpretation of statistical results for legal contexts",
+          "Supporting decision‑making in investigations"
+        ]
+      }
+    ],
+    "competency_mappings": [
+      {
+        "concept": "National Security",
+        "competency": "Strategic Understanding of National Security",
+        "subskills": [
+          "Definition and scope of national security",
+          "Relationship between national security and cyber security",
+          "Policy considerations for protecting national interests"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills describe knowledge of definitions, inter‑relationships, and policy, which together constitute a strategic understanding of national security."
+      },
+      {
+        "concept": "Cyber Security",
+        "competency": "Implementation of Cybersecurity Measures",
+        "subskills": [
+          "Threat identification and classification",
+          "Use of security tools and technologies",
+          "Incident response and mitigation",
+          "Implementation of cyber hygiene practices"
+        ],
+        "confidence": 0.95,
+        "rationale": "The listed subskills focus on practical actions—identifying threats, using tools, responding to incidents, and applying hygiene—defining the ability to implement cybersecurity measures."
+      },
+      {
+        "concept": "Data Security",
+        "competency": "Data Protection and Integrity Management",
+        "subskills": [
+          "Encryption and decryption techniques",
+          "Access control mechanisms",
+          "Data backup and recovery procedures",
+          "Ensuring data integrity and confidentiality"
+        ],
+        "confidence": 0.94,
+        "rationale": "All subskills relate to protecting data confidentiality, integrity, and availability, which together form competence in data protection and integrity management."
+      },
+      {
+        "concept": "Privacy and Anonymity",
+        "competency": "Privacy Protection and Anonymity Practices",
+        "subskills": [
+          "Principles of online privacy",
+          "Techniques for maintaining anonymity",
+          "Legal and ethical considerations of privacy",
+          "Impact of anonymity on digital interactions"
+        ],
+        "confidence": 0.93,
+        "rationale": "The subskills cover understanding privacy principles, anonymity techniques, and related legal/ethical issues, supporting a competency in privacy protection and anonymity."
+      },
+      {
+        "concept": "Social Network Crimes",
+        "competency": "Detection and Prevention of Social Media Cyber Crimes",
+        "subskills": [
+          "Classification of social networking platforms",
+          "Common crimes on social media (e.g., phishing, impersonation)",
+          "Detection and reporting of social network offenses",
+          "Preventive measures for users and organizations"
+        ],
+        "confidence": 0.92,
+        "rationale": "The subskills describe classifying platforms, recognizing crimes, detecting/reporting offenses, and applying preventive measures, which together define competence in detecting and preventing social media cyber crimes."
+      },
+      {
+        "concept": "Prevention of Corruption Act",
+        "competency": "Legal Compliance and Anti‑Corruption Enforcement",
+        "subskills": [
+          "Major provisions of the act",
+          "Enforcement and compliance mechanisms",
+          "Roles and responsibilities of stakeholders",
+          "Case studies of anti‑corruption initiatives"
+        ],
+        "confidence": 0.94,
+        "rationale": "Understanding the act’s provisions, enforcement, stakeholder roles, and case studies directly supports the ability to comply with and enforce anti‑corruption legislation."
+      },
+      {
+        "concept": "Personal Device Security",
+        "competency": "Secure Configuration and Management of Personal Devices",
+        "subskills": [
+          "Device hardening and secure configuration",
+          "Mobile security best practices",
+          "Data wiping and secure disposal",
+          "Use of security applications and updates"
+        ],
+        "confidence": 0.94,
+        "rationale": "The subskills focus on hardening devices, applying mobile security practices, securely disposing of data, and maintaining security software, which together constitute competence in securing personal devices."
+      },
+      {
+        "concept": "Financial Fraud",
+        "competency": "Identification and Mitigation of Financial Cyber Fraud",
+        "subskills": [
+          "Identification of fraud categories (e.g., phishing, identity theft, money laundering)",
+          "Analysis of fraud schemes and tactics",
+          "Detection and reporting procedures",
+          "Preventive controls for financial transactions"
+        ],
+        "confidence": 0.93,
+        "rationale": "These subskills enable learners to recognize fraud types, analyze schemes, detect/report incidents, and apply preventive controls, forming a competency in handling financial cyber fraud."
+      },
+      {
+        "concept": "Cyber Hygiene",
+        "competency": "Routine Cyber Hygiene Practices",
+        "subskills": [
+          "Password management and authentication",
+          "Regular software updates and patch management",
+          "Safe browsing habits",
+          "Awareness of phishing and social engineering"
+        ],
+        "confidence": 0.95,
+        "rationale": "The subskills describe everyday practices that maintain a secure digital environment, directly mapping to a competency in routine cyber hygiene."
+      },
+      {
+        "concept": "Forensic Science",
+        "competency": "Forensic Evidence Collection and Analysis",
+        "subskills": [
+          "Evidence collection and preservation",
+          "Forensic analysis techniques",
+          "Integration of forensic findings in investigations",
+          "Collaboration with statistical methods"
+        ],
+        "confidence": 0.94,
+        "rationale": "The subskills cover the full forensic workflow—from collection to analysis and integration—defining competence in forensic evidence handling."
+      },
+      {
+        "concept": "Statistics in Criminal Justice",
+        "competency": "Statistical Analysis for Criminal Justice Decision‑Making",
+        "subskills": [
+          "Statistical analysis of crime data",
+          "Application of quantitative methods to forensic evidence",
+          "Interpretation of statistical results for legal contexts",
+          "Supporting decision‑making in investigations"
+        ],
+        "confidence": 0.94,
+        "rationale": "These subskills focus on applying and interpreting statistical methods to support investigations and legal decisions, which together constitute a competency in statistical analysis for criminal justice."
+      }
+    ]
+  }
+]
