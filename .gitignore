@@ -40,3 +40,5 @@ Thumbs.db
 test_data/
 # Seed content source PDFs are kept locally and not committed
 ml_pipeline/seed_content/raw/*.pdf
+
+ml_pipeline/seed_content/question_bank_checkpoint.json
