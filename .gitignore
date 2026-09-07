@@ -45,3 +45,6 @@ ml_pipeline/seed_content/question_bank_checkpoint.json
 
 # Extracted text from public TPAC source PDF
 real_data/sources/nssta_tpac_fy2026_27.txt
+
+# Local database files
+*.db
