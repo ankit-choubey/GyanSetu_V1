@@ -11,6 +11,7 @@ from app.routers.content import router as content_router
 from app.routers.dashboard import router as dashboard_router
 from app.routers.users import router as users_router
 from app.routers.monitoring import router as monitoring_router
+from app.routers.scenario import router as scenario_router
 
 app = FastAPI(
     title=settings.app_name,
@@ -36,6 +37,7 @@ app.include_router(chatbot_router, prefix="/api")
 app.include_router(content_router, prefix="/api")
 app.include_router(admin_router, prefix="/api")
 app.include_router(monitoring_router, prefix="/api")
+app.include_router(scenario_router, prefix="/api")
 
 
 @app.get("/health")
