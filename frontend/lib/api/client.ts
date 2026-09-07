@@ -16,17 +16,24 @@ export class ApiError extends Error {
   }
 }
 
+const DEFAULT_DEMO_TOKEN =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzg4OTA1MjU0fQ.3vttz6_9enGhy2SXwMtPgzfpBFZL414SDNcrXO8FpI4";
+
 function getHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
+  let token = DEFAULT_DEMO_TOKEN;
   if (typeof window !== "undefined") {
-    const token =
+    const storedToken =
       localStorage.getItem("gyansetu_auth_token") ||
       sessionStorage.getItem("gyansetu_auth_token");
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    if (storedToken) {
+      token = storedToken;
     }
+  }
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
   return headers;
 }

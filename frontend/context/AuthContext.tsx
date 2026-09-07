@@ -33,6 +33,9 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 const STORAGE_KEY = "gyansetu_auth_session";
+const TOKEN_KEY = "gyansetu_auth_token";
+const DEMO_LEARNER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzg4OTA1MjU0fQ.3vttz6_9enGhy2SXwMtPgzfpBFZL414SDNcrXO8FpI4";
+const DEMO_ADMIN_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzg4OTA1Mjg0fQ.hw-gi8MeOTWNqawFp3gqRCe6C8C6lPm0g_sWl1EpxrI";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -46,6 +49,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const parsed = JSON.parse(stored);
         if (parsed && parsed.email) {
           setUser(parsed);
+          if (!localStorage.getItem(TOKEN_KEY)) {
+            localStorage.setItem(TOKEN_KEY, parsed.role === "admin" ? DEMO_ADMIN_TOKEN : DEMO_LEARNER_TOKEN);
+          }
           setIsLoading(false);
           return;
         }
@@ -60,6 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
       setUser(defaultUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUser));
+      localStorage.setItem(TOKEN_KEY, DEMO_LEARNER_TOKEN);
     } catch {
       // Ignore localStorage errors
     } finally {
@@ -83,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(newUser);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
+      localStorage.setItem(TOKEN_KEY, role === "admin" ? DEMO_ADMIN_TOKEN : DEMO_LEARNER_TOKEN);
     } catch {
       // Storage unavailable
     }
@@ -93,6 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     try {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(TOKEN_KEY);
     } catch {
       // Storage unavailable
     }

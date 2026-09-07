@@ -33,7 +33,16 @@ export async function getCompetencyState(
     return getCompetencyStateSync(persona);
   }
 
-  return client.get<DashboardResponse>("/api/dashboard/learner");
+  try {
+    const res = await client.get<DashboardResponse>("/api/dashboard/learner");
+    if (res && res.competencies && res.competencies.length > 0) {
+      return res;
+    }
+    return getCompetencyStateSync(persona);
+  } catch (err) {
+    console.warn("Backend /api/dashboard/learner error, falling back to persona data:", err);
+    return getCompetencyStateSync(persona);
+  }
 }
 
 // --- Derivation Helpers (§1.1 Ground Truth) ---
