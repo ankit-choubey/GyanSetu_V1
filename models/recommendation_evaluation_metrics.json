@@ -1,0 +1,27 @@
+{
+  "dataset_events": 807,
+  "total_learners": 200,
+  "test_events": 164,
+  "test_learners": 40,
+  "baseline_policy": {
+    "name": "Deterministic Rule-Based Baseline (Cognitive Load Theory)",
+    "test_matches": 37,
+    "match_rate": 0.2256,
+    "mean_observed_improvement": 0.0684,
+    "status": "CANONICAL SYSTEM OF RECORD"
+  },
+  "bandit_recommender": {
+    "name": "Historical Effectiveness Ranker (Multi-Armed Bandit candidate)",
+    "test_matches": 34,
+    "match_rate": 0.2073,
+    "mean_observed_improvement": 0.0548,
+    "status": "REPLACEABLE CANDIDATE"
+  },
+  "unmatched_mean_improvement": 0.0544,
+  "overall_mean_improvement": 0.0545,
+  "scientific_validity_status": {
+    "evidence_weight_status": "HEURISTIC (v1.0-heuristic)",
+    "causality_claim": "OBSERVED ASSOCIATION (Non-causal in absence of prospective randomized trial)",
+    "recommendation_scoring": "TRANSPARENT MULTI-FACTOR HEURISTIC POLICY"
+  }
+}

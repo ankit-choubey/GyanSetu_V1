@@ -14,7 +14,7 @@ from app.models.evidence import Evidence
 from app.models.monitoring_event import MonitoringEvent
 from app.models.user import User
 from app.schemas.monitoring import MonitoringEventRequest, MonitoringEventType
-from app.services.ml_interfaces import ProposedQuestion, QuestionSelector
+from app.services.ml_interfaces import QuestionSelector
 from app.services.orchestrator import coordinate_diagnostic, recalculate_competency_state
 
 
@@ -48,6 +48,7 @@ class MonitoringAgent:
         *,
         diagnostic_selector: QuestionSelector | None = None,
         retention_provider: Any | None = None,
+        **kwargs: Any,
     ) -> MonitoringResult:
         self._validate_context(db, request)
         event = MonitoringEvent(
@@ -122,38 +123,22 @@ class MonitoringAgent:
             return (
                 "DIAGNOSTIC_TRIGGERED",
                 "PROCESSED",
-                {
-                    "sufficient_evidence": decision.sufficient_evidence,
-                    **(
-                        {"next_question": self._serialize_question(decision.next_question)}
-                        if decision.next_question is not None
-                        else {}
-                    ),
-                },
+                {"sufficient_evidence": decision.sufficient_evidence},
             )
 
         if request.event_type is MonitoringEventType.EVIDENCE_STALE:
             evidence = self._validate_stale_evidence(db, request)
             if retention_provider is not None:
-                obs_time = evidence.observed_at if evidence.observed_at.tzinfo else evidence.observed_at.replace(tzinfo=timezone.utc)
-                days = (datetime.now(timezone.utc) - obs_time).total_seconds() / 86400.0
-                score = evidence.score if evidence.score is not None else 0.70
-                retention_score = retention_provider.predict_retention({
-                    "days_since_learning": max(0.0, days),
-                    "mastery_before_decay": score,
-                    "decay_amount": 0.05,
-                    "intervention_count": 0.0,
-                    "intervention_boost": 0.0,
-                    "mastery": score,
-                })
-                reassessment_needed = retention_score < 0.70
+                predicted, needed = retention_provider.evaluate_stale_evidence(
+                    evidence.observed_at,
+                    current_mastery=getattr(evidence, "score", 0.7) or 0.7,
+                )
                 return (
                     "RETENTION_EVALUATED",
                     "PROCESSED",
                     {
-                        "predicted_retention": round(float(retention_score), 4),
-                        "reassessment_needed": reassessment_needed,
-                        "evidence_observed_at": evidence.observed_at.isoformat(),
+                        "predicted_retention": float(predicted),
+                        "reassessment_needed": bool(needed),
                     },
                 )
             return (
@@ -213,18 +198,6 @@ class MonitoringAgent:
             return json.dumps(metadata, default=str)
         except (TypeError, ValueError) as exc:
             raise ValueError("Monitoring metadata must be JSON-serializable") from exc
-
-    @staticmethod
-    def _serialize_question(question: ProposedQuestion) -> dict[str, Any]:
-        return {
-            "question_id": question.question_id,
-            "competency_id": question.competency_id,
-            "subskill_id": question.subskill_id,
-            "question_text": question.question_text,
-            "options": list(question.options),
-            "difficulty": question.difficulty,
-            "source_reference": question.source_reference,
-        }
 
     @staticmethod
     def _require_competency(request: MonitoringEventRequest) -> None:

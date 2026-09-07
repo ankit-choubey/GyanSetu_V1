@@ -130,3 +130,8 @@ def score_mcq_quality(mcq: dict[str, Any], source_text: str) -> dict[str, Any]:
         },
         "cognitive_level": classify_cognitive_level(str(mcq.get("question", ""))),
     }
+
+
+def score_mcq(mcq: dict[str, Any], source_text: str = "") -> dict[str, Any]:
+    """Convenience alias for score_mcq_quality."""
+    return score_mcq_quality(mcq, source_text=source_text)

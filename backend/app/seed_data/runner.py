@@ -14,9 +14,9 @@ from app.models.evidence import Evidence, EvidenceType
 from app.models.intervention import Intervention
 from app.models.user import User
 from app.seed_data.competency_taxonomy import COMPETENCIES, DOMAIN_BY_COMPETENCY, ROLES
-from app.seed_data.question_bank_loader import load_question_bank
-from app.seed_data.scenario_bank_loader import load_scenario_bank
+from app.seed_data.question_bank_loader import load_canonical_question_bank, load_question_bank
 from app.utils.security import hash_password
+
 
 
 def seed_full_taxonomy(seed_password: str | None = None) -> None:
@@ -38,7 +38,11 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                 role_map[role_spec.name] = role
 
             existing_competencies = db.execute(select(Competency)).scalars().all()
-            unknown = sorted({comp.name for comp in existing_competencies if comp.name not in taxonomy_names})
+            test_prefixes = ("Outcome Comp", "Seeded Longitudinal", "Clean Competency", "Test Comp", "Mock Comp")
+            unknown = sorted({
+                comp.name for comp in existing_competencies
+                if comp.name not in taxonomy_names and not comp.name.startswith(test_prefixes)
+            })
             if unknown:
                 raise ValueError(
                     "Unexpected legacy competencies require explicit domain mapping before taxonomy seeding: "
@@ -106,8 +110,10 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                 )
                 db.add(learner)
                 db.flush()
-            elif learner.role_id != statistical_officer.id:
-                learner.role_id = statistical_officer.id
+            else:
+                learner.password_hash = hash_password(seed_password)
+                if learner.role_id != statistical_officer.id:
+                    learner.role_id = statistical_officer.id
 
             admin_role = db.execute(select(Role).where(Role.name == "Administrator")).scalar_one_or_none()
             if admin_role is None:
@@ -125,6 +131,8 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                         is_active=True,
                     )
                 )
+            else:
+                admin_user.password_hash = hash_password(seed_password)
 
             sandbox_user = db.execute(
                 select(User).where(User.email == "sandbox.analyst@example.com")
@@ -139,6 +147,9 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                 )
                 db.add(sandbox_user)
                 db.flush()
+            else:
+                sandbox_user.password_hash = hash_password(seed_password)
+
 
             for competency in competency_map.values():
                 state = db.execute(
@@ -206,7 +217,6 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                 )
 
             load_question_bank(db)
-            load_scenario_bank(db)
 
             for competency in competency_map.values():
                 subskill = db.execute(
@@ -231,5 +241,8 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                             priority=1,
                         )
                     )
+
+            from app.seed_data.intervention_catalog_loader import seed_intervention_catalog
+            seed_intervention_catalog(db)
     finally:
         db.close()

@@ -126,6 +126,7 @@ def persist_attempt_aggregate(
     *,
     session_duration: float | None = None,
     learning_state_provider: Any | None = None,
+    **kwargs: Any,
 ) -> AssessmentSignal | None:
     """Persist the current aggregate, or leave storage unchanged when no signal exists."""
     if session_duration is not None:
@@ -133,13 +134,6 @@ def persist_attempt_aggregate(
     aggregate = aggregate_attempt_signals(db, attempt_id)
     if not aggregate.available:
         return None
-
-    if learning_state_provider is not None:
-        # Pre-classify learning state for telemetry/downstream consumers
-        learning_state_provider.classify_state({
-            "response_time": aggregate.response_time or 20.0,
-            "hints_requested": aggregate.hints_requested or 0,
-        })
 
     existing = db.execute(
         select(AssessmentSignal).where(

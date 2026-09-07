@@ -140,3 +140,7 @@ def map_competencies(concepts):
     response_text = response.choices[0].message.content
 
     return parse_competency_response(response_text)
+
+
+# Backwards compatibility alias
+map_concepts_to_competencies = map_competencies

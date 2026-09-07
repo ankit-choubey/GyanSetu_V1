@@ -287,3 +287,10 @@ def get_ocr_engine() -> VisionOCREngine:
     """Returns the shared VisionOCREngine instance."""
     global _default_ocr_engine
     return _default_ocr_engine
+
+
+# Backward-compatible aliases and class methods
+VisionOCREngine.is_available = classmethod(
+    lambda cls: _default_ocr_engine.tesseract_available or _default_ocr_engine.use_groq_vision_fallback
+)
+OCREngine = VisionOCREngine

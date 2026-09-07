@@ -33,52 +33,34 @@ class CalibrationSummary:
 def validate_self_confidence(value: object) -> float:
     if isinstance(value, bool) or not isinstance(value, Real):
         raise ValueError("self_confidence must be numeric")
-
     confidence = float(value)
-
     if not 0.0 <= confidence <= 1.0:
         raise ValueError("self_confidence must be between 0.0 and 1.0")
-
     return confidence
 
 
-def actual_performance(
-    db: Session,
-    attempt: AssessmentAttempt,
-) -> float | None:
+def actual_performance(db: Session, attempt: AssessmentAttempt) -> float | None:
     """Use stored score, or derive performance from persisted response correctness."""
-
     if attempt.score is not None:
         if not 0.0 <= attempt.score <= 1.0:
             raise ValueError("Assessment score must be between 0.0 and 1.0")
-
         return float(attempt.score)
 
     responses = db.execute(
-        select(AssessmentResponse.is_correct).where(
-            AssessmentResponse.attempt_id == attempt.id
-        )
+        select(AssessmentResponse.is_correct).where(AssessmentResponse.attempt_id == attempt.id)
     ).scalars().all()
-
     if not responses:
         return None
-
     return sum(bool(correct) for correct in responses) / len(responses)
 
 
-def calibrate_attempt(
-    db: Session,
-    attempt: AssessmentAttempt,
-) -> AttemptCalibration | None:
+def calibrate_attempt(db: Session, attempt: AssessmentAttempt) -> AttemptCalibration | None:
     if attempt.self_confidence is None:
         return None
-
     confidence = validate_self_confidence(attempt.self_confidence)
     performance = actual_performance(db, attempt)
-
     if performance is None:
         return None
-
     return AttemptCalibration(
         attempt_id=attempt.id,
         self_confidence=confidence,
@@ -94,48 +76,18 @@ def calibration_history(
     *,
     limit: int | None = None,
 ) -> tuple[AttemptCalibration, ...]:
-    """
-    Return the learner's confidence-calibration history.
-
-    When limit is provided:
-    1. Select the latest N assessment attempts.
-    2. Return those N attempts in chronological order.
-
-    The attempt ID is used as a deterministic tie-breaker when multiple
-    attempts have the same created_at timestamp.
-    """
-
     if limit is not None and limit <= 0:
         raise ValueError("Calibration history limit must be positive")
-
     statement = select(AssessmentAttempt).where(
         AssessmentAttempt.user_id == user_id,
         AssessmentAttempt.self_confidence.is_not(None),
     )
-
     if competency_id is not None:
-        statement = statement.where(
-            AssessmentAttempt.competency_id == competency_id
-        )
-
-    # Select the newest attempts first.
-    # ID provides deterministic ordering when created_at values are equal.
-    ordered = statement.order_by(
-        AssessmentAttempt.created_at.desc(),
-        AssessmentAttempt.id.desc(),
-    )
-
-    # Apply the rolling-window limit BEFORE reversing.
+        statement = statement.where(AssessmentAttempt.competency_id == competency_id)
+    ordered = statement.order_by(AssessmentAttempt.created_at.desc())
     if limit is not None:
         ordered = ordered.limit(limit)
-
-    attempts = list(
-        db.execute(ordered).scalars().all()
-    )
-
-    # Return the selected rolling window from oldest -> newest.
-    attempts.reverse()
-
+    attempts = list(reversed(db.execute(ordered).scalars().all()))
     return tuple(
         calibration
         for attempt in attempts
@@ -157,23 +109,16 @@ def summarize_calibration(
             insufficient_data=True,
         )
 
-    mean_error = round(
-        sum(item.calibration_error for item in history) / len(history),
-        4,
-    )
-
+    mean_error = round(sum(item.calibration_error for item in history) / len(history), 4)
     if mean_error >= SYSTEMATIC_CALIBRATION_THRESHOLD:
         status = "SYSTEMATIC_OVERCONFIDENCE"
         reflection_needed = True
-
     elif mean_error <= -SYSTEMATIC_CALIBRATION_THRESHOLD:
         status = "SYSTEMATIC_UNDERCONFIDENCE"
         reflection_needed = True
-
     elif abs(mean_error) <= GOOD_CALIBRATION_THRESHOLD:
         status = "WELL_CALIBRATED"
         reflection_needed = False
-
     else:
         status = "MILD_MISCALIBRATION"
         reflection_needed = False
@@ -196,11 +141,6 @@ def summarize_user_calibration(
     history_limit: int | None = None,
 ) -> CalibrationSummary:
     return summarize_calibration(
-        calibration_history(
-            db,
-            user_id,
-            competency_id,
-            limit=history_limit,
-        ),
+        calibration_history(db, user_id, competency_id, limit=history_limit),
         minimum_history=minimum_history,
     )

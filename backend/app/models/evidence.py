@@ -30,6 +30,11 @@ class Evidence(SQLModel, table=True):
     description: str | None = None
     score: float | None = None
     weight: float | None = None
+    source: str | None = Field(default="INTERNAL", max_length=255)
+    provenance: str = Field(default="[CURATED]", max_length=100)
+    reliability_status: str = Field(default="VERIFIED", max_length=50)
+    assessment_item_id: int | None = Field(default=None, foreign_key="assessment_items.id", index=True)
+    version: int = Field(default=1)
     evidence_metadata: str | None = Field(default=None, max_length=4000)
     observed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

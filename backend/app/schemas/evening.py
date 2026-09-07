@@ -16,12 +16,17 @@ class ChatbotResponse(BaseModel):
 class DocumentUploadResponse(BaseModel):
     status: str
     filename: str
-    trusted: bool
-    coverage: float
+    trusted: bool = False
+    coverage: float = 0.0
     successful_pages: list[int] = []
     failed_pages: list[int] = []
     ocr_used: bool = False
     warning: str | None = None
+    asset_id: str | None = None
+    job_id: str | None = None
+    file_size: int | None = None
+    checksum_sha256: str | None = None
+    is_duplicate: bool = False
 
 
 class CompetencyAnalytics(BaseModel):

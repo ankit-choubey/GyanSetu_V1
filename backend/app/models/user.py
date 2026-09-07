@@ -9,7 +9,6 @@ if TYPE_CHECKING:
     from .competency_state import CompetencyState
     from .evidence import Evidence
     from .intervention import Intervention
-    from .scenario import ScenarioAttempt
 
 
 class User(SQLModel, table=True):
@@ -28,7 +27,6 @@ class User(SQLModel, table=True):
     evidence: list["Evidence"] = Relationship(back_populates="user")
     assessments: list["AssessmentItem"] = Relationship(back_populates="user")
     assessment_attempts: list["AssessmentAttempt"] = Relationship(back_populates="user")
-    scenario_attempts: list["ScenarioAttempt"] = Relationship(back_populates="user")
     interventions: list["Intervention"] = Relationship(back_populates="user")
     competency_states: list["CompetencyState"] = Relationship(back_populates="user")
 

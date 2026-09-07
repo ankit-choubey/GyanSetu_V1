@@ -23,8 +23,6 @@ from app.models.monitoring_event import MonitoringEvent
 from app.models.user import User
 from app.routers import monitoring as monitoring_router
 from app.schemas.monitoring import MonitoringEventRequest, MonitoringEventType
-from app.services.adaptive_question_selector import NoEligibleDiagnosticQuestionError
-from app.services.ml_interfaces import ProposedQuestion
 from app.services.monitoring_agent import MonitoringAgent
 
 
@@ -88,118 +86,6 @@ def test_repeated_failure_is_provider_unavailable_without_selector(db):
     assert result.status == "PROVIDER_UNAVAILABLE"
     assert result.action == "DIAGNOSTIC_PENDING"
     assert "provider" in result.result["reason"]
-
-
-def test_repeated_failure_with_selector_returns_learner_safe_question(db):
-    session, learner, _, competency, *_ = db
-
-    class Selector:
-        def select_next_question(self, request):
-            return ProposedQuestion(
-                question_id=700,
-                competency_id=request.competency_id,
-                subskill_id=request.subskill_id,
-                question_text="Select the valid sampling frame.",
-                options=("A. One", "B. Two", "C. Three", "D. Four"),
-                difficulty="easy",
-                source_reference="test-question",
-                correct_option="A. One",
-            )
-
-    result = MonitoringAgent().handle_event(
-        session,
-        event(MonitoringEventType.REPEATED_FAILURE, learner.id, competency.id),
-        diagnostic_selector=Selector(),
-    )
-
-    assert result.action == "DIAGNOSTIC_TRIGGERED"
-    assert result.status == "PROCESSED"
-    assert result.result["next_question"] == {
-        "question_id": 700,
-        "competency_id": competency.id,
-        "subskill_id": 2,
-        "question_text": "Select the valid sampling frame.",
-        "options": ["A. One", "B. Two", "C. Three", "D. Four"],
-        "difficulty": "easy",
-        "source_reference": "test-question",
-    }
-    assert "correct_option" not in result.result["next_question"]
-
-
-def test_monitoring_route_injects_authenticated_user_selector_and_safe_question(db, monkeypatch):
-    session, learner, _, competency, *_ = db
-    constructed = []
-
-    class Selector:
-        def __init__(self, selected_db, user_id):
-            constructed.append((selected_db, user_id))
-
-        def select_next_question(self, request):
-            return ProposedQuestion(
-                question_id=701,
-                competency_id=request.competency_id,
-                subskill_id=request.subskill_id,
-                question_text="Choose the valid estimator.",
-                options=("A. One", "B. Two", "C. Three", "D. Four"),
-                difficulty="medium",
-                source_reference="route-question",
-                correct_option="B. Two",
-            )
-
-    monkeypatch.setattr(monitoring_router, "DatabaseAdaptiveQuestionSelector", Selector)
-    app.dependency_overrides[monitoring_router.get_current_user] = lambda: learner
-    app.dependency_overrides[monitoring_router.get_db] = lambda: session
-    try:
-        response = TestClient(app).post(
-            "/api/monitoring/events",
-            json={"event_type": "repeated_failure", "learner_id": learner.id, "competency_id": competency.id},
-        )
-    finally:
-        app.dependency_overrides.pop(monitoring_router.get_current_user, None)
-        app.dependency_overrides.pop(monitoring_router.get_db, None)
-
-    assert response.status_code == 200
-    assert constructed == [(session, learner.id)]
-    next_question = response.json()["result"]["next_question"]
-    assert next_question == {
-        "question_id": 701,
-        "competency_id": competency.id,
-        "subskill_id": 2,
-        "question_text": "Choose the valid estimator.",
-        "options": ["A. One", "B. Two", "C. Three", "D. Four"],
-        "difficulty": "medium",
-        "source_reference": "route-question",
-    }
-    assert "correct_option" not in next_question
-
-
-def test_monitoring_route_handles_question_bank_exhaustion(db, monkeypatch):
-    session, learner, _, competency, *_ = db
-
-    class ExhaustedSelector:
-        def __init__(self, selected_db, user_id):
-            assert selected_db is session
-            assert user_id == learner.id
-
-        def select_next_question(self, request):
-            raise NoEligibleDiagnosticQuestionError(
-                "No eligible diagnostic question remains for this competency."
-            )
-
-    monkeypatch.setattr(monitoring_router, "DatabaseAdaptiveQuestionSelector", ExhaustedSelector)
-    app.dependency_overrides[monitoring_router.get_current_user] = lambda: learner
-    app.dependency_overrides[monitoring_router.get_db] = lambda: session
-    try:
-        response = TestClient(app).post(
-            "/api/monitoring/events",
-            json={"event_type": "repeated_failure", "learner_id": learner.id, "competency_id": competency.id},
-        )
-    finally:
-        app.dependency_overrides.pop(monitoring_router.get_current_user, None)
-        app.dependency_overrides.pop(monitoring_router.get_db, None)
-
-    assert response.status_code == 409
-    assert response.json()["detail"] == "No eligible diagnostic question remains for this competency."
 
 
 def test_evidence_stale_schedules_retention_check_without_prediction(db):

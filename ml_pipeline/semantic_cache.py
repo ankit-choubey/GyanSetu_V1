@@ -104,6 +104,10 @@ class SemanticCache:
         except Exception:
             return False
 
+    def is_available(self) -> bool:
+        """Returns True if Redis is active or in-memory fallback is enabled."""
+        return self.is_redis_active or self.enable_in_memory_fallback
+
     @staticmethod
     def compute_mcq_key(content: str, competency: str, difficulty: str, num_questions: int) -> str:
         """Computes deterministic SHA-256 hash for MCQ generation parameters."""
@@ -142,9 +146,16 @@ class SemanticCache:
         self.misses += 1
         return None
 
-    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> bool:
+    def set(
+        self,
+        key: str,
+        value: Any,
+        ttl: Optional[int] = None,
+        ttl_seconds: Optional[int] = None,
+    ) -> bool:
         """Stores item into cache with TTL."""
-        target_ttl = ttl if ttl is not None else self.default_ttl
+        effective_ttl = ttl_seconds if ttl_seconds is not None else ttl
+        target_ttl = effective_ttl if effective_ttl is not None else self.default_ttl
         success = False
 
         # 1. Store in Redis if available
