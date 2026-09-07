@@ -14,7 +14,7 @@ from app.models.evidence import Evidence
 from app.models.monitoring_event import MonitoringEvent
 from app.models.user import User
 from app.schemas.monitoring import MonitoringEventRequest, MonitoringEventType
-from app.services.ml_interfaces import QuestionSelector
+from app.services.ml_interfaces import ProposedQuestion, QuestionSelector
 from app.services.orchestrator import coordinate_diagnostic, recalculate_competency_state
 
 
@@ -119,7 +119,14 @@ class MonitoringAgent:
             return (
                 "DIAGNOSTIC_TRIGGERED",
                 "PROCESSED",
-                {"sufficient_evidence": decision.sufficient_evidence},
+                {
+                    "sufficient_evidence": decision.sufficient_evidence,
+                    **(
+                        {"next_question": self._serialize_question(decision.next_question)}
+                        if decision.next_question is not None
+                        else {}
+                    ),
+                },
             )
 
         if request.event_type is MonitoringEventType.EVIDENCE_STALE:
@@ -181,6 +188,18 @@ class MonitoringAgent:
             return json.dumps(metadata, default=str)
         except (TypeError, ValueError) as exc:
             raise ValueError("Monitoring metadata must be JSON-serializable") from exc
+
+    @staticmethod
+    def _serialize_question(question: ProposedQuestion) -> dict[str, Any]:
+        return {
+            "question_id": question.question_id,
+            "competency_id": question.competency_id,
+            "subskill_id": question.subskill_id,
+            "question_text": question.question_text,
+            "options": list(question.options),
+            "difficulty": question.difficulty,
+            "source_reference": question.source_reference,
+        }
 
     @staticmethod
     def _require_competency(request: MonitoringEventRequest) -> None:
