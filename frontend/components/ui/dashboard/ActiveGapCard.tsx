@@ -151,15 +151,15 @@ export const ActiveGapCard = React.memo(function ActiveGapCard({
             onClick={handleAction}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm hover:shadow"
           >
-            <span>Start Assessment</span>
+            <span>Ingest Material & Assess</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         ) : (
           <Link
-            href="/dashboard/assessments"
+            href="/dashboard/ingestion"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm hover:shadow"
           >
-            <span>Start Assessment</span>
+            <span>Ingest Material & Assess</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         )}

@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Stethoscope, ArrowRight, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { UploadCloud, ArrowRight, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 interface EmptyStateProps {
@@ -13,7 +14,7 @@ interface EmptyStateProps {
 
 export function EmptyState({
   title = "No Competency Evidence Recorded Yet",
-  description = "This officer has been onboarded to the SSS cadre but has not yet completed a diagnostic assessment. The competency engine requires baseline evidence before generating targeted next-best-actions.",
+  description = "This officer has been onboarded to the SSS cadre but has not yet completed a diagnostic assessment. Start by ingesting training material (PDF, PPTX, or YouTube lecture) in the Ingestion Hub so GyanSetu can extract concepts and generate your tailored 15-question assessment.",
   onStartDiagnostic,
   className,
 }: EmptyStateProps) {
@@ -25,12 +26,12 @@ export function EmptyState({
       )}
     >
       <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 mb-4 shadow-sm">
-        <Stethoscope className="w-7 h-7" />
+        <UploadCloud className="w-7 h-7" />
       </div>
 
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-blue-50 text-blue-700 border border-blue-200 mb-3">
         <ShieldCheck className="w-3.5 h-3.5" />
-        <span>First-Class State: Baseline Calibration Required</span>
+        <span>Step 1: Content Ingestion & Assessment Generation</span>
       </div>
 
       <h3 className="font-heading text-2xl sm:text-3xl text-slate-900 mb-2">
@@ -41,17 +42,18 @@ export function EmptyState({
         {description}
       </p>
 
-      <button
-        type="button"
+      <Link
+        href="/dashboard/ingestion"
         onClick={onStartDiagnostic}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs sm:text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm hover:shadow"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm hover:shadow"
       >
-        <span>Initialize Adaptive Diagnostic (20 min)</span>
+        <UploadCloud className="w-4 h-4" />
+        <span>Ingest Training Material in Ingestion Hub</span>
         <ArrowRight className="w-4 h-4" />
-      </button>
+      </Link>
 
       <p className="text-[11px] font-mono text-slate-400 mt-4">
-        Hard Rule: Unassessed competencies are displayed as &quot;Unassessed&quot; (never 0% or failing).
+        Workflow: Ingest Document/Video → AI Generates 15 Questions → Calibrate Competency
       </p>
     </div>
   );

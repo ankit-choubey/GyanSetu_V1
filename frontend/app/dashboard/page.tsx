@@ -27,7 +27,9 @@ import {
   X,
   Activity,
   RefreshCw,
+  UploadCloud,
 } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/cn";
 
 export default function DashboardPage() {
@@ -187,14 +189,13 @@ export default function DashboardPage() {
             <span>Sync State</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handleOpenDiagnosticModal}
+          <Link
+            href="/dashboard/ingestion"
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition shadow-xs whitespace-nowrap"
           >
-            <ClipboardCheck className="w-3.5 h-3.5" />
-            <span>Start Assessment</span>
-          </button>
+            <UploadCloud className="w-3.5 h-3.5" />
+            <span>Ingest & Start Assessment</span>
+          </Link>
         </div>
       </motion.div>
 
@@ -410,21 +411,21 @@ export default function DashboardPage() {
             </button>
 
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
-                <ClipboardCheck className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+                <UploadCloud className="w-5 h-5" />
               </div>
               <div>
                 <h4 className="font-heading text-xl text-slate-900">
-                  Start Assessment
+                  Assessment Workflow: Ingestion First
                 </h4>
                 <p className="text-xs text-slate-500">
-                  Target: {activeGap?.competency_name || "Sampling Design"}
+                  Target Competency: {activeGap?.competency_name || "Sampling Design"}
                 </p>
               </div>
             </div>
 
             <p className="text-xs text-slate-600 font-sans leading-relaxed mb-4">
-              Take an adaptive diagnostic assessment to calibrate your competency state. Questions adapt dynamically based on your response history.
+              To calibrate your competencies accurately, GyanSetu requires you to first ingest your training curriculum, policy handbook (PDF/PPTX), or YouTube lecture. The AI pipeline extracts knowledge concepts and generates your tailored 15-question assessment.
             </p>
 
             <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 text-xs mb-5 space-y-1.5">
@@ -437,27 +438,34 @@ export default function DashboardPage() {
                 <span className="text-slate-900">{data.role_name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Target Competency:</span>
-                <span className="text-slate-900 font-medium">
-                  {activeGap?.competency_name || "Sampling Design"}
+                <span className="text-slate-500">Workflow:</span>
+                <span className="text-blue-700 font-semibold">
+                  1. Ingest Material → 2. AI Generates 15 MCQs → 3. Assess & Calibrate
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3">
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-2.5">
               <button
                 type="button"
                 onClick={handleCloseDiagnosticModal}
-                className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                className="w-full sm:w-auto px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition"
               >
                 Cancel
               </button>
-              <a
+              <Link
                 href="/dashboard/assessments"
-                className="px-4 py-2 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow-xs"
+                className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 rounded-lg transition text-center"
               >
-                Proceed to Assessments Page
-              </a>
+                Skip Ingestion (Standard Bank)
+              </Link>
+              <Link
+                href="/dashboard/ingestion"
+                className="w-full sm:w-auto px-4 py-2 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow-xs text-center flex items-center justify-center gap-1.5"
+              >
+                <UploadCloud className="w-3.5 h-3.5" />
+                <span>Go to Ingestion Page (Recommended)</span>
+              </Link>
             </div>
           </div>
         </div>
