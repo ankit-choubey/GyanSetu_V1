@@ -14,3 +14,7 @@ pdfplumber>=0.10.0
 # tesseract / Windows installer). Not a pip-only dependency.
 pytesseract>=0.3.10
 Pillow>=10.0.0
+
+# Phase 5.1 — YouTube Video & Audio Ingestion
+youtube-transcript-api>=0.6.0
+yt-dlp>=2024.0.0
