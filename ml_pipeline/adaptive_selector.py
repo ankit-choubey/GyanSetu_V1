@@ -19,6 +19,7 @@ def select_next_question(
     item_bank: list[dict[str, Any]],
     session_history: list[dict[str, Any]],
     competency: str | None = None,
+    current_theta: float = 0.0,
 ) -> dict[str, Any]:
     """
     Determines and returns the next adaptive MCQ based on learner performance history.
@@ -104,26 +105,29 @@ def select_next_question(
                 "reason": "Targeted remediation for weak subskill.",
             }
 
-    # 2. Match target difficulty
+    # 2. Match target difficulty with Fisher Information optimization
     diff_matches = [
         q for q in available
         if q.get("difficulty", "medium").lower() == target_diff
     ]
     if diff_matches:
+        from ml_pipeline.psychometric_engine import TriTierFSM
+        best_candidate = TriTierFSM.select_item_by_fisher_info(diff_matches, theta=current_theta)
         return {
-            "next_question": diff_matches[0],
+            "next_question": best_candidate,
             "target_difficulty": target_diff,
             "target_subskill": target_subskill,
             "is_complete": False,
-            "reason": f"Selected question matching target difficulty '{target_diff}'.",
+            "reason": f"Selected question matching target difficulty '{target_diff}' via Fisher information.",
         }
 
-    # 3. Fallback: closest available question in the pool
-    fallback_q = available[0]
+    # 3. Fallback: Any available question
+    from ml_pipeline.psychometric_engine import TriTierFSM
+    best_fallback = TriTierFSM.select_item_by_fisher_info(available, theta=current_theta)
     return {
-        "next_question": fallback_q,
-        "target_difficulty": fallback_q.get("difficulty", "medium"),
-        "target_subskill": None,
+        "next_question": best_fallback,
+        "target_difficulty": best_fallback.get("difficulty", "medium").lower(),
+        "target_subskill": target_subskill,
         "is_complete": False,
-        "reason": "Fallback question served due to pool constraints.",
+        "reason": "Fallback item selected as exact difficulty was exhausted.",
     }

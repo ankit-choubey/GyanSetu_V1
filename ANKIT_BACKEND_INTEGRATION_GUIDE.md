@@ -588,4 +588,146 @@ def test_3tier_unlock_progression(client):
 
 ---
 
+## 7. MoSPI Psychometric & Educational KPI Telemetry Specification
+
+Per the official MoSPI Smart India Hackathon blueprint (`kpi sih.docx`), GyanSetu incorporates real-time time-augmented psychometrics:
+1. **Signed Residual Time (SRT)**: Rewards fast accuracy and penalizes rapid random guessing.
+2. **Cognitive Fluency Index (CFI)**: Measures operational automaticity.
+3. **Normative Rapid Guessing Threshold (RGT)**: Flags unreflective guesses under 3.0s.
+4. **Dynamic Educational Elo**: Online calibration of ability $\theta$ and item difficulty $b$.
+5. **Fisher Information Item Selection**: CAT algorithm selecting items maximizing measurement precision.
+
+### 7.1 Database Schema (SQLModel / SQLAlchemy)
+
+Add these tables in `app/models/assessment_telemetry.py`:
+
+```python
+import uuid
+from datetime import datetime, timezone
+from sqlmodel import SQLModel, Field
+
+class AssessmentSession(SQLModel, table=True):
+    __tablename__ = "assessment_sessions"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    officer_id: str = Field(index=True)
+    competency_id: str = Field(index=True)
+    active_tier: str = Field(default="EASY")  # EASY, MEDIUM, HARD
+    consecutive_correct: int = Field(default=0)
+    current_theta: float = Field(default=0.0)
+    interaction_count: int = Field(default=0)
+    is_completed: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class InteractionTelemetryRecord(SQLModel, table=True):
+    __tablename__ = "assessment_telemetry_events"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    session_id: uuid.UUID = Field(foreign_key="assessment_sessions.id", index=True)
+    officer_id: str = Field(index=True)
+    item_id: str = Field(index=True)
+    subskill_id: str = Field(index=True)
+    is_correct: bool
+    response_time_ms: int
+    time_limit_ms: int
+    signed_residual_score: float
+    cognitive_fluency_index: float
+    is_rapid_guess: bool
+    prior_theta: float
+    posterior_theta: float
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+```
+
+### 7.2 High-Resolution Telemetry Endpoint
+
+* **Route:** `POST /api/v1/assessment/interaction/submit`
+* **File:** `app/routers/assessment.py`
+
+```python
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
+from ml_pipeline.psychometric_engine import PsychometricEngine, TriTierFSM, ItemContext, InteractionTelemetry
+
+class SubmitInteractionRequest(BaseModel):
+    session_id: str
+    item_id: str
+    subskill_id: str
+    selected_option: str
+    response_time_ms: int
+    client_monotonic_start: float
+    client_monotonic_end: float
+
+@router.post("/assessment/interaction/submit")
+async def submit_interaction(payload: SubmitInteractionRequest, db: Session = Depends(get_db)):
+    # 1. Fetch session and item
+    session = db.query(AssessmentSession).filter(AssessmentSession.id == payload.session_id).first()
+    if not session or session.is_completed:
+        raise HTTPException(status_code=404, detail="Active assessment session not found")
+
+    item = db.query(AssessmentItem).filter(AssessmentItem.id == payload.item_id).first()
+    is_correct = (payload.selected_option.strip().upper() == item.correct_answer.strip().upper())
+    resp_sec = payload.response_time_ms / 1000.0
+
+    # 2. Evaluate with PsychometricEngine
+    item_ctx = ItemContext(
+        item_id=str(item.id),
+        competency_id=item.competency_id,
+        subskill_id=item.subskill_id,
+        difficulty=float(item.difficulty_score or 0.0),
+        time_limit_sec=float(item.time_limit_sec or 60.0),
+        target_time_sec=float(item.target_time_sec or 30.0),
+    )
+    telemetry_in = InteractionTelemetry(
+        learner_id=session.officer_id,
+        item_id=str(item.id),
+        selected_option=payload.selected_option,
+        response_time_sec=resp_sec,
+        is_correct=is_correct,
+    )
+
+    eval_res = PsychometricEngine.evaluate_response(
+        item=item_ctx,
+        telemetry=telemetry_in,
+        current_theta=session.current_theta,
+        learner_interactions=session.interaction_count + 1,
+    )
+
+    # 3. Transition FSM
+    new_tier, new_streak = TriTierFSM.transition(
+        current_tier=session.active_tier,
+        consecutive_correct=session.consecutive_correct,
+        is_correct=is_correct,
+        cfi=eval_res["cognitive_fluency_index"],
+    )
+
+    # 4. Save Telemetry Event
+    event = InteractionTelemetryRecord(
+        session_id=session.id,
+        officer_id=session.officer_id,
+        item_id=str(item.id),
+        subskill_id=item.subskill_id,
+        is_correct=is_correct,
+        response_time_ms=payload.response_time_ms,
+        time_limit_ms=int(item_ctx.time_limit_sec * 1000),
+        signed_residual_score=eval_res["signed_residual_score"],
+        cognitive_fluency_index=eval_res["cognitive_fluency_index"],
+        is_rapid_guess=eval_res["is_rapid_guess"],
+        prior_theta=eval_res["prior_theta"],
+        posterior_theta=eval_res["posterior_theta"],
+    )
+    db.add(event)
+    session.current_theta = eval_res["posterior_theta"]
+    session.active_tier = new_tier
+    session.consecutive_correct = new_streak
+    session.interaction_count += 1
+    db.commit()
+
+    return {
+        "status": "CONTINUE" if session.interaction_count < 10 else "COMPLETED",
+        "kpi_telemetry": eval_res,
+        "active_tier": new_tier,
+        "consecutive_correct": new_streak,
+    }
+```
+
+---
+
 Ankit, both the AI/ML pipeline and Frontend contracts are aligned. Connect these endpoints and the system will run smoothly end-to-end!

@@ -438,3 +438,129 @@ Grades responses, updates Bayesian Knowledge Tracing (BKT), unlocks the next tie
 
 4. **Persistence**:
    - Store `session_id` in URL params (`?session_id=...`) and `localStorage` so a page refresh never loses the officer's unlocked tiers or scores.
+
+---
+
+## 6. MoSPI Psychometric Telemetry & High-Precision Countdown Hook
+
+Per the official MoSPI Smart India Hackathon engineering blueprint (`kpi sih.docx`), GyanSetu incorporates client-side millisecond telemetry to compute **Signed Residual Time (SRT)**, **Cognitive Fluency Index (CFI)**, and **Rapid Guessing Threshold (RGT)**.
+
+### 6.1 High-Precision Countdown Hook (`hooks/useHighPrecisionTimer.ts`)
+
+Create this hook in your React app at `src/hooks/useHighPrecisionTimer.ts`:
+
+```typescript
+import { useState, useEffect, useRef, useCallback } from 'react';
+
+interface TimerState {
+  remainingSec: number;
+  elapsedMs: number;
+  percentageRemaining: number;
+  isExpired: boolean;
+}
+
+export function useHighPrecisionTimer(timeLimitSec: number, onExpire: () => void) {
+  const [state, setState] = useState<TimerState>({
+    remainingSec: timeLimitSec,
+    elapsedMs: 0,
+    percentageRemaining: 100,
+    isExpired: false,
+  });
+
+  const startRef = useRef<number>(performance.now());
+  const animFrameRef = useRef<number | null>(null);
+  const onExpireRef = useRef(onExpire);
+  onExpireRef.current = onExpire;
+
+  const resetTimer = useCallback(() => {
+    startRef.current = performance.now();
+    setState({
+      remainingSec: timeLimitSec,
+      elapsedMs: 0,
+      percentageRemaining: 100,
+      isExpired: false,
+    });
+  }, [timeLimitSec]);
+
+  useEffect(() => {
+    startRef.current = performance.now();
+    const durationMs = timeLimitSec * 1000;
+
+    const tick = (now: number) => {
+      const elapsed = now - startRef.current;
+      const remaining = Math.max(0, durationMs - elapsed);
+      const percent = (remaining / durationMs) * 100;
+
+      setState({
+        remainingSec: Math.max(0, parseFloat((remaining / 1000).toFixed(1))),
+        elapsedMs: Math.round(elapsed),
+        percentageRemaining: percent,
+        isExpired: remaining <= 0,
+      });
+
+      if (remaining > 0) {
+        animFrameRef.current = requestAnimationFrame(tick);
+      } else {
+        onExpireRef.current();
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [timeLimitSec]);
+
+  return {
+    ...state,
+    resetTimer,
+    monotonicStart: startRef.current,
+  };
+}
+```
+
+### 6.2 Telemetry Submission Payload
+
+When an officer selects an option, send the monotonic millisecond timestamps to Ankit's endpoint:
+
+```typescript
+const handleOptionSubmit = async (selectedLetter: string) => {
+  const monotonicEnd = performance.now();
+  const responseTimeMs = Math.round(monotonicEnd - monotonicStart);
+
+  const payload = {
+    session_id: sessionId,
+    item_id: currentQuestion.id,
+    subskill_id: currentQuestion.subskill_id,
+    selected_option: selectedLetter,
+    response_time_ms: responseTimeMs,
+    client_monotonic_start: monotonicStart,
+    client_monotonic_end: monotonicEnd,
+  };
+
+  const response = await fetch('/api/v1/assessment/interaction/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+
+  // If rapid guessing was flagged (< 3.0s), display friendly warning toast:
+  if (data.kpi_telemetry.is_rapid_guess) {
+    showToast("⚠️ Unreflective response detected. Take your time to review the question stem!");
+  }
+};
+```
+
+### 6.3 Officer KPI Dashboard UI Components
+
+In the final assessment summary screen, display these 4 key MoSPI KPI cards:
+1. **Latent Trait Ability ($\theta$)**: Displayed as a Gaussian bell curve badge with standard error band.
+2. **Cognitive Fluency Index (CFI)**: Speed + accuracy gauge (*Emerald = Automatic $\ge 0.75$, Amber = Effortful, Slate = Incomplete*).
+3. **24 Sub-Skill SPI Mastery Bars**:
+   - `Mastered (SPI >= 75%)`: Emerald progress bar (`bg-emerald-500`).
+   - `Developing (60% - 74%)`: Slate-blue progress bar (`bg-blue-500`).
+   - `Remediation (40% - 59%)`: Amber warning bar (`bg-amber-500`).
+   - `Critical Gap (< 40%)`: Rose alert bar (`bg-rose-500`).
+4. **Explainable Next-Best-Action Cards**: Displays nominated **iGOT Karmayogi** and **NSSTA** courses with estimated duration and targeted sub-skill gap badge.
+

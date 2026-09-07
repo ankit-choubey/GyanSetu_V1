@@ -40,9 +40,7 @@ except ImportError:
 
 # --- Optional dependencies: OCR -----------------------------------------
 try:
-    import pytesseract
-    from PIL import Image
-    import io
+    from ml_pipeline.ocr_engine import get_ocr_engine
     _OCR_AVAILABLE = True
 except ImportError:
     _OCR_AVAILABLE = False
@@ -53,8 +51,7 @@ def _extract_pdf_page_tables(file_path: str, page_number: int) -> list[list[list
     Returns tables found on the given 1-indexed page, each table as a
     list of rows (list of cell strings). Returns [] if pdfplumber isn't
     installed, or if this specific page can't be reliably parsed for
-    tables — a table-extraction problem on one page must never fail
-    extraction of the whole document.
+    tables.
     """
     if not _PDFPLUMBER_AVAILABLE:
         return []
@@ -66,9 +63,6 @@ def _extract_pdf_page_tables(file_path: str, page_number: int) -> list[list[list
             page = pdf.pages[page_number - 1]
             raw_tables = page.extract_tables() or []
     except Exception:
-        # Deliberately broad: a malformed page or a pdfplumber internal
-        # error must degrade to "no tables on this page", not crash the
-        # document. See module docstring / requirement #1.
         return []
 
     tables = []
@@ -80,9 +74,7 @@ def _extract_pdf_page_tables(file_path: str, page_number: int) -> list[list[list
 
 
 def _table_to_text(table: list[list[str]]) -> str:
-    """Serializes a table (list of rows) into a simple pipe-delimited
-    block, so it stays inside the plain-text contract while remaining
-    visually distinguishable from prose for downstream MCQ/RAG use."""
+    """Serializes a table (list of rows) into a pipe-delimited block."""
     lines = ["[TABLE]"]
     lines.extend(" | ".join(row) for row in table)
     lines.append("[/TABLE]")
@@ -91,7 +83,7 @@ def _table_to_text(table: list[list[str]]) -> str:
 
 def _ocr_page(page) -> tuple[str, bool]:
     """
-    Rasterizes a PyMuPDF page and runs OCR on it.
+    Rasterizes a PyMuPDF page and runs OCR on it using VisionOCREngine.
     Returns (text, ocr_succeeded). Never raises — OCR failures degrade
     to ("", False) so document extraction as a whole still completes.
     """
@@ -99,14 +91,10 @@ def _ocr_page(page) -> tuple[str, bool]:
         return "", False
 
     try:
-        pixmap = page.get_pixmap(dpi=200)
-        image = Image.open(io.BytesIO(pixmap.tobytes("png")))
-        text = pytesseract.image_to_string(image)
-        return text, True
+        engine = get_ocr_engine()
+        res = engine.ocr_pdf_page(page, dpi=300)
+        return res.text, res.success
     except Exception:
-        # Covers TesseractNotFoundError (binary not installed) and any
-        # other OCR-time failure. See requirement #2: "handle OCR
-        # failures gracefully."
         return "", False
 
 
@@ -154,23 +142,38 @@ def _process_pdf_pages(file_path: str) -> list[dict]:
 
 
 def _process_pptx_slides(file_path: str) -> list[dict]:
-    """PPTX pipeline — unchanged behavior from before, just reshaped into
-    the same per-page dict structure for a consistent structured API.
-    No table/OCR handling here — out of scope (spec targets PDF pages)."""
+    """PPTX pipeline — extracts textual shapes and inspects embedded picture/diagram
+    shapes with VisionOCREngine when text is sparse or embedded figures exist."""
     presentation = Presentation(file_path)
     slides_out = []
+    engine = get_ocr_engine() if _OCR_AVAILABLE else None
+
     for i, slide in enumerate(presentation.slides):
         shape_texts = [
             shape.text for shape in slide.shapes
             if hasattr(shape, "text") and shape.text.strip()
         ]
-        text = "\n".join(shape_texts)
+        ocr_texts = []
+        ocr_used = False
+
+        if engine:
+            for shape in slide.shapes:
+                if hasattr(shape, "image"):
+                    res = engine.ocr_pptx_shape(shape)
+                    if res.success and res.text.strip():
+                        ocr_texts.append(f"[IMAGE OCR: {res.text.strip()}]")
+                        ocr_used = True
+
+        combined_parts = shape_texts + ocr_texts
+        text = "\n".join(combined_parts).strip()
+        content_type = "ocr" if (not shape_texts and ocr_used) else ("text" if text else "empty")
+
         slides_out.append({
             "page": i + 1,
-            "content_type": "text" if text.strip() else "empty",
-            "text": text.strip(),
+            "content_type": content_type,
+            "text": text,
             "tables": [],
-            "ocr_used": False,
+            "ocr_used": ocr_used,
         })
     return slides_out
 

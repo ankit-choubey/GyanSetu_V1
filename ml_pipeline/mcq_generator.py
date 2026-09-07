@@ -98,7 +98,16 @@ def parse_mcq_response(raw_text: str) -> list[dict]:
     return parsed
 
 
-def generate_mcqs(content: str, competency: str, num_questions: int, difficulty: str) -> list[dict]:
+from ml_pipeline.semantic_cache import get_semantic_cache
+
+
+def generate_mcqs(
+    content: str,
+    competency: str,
+    num_questions: int,
+    difficulty: str,
+    use_cache: bool = True,
+) -> list[dict]:
     """
     THE CONTRACT WITH BACKEND — do not change this signature without
     telling Utkarsh/Mounya first.
@@ -109,6 +118,7 @@ def generate_mcqs(content: str, competency: str, num_questions: int, difficulty:
         competency: the competency being tested, e.g. "Sampling Design".
         num_questions: how many MCQs to generate.
         difficulty: "easy" | "medium" | "hard".
+        use_cache: whether to utilize Redis/in-memory semantic caching (default True).
 
     Returns:
         list of dicts: {question, options (4 items), correct_answer (A-D),
@@ -119,6 +129,13 @@ def generate_mcqs(content: str, competency: str, num_questions: int, difficulty:
         ValueError: if GROQ_API_KEY is unset, or the model's response
         can't be parsed into valid-shaped MCQs.
     """
+    cache = get_semantic_cache()
+    if use_cache:
+        cache_key = cache.compute_mcq_key(content, competency, difficulty, num_questions)
+        cached_val = cache.get(cache_key)
+        if cached_val is not None and isinstance(cached_val, list):
+            return cached_val
+
     if not GROQ_API_KEY:
         raise ValueError("GROQ_API_KEY not set — see ENVIRONMENT_SETUP.md §3 / ml_pipeline/.env.example")
 
@@ -136,7 +153,13 @@ def generate_mcqs(content: str, competency: str, num_questions: int, difficulty:
         temperature=0.3,
     )
     raw = response.choices[0].message.content
-    return parse_mcq_response(raw)
+    parsed = parse_mcq_response(raw)
+
+    if use_cache and parsed:
+        cache_key = cache.compute_mcq_key(content, competency, difficulty, num_questions)
+        cache.set(cache_key, parsed)
+
+    return parsed
 
 
 if __name__ == "__main__":

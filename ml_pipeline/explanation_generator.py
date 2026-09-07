@@ -215,11 +215,15 @@ def _generate_llm_feedback(
     }
 
 
+from ml_pipeline.semantic_cache import get_semantic_cache
+
+
 def generate_feedback(
     mcq: dict[str, Any],
     selected_letter: str,
     source_context: str | None = None,
     use_llm: bool = True,
+    use_cache: bool = True,
 ) -> dict[str, Any]:
     """
     Generates tailored pedagogical feedback for an answered MCQ.
@@ -229,14 +233,29 @@ def generate_feedback(
         selected_letter: The officer's chosen option letter ('A', 'B', 'C', 'D').
         source_context: Optional source text excerpt for deep citation.
         use_llm: If True, uses Groq LLM for deep cognitive remediation with template fallback.
+        use_cache: If True, leverages Redis/in-memory semantic cache.
 
     Returns:
         Structured feedback dictionary matching backend protocol contract.
     """
+    cache = get_semantic_cache()
+    question = mcq.get("question", "")
+    correct_letter = mcq.get("correct_answer", "A")
+
+    if use_cache and use_llm:
+        cache_key = cache.compute_feedback_key(question, selected_letter, correct_letter)
+        cached_fb = cache.get(cache_key)
+        if cached_fb is not None and isinstance(cached_fb, dict):
+            return cached_fb
+
     if not use_llm or not GROQ_API_KEY:
         return _generate_template_feedback(mcq, selected_letter, source_context)
 
     try:
-        return _generate_llm_feedback(mcq, selected_letter, source_context)
+        fb = _generate_llm_feedback(mcq, selected_letter, source_context)
+        if use_cache and fb:
+            cache_key = cache.compute_feedback_key(question, selected_letter, correct_letter)
+            cache.set(cache_key, fb)
+        return fb
     except Exception:
         return _generate_template_feedback(mcq, selected_letter, source_context)
