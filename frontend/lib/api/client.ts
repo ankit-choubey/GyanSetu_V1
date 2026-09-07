@@ -19,12 +19,13 @@ export class ApiError extends Error {
 const DEFAULT_DEMO_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzg4OTA1MjU0fQ.3vttz6_9enGhy2SXwMtPgzfpBFZL414SDNcrXO8FpI4";
 
-function getHeaders(): Record<string, string> {
+function getHeaders(customHeaders?: Record<string, string>, customToken?: string): Record<string, string> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    ...(customHeaders || {}),
   };
-  let token = DEFAULT_DEMO_TOKEN;
-  if (typeof window !== "undefined") {
+  let token = customToken || DEFAULT_DEMO_TOKEN;
+  if (!customToken && typeof window !== "undefined") {
     const storedToken =
       localStorage.getItem("gyansetu_auth_token") ||
       sessionStorage.getItem("gyansetu_auth_token");
@@ -39,9 +40,9 @@ function getHeaders(): Record<string, string> {
 }
 
 export const client = {
-  async get<T>(path: string): Promise<T> {
+  async get<T>(path: string, options?: { headers?: Record<string, string>; token?: string }): Promise<T> {
     const res = await fetch(`${API_BASE}${path}`, {
-      headers: getHeaders(),
+      headers: getHeaders(options?.headers, options?.token),
       next: { revalidate: 0 },
     });
 
@@ -57,10 +58,10 @@ export const client = {
     return res.json();
   },
 
-  async post<T>(path: string, body: any): Promise<T> {
+  async post<T>(path: string, body: any, options?: { headers?: Record<string, string>; token?: string }): Promise<T> {
     const res = await fetch(`${API_BASE}${path}`, {
       method: "POST",
-      headers: getHeaders(),
+      headers: getHeaders(options?.headers, options?.token),
       body: JSON.stringify(body),
     });
 

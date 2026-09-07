@@ -11,18 +11,21 @@ interface SandboxBadgeProps {
 
 export function SandboxBadge({
   className,
-  label = "DEMO DATA",
+  label = "LIVE SYNCED",
 }: SandboxBadgeProps) {
+  const isLive = label.toUpperCase().includes("LIVE") || label.toUpperCase().includes("SYNC");
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium",
-        "bg-amber-50 text-amber-800 border border-amber-200 shadow-xs",
+        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold",
+        isLive
+          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+          : "bg-amber-50 text-amber-800 border border-amber-200",
         className
       )}
-      title="Demonstration data mode"
+      title={isLive ? "Live synchronized mode" : "Demonstration data mode"}
     >
-      <AlertCircle className="w-3 h-3 text-amber-600 shrink-0" />
+      <span className={cn("w-1.5 h-1.5 rounded-full", isLive ? "bg-emerald-500 animate-pulse" : "bg-amber-500")} />
       <span>{label}</span>
     </div>
   );

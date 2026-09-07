@@ -25,11 +25,13 @@ import {
   ChevronRight,
   ClipboardCheck,
   X,
+  Activity,
+  RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export default function DashboardPage() {
-  const { persona, setUserInfo } = useDashboard();
+  const { persona, setUserInfo, refreshCount, refreshDashboard } = useDashboard();
   const [data, setData] = useState<DashboardResponse>(() =>
     getCompetencyStateSync(persona)
   );
@@ -54,7 +56,7 @@ export default function DashboardPage() {
     setSelectedCompetency(null);
   }, []);
 
-  // Synchronize state on persona change
+  // Synchronize state on persona or refresh trigger
   useEffect(() => {
     let isSubscribed = true;
     const isMock = process.env.NEXT_PUBLIC_USE_MOCK !== "false";
@@ -88,7 +90,7 @@ export default function DashboardPage() {
     return () => {
       isSubscribed = false;
     };
-  }, [persona, setUserInfo]);
+  }, [persona, refreshCount, setUserInfo]);
 
   // Derived state (§1.1 Ground Truth)
   const kpiSummary = useMemo(() => deriveKPISummary(data), [data]);
@@ -96,11 +98,11 @@ export default function DashboardPage() {
   const activeGap = useMemo(() => deriveActiveGap(data.competencies), [data.competencies]);
   const isAllUnassessed = kpiSummary.mastery_avg === null;
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <DashboardSkeleton />;
   }
 
-  if (error || !data) {
+  if (error && !data) {
     return (
       <ErrorState
         title="Could not load dashboard"
@@ -108,8 +110,11 @@ export default function DashboardPage() {
         onRetry={() => {
           setIsLoading(true);
           getCompetencyState(persona)
-            .then(setData)
-            .catch((e) => setError(e.message))
+            .then((res) => {
+              setData(res);
+              setError(null);
+            })
+            .catch((err) => setError(err.message))
             .finally(() => setIsLoading(false));
         }}
       />
@@ -140,29 +145,50 @@ export default function DashboardPage() {
       initial="hidden"
       animate="visible"
     >
-      {/* Demo Mode Notification Bar */}
+      {/* Dynamic Diagnostic Session Status Bar */}
       <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-900">
-              Demo Mode — {persona === "jso" ? "Sample Learner" : "New Learner"}
-            </span>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+            <Activity className="w-5 h-5 animate-pulse" />
           </div>
-          <p className="text-xs text-slate-500 font-sans mt-0.5">
-            {isAllUnassessed
-              ? "New officer — no assessments taken yet."
-              : "Officer with active competency data and diagnosed needs."}
-          </p>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Synced
+              </span>
+              <span className="text-xs font-bold text-slate-900">
+                {data.full_name || (persona === "jso" ? "Sample Learner" : "Sandbox Analyst")} • {data.role_name || "Statistical Officer"}
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 font-sans mt-0.5">
+              {isAllUnassessed
+                ? "New officer profile — 0 of 7 competencies diagnosed. Initial baseline assessment ready."
+                : `Active diagnostic state — ${kpiSummary.assessed_count} of ${kpiSummary.total_count} competencies diagnosed via adaptive assessment & evidence fusion.`}
+            </p>
+          </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleOpenDiagnosticModal}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition whitespace-nowrap"
-        >
-          <ClipboardCheck className="w-3.5 h-3.5" />
-          <span>Start Assessment</span>
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={refreshDashboard}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition"
+            title="Sync latest competency state from backend"
+          >
+            <RefreshCw className={cn("w-3.5 h-3.5", isLoading && "animate-spin text-blue-600")} />
+            <span>Sync State</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleOpenDiagnosticModal}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition shadow-xs whitespace-nowrap"
+          >
+            <ClipboardCheck className="w-3.5 h-3.5" />
+            <span>Start Assessment</span>
+          </button>
+        </div>
       </motion.div>
 
       {/* ROW 1: 4 KPI STAT CARDS */}

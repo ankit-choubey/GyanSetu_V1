@@ -327,9 +327,10 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                 <h1 className="font-heading text-xl sm:text-2xl tracking-wide text-slate-900">
                   {pageInfo.title}
                 </h1>
-                <StatusChip status="info" size="sm">
-                  Demo data
-                </StatusChip>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Live Synced
+                </span>
               </div>
               <p className="text-sm text-slate-600 hidden sm:block font-sans">
                 {pageInfo.subtitle}
@@ -340,13 +341,13 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           {/* Persona Switcher & User Avatar */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2.5">
-              <span className="text-sm text-slate-500 font-medium hidden md:inline font-sans">View as:</span>
-              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-sm">
+              <span className="text-xs text-slate-500 font-medium hidden md:inline font-sans">Officer Profile:</span>
+              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs sm:text-sm">
                 <button
                   type="button"
                   onClick={() => setPersona("jso")}
                   className={cn(
-                    "px-3 py-1.5 rounded-lg transition text-sm font-semibold",
+                    "px-2.5 sm:px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-semibold",
                     persona === "jso"
                       ? "bg-white text-slate-900 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -358,13 +359,13 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                   type="button"
                   onClick={() => setPersona("new")}
                   className={cn(
-                    "px-3 py-1.5 rounded-lg transition text-sm font-semibold",
+                    "px-2.5 sm:px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-semibold",
                     persona === "new"
                       ? "bg-white text-slate-900 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   )}
                 >
-                  New Learner
+                  New Officer
                 </button>
               </div>
             </div>

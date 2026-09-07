@@ -24,6 +24,11 @@ export function getCompetencyStateSync(
   return jsoMockData as unknown as DashboardResponse;
 }
 
+const DEMO_LEARNER_TOKEN =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzg4OTA1MjU0fQ.3vttz6_9enGhy2SXwMtPgzfpBFZL414SDNcrXO8FpI4";
+const NEW_LEARNER_TOKEN =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZXhwIjoxNzg4OTA2MDM5fQ.I7K0poC0VsqwR-UAOOAD0XkO-7W9OTeMqR5JFMXa9Ls";
+
 export async function getCompetencyState(
   persona: "jso" | "new" | "admin" = "jso"
 ): Promise<DashboardResponse> {
@@ -34,7 +39,8 @@ export async function getCompetencyState(
   }
 
   try {
-    const res = await client.get<DashboardResponse>("/api/dashboard/learner");
+    const token = persona === "new" ? NEW_LEARNER_TOKEN : DEMO_LEARNER_TOKEN;
+    const res = await client.get<DashboardResponse>("/api/dashboard/learner", { token });
     if (res && res.competencies && res.competencies.length > 0) {
       return res;
     }

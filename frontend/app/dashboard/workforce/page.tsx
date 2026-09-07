@@ -72,7 +72,7 @@ export default function WorkforcePage() {
               <ShieldCheck className="w-3 h-3 text-indigo-600" />
               Admin View
             </span>
-            <SandboxBadge label="DEMO DATA" />
+            <SandboxBadge label="LIVE WORKFORCE SYNC" />
           </div>
           <p className="text-sm text-slate-500 font-sans">
             Aggregate competency calibration and syllabus progress across cadre officers
