@@ -15,6 +15,7 @@ import { MetricCard } from "@/components/ui/dashboard/MetricCard";
 import { CompetencyRadar } from "@/components/ui/dashboard/CompetencyRadar";
 import { ActiveGapCard } from "@/components/ui/dashboard/ActiveGapCard";
 import { NextBestActionCard } from "@/components/ui/dashboard/NextBestActionCard";
+import { StatusChip } from "@/components/ui/dashboard/primitives";
 import { DashboardSkeleton } from "@/components/ui/dashboard/states/CardSkeleton";
 import { EmptyState } from "@/components/ui/dashboard/states/EmptyState";
 import { ErrorState } from "@/components/ui/dashboard/states/ErrorState";
@@ -255,7 +256,7 @@ export default function DashboardPage() {
       )}
 
       {/* ROW 4: COMPETENCY BREAKDOWN TABLE */}
-      <motion.section variants={itemVariants} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+      <motion.section variants={itemVariants} className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
           <div>
             <h3 className="font-heading text-xl sm:text-2xl tracking-normal text-slate-900">
@@ -265,24 +266,24 @@ export default function DashboardPage() {
               Measured competency performance and evidence records
             </p>
           </div>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-slate-400 font-medium">
             {data.competencies.length} competencies
           </span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 text-slate-500 text-[11px] uppercase tracking-wider bg-slate-50/60 font-semibold">
-                <th className="py-3 px-4">Competency</th>
-                <th className="py-3 px-4">Mastery</th>
-                <th className="py-3 px-4">Confidence</th>
-                <th className="py-3 px-4">Coverage</th>
-                <th className="py-3 px-4">Evidence</th>
-                <th className="py-3 px-4">Status</th>
+              <tr className="border-b border-slate-200 text-slate-400 text-[11px] uppercase tracking-wider bg-slate-50/60 font-medium">
+                <th className="py-3 px-4 text-left">Competency</th>
+                <th className="py-3 px-4 text-right">Mastery</th>
+                <th className="py-3 px-4 text-right">Confidence</th>
+                <th className="py-3 px-4 text-right">Coverage</th>
+                <th className="py-3 px-4 text-right">Evidence</th>
+                <th className="py-3 px-4 text-left">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 font-sans">
               {data.competencies.map((c) => {
                 const isUnassessed = c.mastery === null;
                 return (
@@ -296,18 +297,17 @@ export default function DashboardPage() {
                         {c.competency_name}
                       </div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4 text-right">
                       {isUnassessed ? (
-                        <span className="inline-flex items-center gap-1 text-slate-500 text-[11px]">
-                          <HelpCircle className="w-3 h-3 text-slate-400" />
+                        <span className="inline-flex items-center gap-1 text-slate-400 text-xs">
                           Unassessed
                         </span>
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-900 text-xs">
+                        <div className="flex items-center justify-end gap-2">
+                          <span className="font-semibold text-slate-900 text-xs tabular-nums">
                             {(c.mastery! * 100).toFixed(0)}%
                           </span>
-                          <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="w-14 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                             <div
                               className={cn(
                                 "h-full rounded-full",
@@ -323,43 +323,38 @@ export default function DashboardPage() {
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4 text-right">
                       {isUnassessed ? (
-                        <span className="text-slate-400 text-[11px]">—</span>
+                        <span className="text-slate-400 text-xs">—</span>
                       ) : (
-                        <span
-                          className={cn(
-                            "px-2 py-0.5 rounded text-[11px] border font-medium",
-                            c.confidence >= 0.7
-                              ? "bg-teal-50 text-teal-700 border-teal-200"
-                              : c.confidence >= 0.4
-                              ? "bg-blue-50 text-blue-700 border-blue-200"
-                              : "bg-amber-50 text-amber-700 border-amber-200"
-                          )}
-                        >
+                        <span className="font-medium text-slate-700 text-xs tabular-nums">
                           {(c.confidence * 100).toFixed(0)}%
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-slate-600">
+                    <td className="py-3 px-4 text-right text-slate-600 tabular-nums">
                       {isUnassessed ? "—" : `${(c.coverage * 100).toFixed(0)}%`}
                     </td>
-                    <td className="py-3 px-4 text-slate-600">
-                      {c.evidence_count} items
+                    <td className="py-3 px-4 text-right text-slate-600 tabular-nums">
+                      {c.evidence_count}
                     </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={cn(
-                          "px-2 py-0.5 rounded text-[10px] uppercase tracking-wider border font-medium",
+                    <td className="py-3 px-4 text-left">
+                      <StatusChip
+                        status={
                           c.status === "ASSESSED"
-                            ? "bg-teal-50 text-teal-800 border-teal-200"
+                            ? "high"
                             : c.status === "CONFLICTING_EVIDENCE"
-                            ? "bg-amber-50 text-amber-800 border-amber-200"
-                            : "bg-slate-100 text-slate-600 border-slate-200"
-                        )}
+                            ? "med"
+                            : "unassessed"
+                        }
+                        size="sm"
                       >
-                        {c.status.replace("_", " ")}
-                      </span>
+                        {c.status === "ASSESSED"
+                          ? "Assessed"
+                          : c.status === "CONFLICTING_EVIDENCE"
+                          ? "Conflicting"
+                          : "Unassessed"}
+                      </StatusChip>
                     </td>
                   </tr>
                 );

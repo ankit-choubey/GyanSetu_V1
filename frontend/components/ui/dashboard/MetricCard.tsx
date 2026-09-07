@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/cn";
-import { ShieldAlert, ShieldCheck, HelpCircle, TrendingUp } from "lucide-react";
+import { StatusChip } from "@/components/ui/dashboard/primitives";
 
 export interface MetricCardProps {
   label: string;
@@ -28,39 +28,37 @@ export const MetricCard = React.memo(function MetricCard({
 }: MetricCardProps) {
   const isUnassessed = value === null || value === undefined;
 
-  // Determine styling according to the 4 states:
-  // - High (>= 0.7): teal
-  // - Med (0.4-0.7): amber
-  // - Low (< 0.4): coral
-  // - null: neutral gray
-  let statusColor = "border-slate-200 bg-white text-slate-900";
-  let badgeColor = "bg-slate-100 text-slate-700 border-slate-200";
+  // Status color applied to the number only (never tint the whole card)
+  let valueColor = "text-slate-900";
+  let statusIndicatorColor = "bg-slate-300";
 
   if (isUnassessed) {
-    statusColor = "border-slate-200 bg-slate-50/70 text-slate-500";
-    badgeColor = "bg-slate-200/80 text-slate-600 border-slate-300";
+    valueColor = "text-slate-400";
+    statusIndicatorColor = "bg-slate-300";
   } else if (typeof value === "number") {
     if (type === "mastery") {
       if (value >= 0.7) {
-        statusColor = "border-teal-200 bg-teal-50/30 text-teal-900";
-        badgeColor = "bg-teal-100 text-teal-800 border-teal-200";
+        valueColor = "text-teal-600";
+        statusIndicatorColor = "bg-teal-500";
       } else if (value >= 0.4) {
-        statusColor = "border-amber-200 bg-amber-50/30 text-amber-900";
-        badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
+        valueColor = "text-amber-600";
+        statusIndicatorColor = "bg-amber-500";
       } else {
-        statusColor = "border-rose-200 bg-rose-50/30 text-rose-900";
-        badgeColor = "bg-rose-100 text-rose-800 border-rose-200";
+        valueColor = "text-rose-600";
+        statusIndicatorColor = "bg-rose-500";
       }
+    } else if (type === "coverage" || type === "confidence") {
+      valueColor = "text-slate-900";
+      statusIndicatorColor = value >= 0.7 ? "bg-teal-500" : "bg-blue-500";
     }
   }
 
-  // Value rendering helper
+  // Format value strictly in Inter with tabular-nums
   const renderFormattedValue = () => {
     if (isUnassessed) {
       return (
-        <div className="flex items-center gap-1.5 text-slate-500">
-          <HelpCircle className="w-6 h-6 text-slate-400" />
-          <span className="font-heading text-3xl sm:text-4xl tracking-wide uppercase">
+        <div className="flex items-center gap-1.5">
+          <span className="font-body font-semibold text-2xl tracking-tight text-slate-400">
             Unassessed
           </span>
         </div>
@@ -69,97 +67,76 @@ export const MetricCard = React.memo(function MetricCard({
 
     if (displayValue) {
       return (
-        <span className="font-heading text-4xl sm:text-5xl tracking-tight">
+        <span className={cn("font-body font-bold text-3xl tabular-nums tracking-tight", valueColor)}>
           {displayValue}
         </span>
       );
     }
 
     if (typeof value === "number") {
-      if (type === "mastery" || type === "confidence") {
+      if (type === "mastery" || type === "confidence" || type === "coverage") {
         return (
-          <span className="font-heading text-4xl sm:text-5xl tracking-tight">
-            {(value * 100).toFixed(0)}%
-          </span>
-        );
-      }
-      if (type === "coverage") {
-        return (
-          <span className="font-heading text-4xl sm:text-5xl tracking-tight">
+          <span className={cn("font-body font-bold text-3xl tabular-nums tracking-tight", valueColor)}>
             {(value * 100).toFixed(0)}%
           </span>
         );
       }
       return (
-        <span className="font-heading text-4xl sm:text-5xl tracking-tight">
+        <span className={cn("font-body font-bold text-3xl tabular-nums tracking-tight", valueColor)}>
           {value}
         </span>
       );
     }
 
     return (
-      <span className="font-heading text-4xl sm:text-5xl tracking-tight">
+      <span className={cn("font-body font-bold text-3xl tabular-nums tracking-tight", valueColor)}>
         {value}
       </span>
     );
   };
 
+  // Clean sublabel: replace "Target: 80%" with "Role target: 80%"
+  const cleanSublabel = sublabel?.replace("Target: 80%", "Role target: 80%");
+
   return (
     <div
       className={cn(
-        "relative rounded-xl border p-5 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col justify-between min-h-[140px]",
-        statusColor,
+        "relative rounded-xl border border-slate-200 bg-white p-5 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col justify-between min-h-[140px]",
         className
       )}
     >
-      {/* Top Header: Label + Confidence / Status Chip */}
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-medium">
-          {label}
-        </span>
+      {/* Top Header: Eyebrow Label + Status Chip */}
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-1.5">
+          <span className={cn("w-2 h-2 rounded-full shrink-0", statusIndicatorColor)} />
+          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+            {label}
+          </span>
+        </div>
 
         {isUnassessed ? (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono border bg-slate-100 text-slate-600 border-slate-200">
-            No Evidence
-          </span>
+          <StatusChip status="unassessed" size="sm">
+            No evidence
+          </StatusChip>
         ) : confidence ? (
-          <span
-            className={cn(
-              "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono border font-medium",
-              confidence === "High"
-                ? "bg-teal-50 text-teal-700 border-teal-200"
-                : confidence === "Medium"
-                ? "bg-blue-50 text-blue-700 border-blue-200"
-                : "bg-amber-50 text-amber-700 border-amber-200"
-            )}
-            title={`Estimation Confidence: ${confidenceScore ? (confidenceScore * 100).toFixed(0) + "%" : confidence}`}
+          <StatusChip
+            status={confidence === "High" ? "high" : confidence === "Medium" ? "med" : "low"}
+            size="sm"
           >
-            {confidence === "High" ? (
-              <ShieldCheck className="w-3 h-3 text-teal-600" />
-            ) : (
-              <ShieldAlert className="w-3 h-3 text-amber-600" />
-            )}
             Conf: {confidence}
-          </span>
+          </StatusChip>
         ) : null}
       </div>
 
-      {/* Main Metric Value */}
-      <div className="my-1 flex items-baseline gap-2">
+      {/* Main Metric Figure (Inter font with tabular-nums) */}
+      <div className="my-1 flex items-baseline">
         {renderFormattedValue()}
       </div>
 
-      {/* Sublabel / Context */}
-      <div className="mt-2 text-xs text-slate-500 font-sans flex items-center justify-between">
-        <span>{sublabel || (isUnassessed ? "Baseline required" : "Measured state")}</span>
-        {!isUnassessed && typeof value === "number" && type === "mastery" && (
-          <span className="text-[11px] font-mono text-slate-400">
-            Target: 80%
-          </span>
-        )}
+      {/* Subtitle / Benchmark */}
+      <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-sans">
+        <span className="truncate">{cleanSublabel || "Baseline benchmark"}</span>
       </div>
     </div>
   );
 });
-
-MetricCard.displayName = "MetricCard";

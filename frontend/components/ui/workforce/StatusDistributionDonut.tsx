@@ -117,7 +117,7 @@ export const StatusDistributionDonut = React.memo(
 
           {/* Centered Total Label inside Donut Ring */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="font-heading text-2xl text-slate-900 leading-none">
+            <span className="font-body font-bold text-2xl tabular-nums text-slate-900 leading-none">
               {totalCount}
             </span>
             <span className="text-[10px] text-slate-400 font-medium uppercase mt-0.5">

@@ -106,23 +106,23 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
         className="w-full bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden"
       >
         <div className={cn(
-          "p-8 text-center border-b",
-          results.passed ? "bg-emerald-50 border-emerald-100" : "bg-rose-50 border-rose-100"
+          "p-8 text-center border-b font-sans",
+          results.passed ? "bg-teal-50/40 border-teal-100" : "bg-rose-50/40 border-rose-100"
         )}>
           {results.passed ? (
-            <Award className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+            <Award className="w-12 h-12 text-teal-600 mx-auto mb-3" />
           ) : (
-            <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
+            <AlertCircle className="w-12 h-12 text-rose-600 mx-auto mb-3" />
           )}
-          <h2 className="text-3xl font-heading text-slate-900 mb-2">
-            Score: {results.score}%
-          </h2>
-          <p className="text-sm font-medium text-slate-600 mb-6">
-            {results.passed ? "Excellent work! You passed this tier." : "You need 70% to pass this tier. Keep reviewing!"}
+          <div className="font-body font-bold text-4xl tabular-nums text-slate-900 mb-1">
+            {results.score}%
+          </div>
+          <p className="text-xs font-medium text-slate-600 mb-4">
+            {results.passed ? "Assessment passed (meets 70% threshold)." : "Passing score is 70%. Review the recommendations below."}
           </p>
           {results.next_tier_unlocked && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold border border-purple-200">
-              Unlock Celebration: Tier '{results.next_tier_unlocked}' is now available!
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-50 text-blue-800 rounded-full text-xs font-semibold border border-blue-200">
+              Next tier unlocked: Tier '{results.next_tier_unlocked}' is now available
             </div>
           )}
         </div>

@@ -35,7 +35,7 @@ export function ResultsPanel({
         <div className="flex items-center gap-2">
           <div
             className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center font-heading text-lg font-bold border",
+              "w-12 h-12 rounded-full flex items-center justify-center font-body text-base font-bold tabular-nums border",
               isPassed
                 ? "bg-teal-50 text-teal-700 border-teal-200"
                 : "bg-amber-50 text-amber-700 border-amber-200"
@@ -50,13 +50,13 @@ export function ResultsPanel({
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
           <span className="text-xs text-slate-500 block">Updated Mastery</span>
-          <span className="font-heading text-2xl text-slate-900 mt-1 block">
+          <span className="font-body font-bold text-2xl tabular-nums text-slate-900 mt-1 block">
             {Math.round(result.mastery * 100)}%
           </span>
         </div>
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
           <span className="text-xs text-slate-500 block">Belief Confidence</span>
-          <span className="font-heading text-2xl text-slate-900 mt-1 block">
+          <span className="font-body font-bold text-2xl tabular-nums text-slate-900 mt-1 block">
             {Math.round(result.confidence * 100)}%
           </span>
         </div>

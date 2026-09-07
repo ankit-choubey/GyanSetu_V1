@@ -15,9 +15,11 @@ import {
   Lock,
   LogOut,
   UploadCloud,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { SandboxBadge } from "@/components/ui/dashboard/SandboxBadge";
+import { StatusChip } from "@/components/ui/dashboard/primitives";
 import { DashboardProvider, useDashboard } from "@/components/ui/dashboard/DashboardContext";
 import { cn } from "@/lib/cn";
 
@@ -141,6 +143,30 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     .slice(0, 2)
     .toUpperCase();
 
+  const getPageInfo = () => {
+    if (pathname === "/dashboard") {
+      return { title: "Dashboard", subtitle: "Competency diagnostic overview & learning progress" };
+    }
+    if (pathname?.startsWith("/dashboard/ingestion")) {
+      return { title: "Data Ingestion", subtitle: "Multi-modal knowledge extraction & syllabus mapping" };
+    }
+    if (pathname?.startsWith("/dashboard/assessments")) {
+      return { title: "Assessments", subtitle: "Adaptive multi-tier diagnostic evaluations" };
+    }
+    if (pathname?.startsWith("/dashboard/tasks")) {
+      return { title: "Practical Tasks", subtitle: "Workplace assignments & evidence records" };
+    }
+    if (pathname?.startsWith("/dashboard/workforce")) {
+      return { title: "Workforce Analytics", subtitle: "Cadre readiness, competency distribution & gaps" };
+    }
+    if (pathname?.startsWith("/dashboard/map")) {
+      return { title: "Competency Map", subtitle: "Hierarchical capability framework & ontology" };
+    }
+    return { title: "GyanSetu", subtitle: "Competency Development Platform" };
+  };
+
+  const pageInfo = getPageInfo();
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex text-[#0F172A] font-body antialiased">
       {/* Mobile Sidebar Overlay */}
@@ -161,7 +187,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       >
         <div>
           {/* Brand Header */}
-          <div className={cn("p-4 border-b border-slate-200 flex items-center h-[61px]", isCollapsed ? "justify-center" : "justify-between")}>
+          <div className={cn("px-4 border-b border-slate-200 flex items-center h-[60px]", isCollapsed ? "justify-center" : "justify-between")}>
             <Link href="/" className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-2.5")}>
               <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-heading text-lg font-bold shadow-xs shrink-0">
                 GS
@@ -174,21 +200,40 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                 </div>
               )}
             </Link>
-            {!isCollapsed && (
+            {!isCollapsed ? (
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setIsCollapsed(true)}
+                  className="hidden lg:flex text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition"
+                  title="Collapse Sidebar"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  className="lg:hidden text-slate-500 hover:text-slate-800 p-1"
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-label="Close sidebar"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            ) : (
               <button
                 type="button"
-                className="lg:hidden text-slate-500 hover:text-slate-800 p-1"
-                onClick={() => setMobileMenuOpen(false)}
-                aria-label="Close sidebar"
+                onClick={() => setIsCollapsed(false)}
+                className="hidden lg:flex text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition mt-1"
+                title="Expand Sidebar"
               >
-                <X className="w-5 h-5" />
+                <ChevronsRight className="w-4 h-4" />
               </button>
             )}
           </div>
 
           {/* Navigation Links */}
           <div className="p-3 space-y-1">
-            <div className={cn("px-3 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider", isCollapsed ? "text-center" : "")}>
+            <div className={cn("px-3 py-1.5 text-[11px] font-medium text-slate-400 uppercase tracking-wider", isCollapsed ? "text-center" : "")}>
               {!isCollapsed ? "Navigation" : "Nav"}
             </div>
             {navItems.map((item) => {
@@ -217,14 +262,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                     {!isCollapsed && <span>{item.name}</span>}
                   </div>
                   {!isCollapsed && item.badge && (
-                    <span
-                      className={cn(
-                        "text-[9px] font-medium px-1.5 py-0.5 rounded",
-                        item.active
-                          ? "bg-blue-200/70 text-blue-800"
-                          : "bg-slate-100 text-slate-500"
-                      )}
-                    >
+                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
                       {item.badge}
                     </span>
                   )}
@@ -243,7 +281,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             className={cn("w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition", isCollapsed ? "justify-center" : "")}
             title={isCollapsed ? "Expand Sidebar" : undefined}
           >
-            <Menu className="w-3.5 h-3.5 shrink-0" />
+            {isCollapsed ? <ChevronsRight className="w-3.5 h-3.5 shrink-0" /> : <ChevronsLeft className="w-3.5 h-3.5 shrink-0" />}
             {!isCollapsed && <span>Collapse Sidebar</span>}
           </button>
           
@@ -273,7 +311,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       {/* MAIN VIEWPORT CONTAINER */}
       <div className={cn("flex-1 flex flex-col min-w-0 transition-all duration-300", isCollapsed ? "lg:pl-20" : "lg:pl-60")}>
         {/* TOP BAR */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-8 h-[60px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -287,70 +325,69 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="font-heading text-lg sm:text-xl tracking-normal text-slate-900">
-                  {user?.name || userName}
+                  {pageInfo.title}
                 </h1>
-                <SandboxBadge label="OFFICIAL SESSION" />
+                <StatusChip status="info" size="sm">
+                  Demo data
+                </StatusChip>
               </div>
               <p className="text-xs text-slate-500 hidden sm:block">
-                {user?.designation || roleName} • {user?.department || "MoSPI"}
+                {pageInfo.subtitle}
               </p>
             </div>
           </div>
 
-          {/* Persona Switcher (Demo Tool) & Logout */}
+          {/* Persona Switcher & User Avatar */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
-              <button
-                type="button"
-                onClick={() => setPersona("jso")}
-                className={cn(
-                  "px-2.5 py-1 rounded transition text-xs",
-                  persona === "jso"
-                    ? "bg-white text-blue-700 font-semibold shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                )}
-              >
-                Sample Learner
-              </button>
-              <button
-                type="button"
-                onClick={() => setPersona("new")}
-                className={cn(
-                  "px-2.5 py-1 rounded transition text-xs",
-                  persona === "new"
-                    ? "bg-white text-blue-700 font-semibold shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                )}
-              >
-                New Learner
-              </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-400 font-medium hidden md:inline">View as:</span>
+              <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setPersona("jso")}
+                  className={cn(
+                    "px-2.5 py-1 rounded-md transition text-xs",
+                    persona === "jso"
+                      ? "bg-white text-slate-900 font-semibold shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  )}
+                >
+                  Sample Learner
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPersona("new")}
+                  className={cn(
+                    "px-2.5 py-1 rounded-md transition text-xs",
+                    persona === "new"
+                      ? "bg-white text-slate-900 font-semibold shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  )}
+                >
+                  New Learner
+                </button>
+              </div>
             </div>
+
+            <div className="w-px h-6 bg-slate-200 hidden sm:block" />
 
             {/* User Avatar */}
             <div 
-              className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0 shadow-xs"
+              className="flex items-center gap-2.5 p-1 rounded-lg"
               title={`${user?.name || userName} (${user?.role || "Learner"})`}
             >
-              {(user?.name || userName)
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .slice(0, 2)
-                .toUpperCase()}
+              <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0">
+                {initials}
+              </div>
+              <div className="text-left hidden xl:block">
+                <div className="text-xs font-semibold text-slate-900 leading-tight truncate max-w-[120px]">
+                  {user?.name || userName}
+                </div>
+                <div className="text-[11px] text-slate-500 leading-tight truncate max-w-[120px]">
+                  {user?.role === "admin" ? "Administrator" : "Officer"}
+                </div>
+              </div>
             </div>
-
-            {/* Fast Logout Button */}
-            <button
-              type="button"
-              onClick={() => {
-                logout();
-                router.push("/login");
-              }}
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded-lg transition"
-              title="Sign Out"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
           </div>
         </header>
 

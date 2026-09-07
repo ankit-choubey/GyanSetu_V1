@@ -93,28 +93,28 @@ export const NodeDetailPanel = React.memo(function NodeDetailPanel({
         <div className="grid grid-cols-2 gap-3 mb-5">
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
             <span className="text-[11px] text-slate-500 block">Mastery Score</span>
-            <span className="font-heading text-2xl text-slate-900 mt-0.5 block">
+            <span className="font-body font-bold text-xl tabular-nums text-slate-900 mt-0.5 block">
               {isUnassessed ? "—" : `${Math.round(competency.mastery! * 100)}%`}
             </span>
           </div>
 
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
             <span className="text-[11px] text-slate-500 block">Belief Confidence</span>
-            <span className="font-heading text-2xl text-slate-900 mt-0.5 block">
+            <span className="font-body font-bold text-xl tabular-nums text-slate-900 mt-0.5 block">
               {isUnassessed ? "—" : `${Math.round(competency.confidence * 100)}%`}
             </span>
           </div>
 
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
             <span className="text-[11px] text-slate-500 block">Tested Coverage</span>
-            <span className="font-heading text-2xl text-slate-900 mt-0.5 block">
+            <span className="font-body font-bold text-xl tabular-nums text-slate-900 mt-0.5 block">
               {isUnassessed ? "—" : `${Math.round(competency.coverage * 100)}%`}
             </span>
           </div>
 
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
             <span className="text-[11px] text-slate-500 block">Evidence Records</span>
-            <span className="font-heading text-2xl text-slate-900 mt-0.5 block">
+            <span className="font-body font-bold text-xl tabular-nums text-slate-900 mt-0.5 block">
               {competency.evidence_count} items
             </span>
           </div>

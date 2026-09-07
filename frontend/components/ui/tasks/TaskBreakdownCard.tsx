@@ -69,7 +69,7 @@ export const TaskBreakdownCard = React.memo(function TaskBreakdownCard({
               <Clock className="w-3.5 h-3.5 text-blue-600" />
               <span>In Progress</span>
             </div>
-            <span className="font-heading text-2xl text-slate-900 block">
+            <span className="font-body font-bold text-2xl tabular-nums text-slate-900 block">
               {summary.active}
             </span>
           </div>
@@ -79,7 +79,7 @@ export const TaskBreakdownCard = React.memo(function TaskBreakdownCard({
               <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
               <span>Completed</span>
             </div>
-            <span className="font-heading text-2xl text-slate-900 block">
+            <span className="font-body font-bold text-2xl tabular-nums text-slate-900 block">
               {summary.completed}
             </span>
           </div>

@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ShieldAlert, CheckCircle2, Lock, ArrowRight, Loader2, PlayCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { AssessmentRunner } from "@/components/assessments/AssessmentRunner";
+import { StatusChip } from "@/components/ui/dashboard/primitives";
 
 type TierStatus = {
   id: "easy" | "medium" | "tough";
@@ -128,13 +129,21 @@ export default function AssessmentsPage() {
       initial="hidden"
       animate="visible"
     >
-      <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-        <h2 className="font-heading text-2xl text-slate-900 tracking-normal mb-1">
-          3-Tier Gated Assessment
-        </h2>
-        <p className="text-sm text-slate-500 font-sans">
-          Session ID: <span className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded text-slate-600">{sessionId}</span>
-        </p>
+      <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 className="font-heading text-xl sm:text-2xl text-slate-900 tracking-normal mb-0.5">
+            Assessment
+          </h2>
+          <p className="text-xs text-slate-500 font-sans">
+            Three levels, unlocked in order
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-slate-500 font-sans">
+          <span>Session:</span>
+          <span className="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-700 border border-slate-200 font-medium">
+            {sessionId}
+          </span>
+        </div>
       </motion.div>
 
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -148,37 +157,37 @@ export default function AssessmentsPage() {
                 : "bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300"
             )}
           >
-            {/* Top color strip */}
+            {/* Top color strip (thin 2px rule, semantic status only) */}
             <div className={cn(
-              "h-1.5 w-full",
-              tier.id === "easy" ? "bg-emerald-500" :
-              tier.id === "medium" ? "bg-amber-500" : "bg-purple-500"
+              "h-0.5 w-full",
+              tier.id === "easy" ? "bg-teal-500" :
+              tier.id === "medium" ? "bg-amber-500" : "bg-rose-500"
             )} />
 
             <div className="p-6 flex-1 flex flex-col">
               <div className="flex items-start justify-between mb-4">
-                <span className={cn(
-                  "inline-flex items-center px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border",
-                  tier.badgeColor
-                )}>
+                <StatusChip
+                  status={tier.id === "easy" ? "high" : tier.id === "medium" ? "med" : "low"}
+                  size="sm"
+                >
                   {tier.name}
-                </span>
-                {!tier.unlocked && <Lock className="w-5 h-5 text-slate-400" />}
-                {tier.completed && <CheckCircle2 className="w-5 h-5 text-teal-500" />}
+                </StatusChip>
+                {!tier.unlocked && <Lock className="w-4 h-4 text-slate-400" />}
+                {tier.completed && <CheckCircle2 className="w-4 h-4 text-teal-600" />}
               </div>
 
               <h3 className="font-heading text-lg text-slate-900 mb-2">{tier.difficultyText}</h3>
-              <p className="text-xs text-slate-600 flex-1 leading-relaxed">{tier.description}</p>
+              <p className="text-xs text-slate-600 flex-1 leading-relaxed font-sans">{tier.description}</p>
 
               {tier.completed && tier.score !== null && (
-                <div className="mt-4 py-2 border-t border-slate-100">
-                  <div className="flex justify-between items-center text-sm">
+                <div className="mt-4 py-2 border-t border-slate-100 font-sans">
+                  <div className="flex justify-between items-center text-xs">
                     <span className="text-slate-500 font-medium">Score:</span>
                     <span className={cn(
-                      "font-bold",
+                      "font-bold tabular-nums",
                       tier.score >= tier.passing_score ? "text-teal-600" : "text-rose-600"
                     )}>
-                      {tier.score}% {tier.score >= tier.passing_score ? "(Passed)" : "(Failed)"}
+                      {tier.score}% {tier.score >= tier.passing_score ? "(Passed)" : "(Needs review)"}
                     </span>
                   </div>
                 </div>

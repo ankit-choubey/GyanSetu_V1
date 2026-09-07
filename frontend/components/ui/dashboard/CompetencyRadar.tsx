@@ -178,8 +178,8 @@ export const CompetencyRadar = React.memo(function CompetencyRadar({
       {/* Footer info */}
       <div className="mt-2 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
         <span>Evidence Source: Assessments & Practice</span>
-        <span className="text-blue-600 font-medium">
-          {isAllUnassessed ? "Baseline Required" : "Primary Attention: Lowest Mastery Axis"}
+        <span className="text-slate-600 font-medium font-sans">
+          {isAllUnassessed ? "Baseline required" : "Focus: lowest-scoring area"}
         </span>
       </div>
     </div>
