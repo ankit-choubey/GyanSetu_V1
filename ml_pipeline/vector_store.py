@@ -56,8 +56,56 @@ class FastLocalEmbeddingFunction(EmbeddingFunction[Documents]):
     def __call__(self, input: Documents) -> Embeddings:
         return [self._embed_single(doc) for doc in input]
 
+    def name(self) -> str:
+        return f"fast_local_embedding_{self.dim}"
 
-_embedding_fn = FastLocalEmbeddingFunction()
+
+# Alias for explicit fallback semantics
+FallbackEmbeddingFunction = FastLocalEmbeddingFunction
+
+
+class SemanticEmbeddingFunction(EmbeddingFunction[Documents]):
+    """
+    Production dense semantic embedding function using all-MiniLM-L6-v2 (384-dimensional).
+    Produces normalized sentence embeddings capturing synonymy, phrase semantics,
+    and conceptual relationships with state-of-the-art retrieval accuracy.
+    """
+
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+        from sentence_transformers import SentenceTransformer
+
+        self.model_name = model_name
+        self._model = SentenceTransformer(model_name)
+
+    def __call__(self, input: Documents) -> Embeddings:
+        if not input:
+            return []
+        embeddings = self._model.encode(
+            list(input),
+            normalize_embeddings=True,
+            show_progress_bar=False,
+        )
+        return embeddings.tolist()
+
+    def name(self) -> str:
+        return f"sentence_transformer_{self.model_name}"
+
+
+def create_embedding_function(prefer_semantic: bool = True) -> EmbeddingFunction[Documents]:
+    """
+    Factory creating the highest-fidelity available embedding function.
+    Prefers SentenceTransformer (all-MiniLM-L6-v2), gracefully falling back to
+    FastLocalEmbeddingFunction if torch/sentence_transformers is absent or fails.
+    """
+    if prefer_semantic:
+        try:
+            return SemanticEmbeddingFunction()
+        except Exception:
+            pass
+    return FastLocalEmbeddingFunction()
+
+
+_embedding_fn: EmbeddingFunction[Documents] = create_embedding_function(prefer_semantic=True)
 _client = None
 
 
@@ -70,14 +118,58 @@ def get_chroma_client() -> chromadb.ClientAPI:
     return _client
 
 
-def get_or_create_collection(name: str = "gyansetu_materials"):
-    """Gets or creates a ChromaDB collection with our offline embedding function."""
+def get_or_create_collection(
+    name: str = "gyansetu_materials",
+    embedding_function: EmbeddingFunction[Documents] | None = None,
+):
+    """Gets or creates a ChromaDB collection with configured embedding function."""
     client = get_chroma_client()
+    fn = embedding_function or _embedding_fn
     return client.get_or_create_collection(
         name=name,
-        embedding_function=_embedding_fn,
+        embedding_function=fn,
         metadata={"hnsw:space": "cosine"},
     )
+
+
+def migrate_to_semantic(
+    collection_name: str = "gyansetu_materials",
+    new_chunks: list[dict[str, Any]] | None = None,
+) -> int:
+    """
+    Migrates a collection to semantic embeddings by deleting existing records
+    and re-indexing chunks with the SemanticEmbeddingFunction.
+    If new_chunks is None, existing documents in the collection are retrieved and re-indexed.
+    """
+    client = get_chroma_client()
+    chunks_to_reindex: list[dict[str, Any]] = []
+
+    if new_chunks is not None:
+        chunks_to_reindex = new_chunks
+    else:
+        try:
+            col = client.get_collection(name=collection_name)
+            existing = col.get(include=["documents", "metadatas"])
+            if existing and existing.get("ids"):
+                for i, cid in enumerate(existing["ids"]):
+                    doc = existing["documents"][i] if existing.get("documents") else ""
+                    meta = existing["metadatas"][i] if existing.get("metadatas") else {}
+                    chunks_to_reindex.append({
+                        "chunk_id": cid,
+                        "text": doc,
+                        "page_number": meta.get("page_number", 1),
+                        "chunk_type": meta.get("chunk_type", "text"),
+                        "char_length": meta.get("char_length", len(doc)),
+                        "source_id": meta.get("source_id", "migrated"),
+                        "competency": meta.get("competency"),
+                    })
+        except Exception:
+            chunks_to_reindex = []
+
+    clear_collection(collection_name)
+    if chunks_to_reindex:
+        return add_chunks(chunks_to_reindex, collection_name=collection_name)
+    return 0
 
 
 def add_chunks(chunks: list[dict[str, Any]], collection_name: str = "gyansetu_materials") -> int:

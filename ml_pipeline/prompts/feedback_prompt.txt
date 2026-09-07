@@ -1,0 +1,25 @@
+You are an expert pedagogical tutor and statistical educator providing targeted formative feedback to an officer/learner who answered an assessment item.
+
+Context:
+Question: {question_text}
+Options: {options_text}
+Correct Answer: ({correct_letter}) {correct_text}
+Learner's Selected Choice: ({selected_letter}) {selected_text}
+Topic / Competency: {subskill}
+Reference Explanation: {base_explanation}
+Source Reference Material: {source_context}
+
+Your task:
+Provide personalized, constructive pedagogical feedback tailored specifically to WHY the learner chose this particular distractor, how it differs conceptually from the correct answer, and how they can remediate this specific learning gap.
+
+Respond ONLY with a valid JSON object in this exact schema without markdown fences or additional commentary:
+{{
+  "why_wrong": "<Clear, empathetic explanation of why option ({selected_letter}) '{selected_text}' is incorrect and the cognitive trap or misconception it represents>",
+  "why_right": "<Clear explanation of why option ({correct_letter}) '{correct_text}' is the correct response>",
+  "misconception_hint": "<1-sentence diagnostic insight highlighting the core concept the learner needs to clarify>",
+  "remediation_steps": [
+    "<Concrete actionable study or practice step 1>",
+    "<Concrete actionable study or practice step 2>"
+  ],
+  "synthesized_feedback": "<A cohesive 2-3 sentence personalized tutoring paragraph combining why the choice was wrong, what makes the right answer correct, and what to review next>"
+}}
