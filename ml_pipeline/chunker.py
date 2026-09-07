@@ -92,7 +92,26 @@ def chunk_text(
             current_buf = []
             current_len = 0
 
-            sentences = [s.strip() for s in re.split(r"(?<=[.?!])\s+", para) if s.strip()]
+            raw_sentences = [s.strip() for s in re.split(r"(?<=[.?!])\s+", para) if s.strip()]
+            sentences: list[str] = []
+            for s in raw_sentences:
+                if len(s) > chunk_size:
+                    # Break unpunctuated overlong speech segment on word boundaries
+                    words = s.split()
+                    w_buf: list[str] = []
+                    w_len = 0
+                    for w in words:
+                        if w_len + len(w) + 1 > chunk_size and w_buf:
+                            sentences.append(" ".join(w_buf))
+                            w_buf = []
+                            w_len = 0
+                        w_buf.append(w)
+                        w_len += len(w) + 1
+                    if w_buf:
+                        sentences.append(" ".join(w_buf))
+                else:
+                    sentences.append(s)
+
             sub_buf: list[str] = []
             sub_len = 0
 

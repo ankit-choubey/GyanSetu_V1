@@ -521,6 +521,8 @@ def process_youtube_url(
         "file_path": canonical_url,
         "source_type": "youtube",
         "video_id": video_id,
+        "text": raw_text,
+        "transcript": raw_text,
         "raw_text": raw_text,
         "language": transcription.get("language") or language,
         "duration": transcription.get("duration"),
