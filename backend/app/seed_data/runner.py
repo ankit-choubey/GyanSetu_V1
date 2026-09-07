@@ -15,6 +15,7 @@ from app.models.intervention import Intervention
 from app.models.user import User
 from app.seed_data.competency_taxonomy import COMPETENCIES, DOMAIN_BY_COMPETENCY, ROLES
 from app.seed_data.question_bank_loader import load_question_bank
+from app.seed_data.scenario_bank_loader import load_scenario_bank
 from app.utils.security import hash_password
 
 
@@ -205,6 +206,7 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                 )
 
             load_question_bank(db)
+            load_scenario_bank(db)
 
             for competency in competency_map.values():
                 subskill = db.execute(

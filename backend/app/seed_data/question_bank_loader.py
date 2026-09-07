@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.models.assessment import AssessmentItem
 from app.models.competency import Competency, SubSkill
 from app.seed_data.question_bank import QUESTION_BANK, QuestionBankRecord
+from app.seed_data.taxonomy_resolver import resolve_taxonomy
 
 OPTION_LABELS = ("A", "B", "C", "D")
 VALID_DIFFICULTIES = frozenset({"easy", "medium", "hard"})
@@ -40,7 +41,7 @@ def load_question_bank(
     records = QUESTION_BANK if questions is None else questions
     for raw in records:
         record = _coerce_record(raw)
-        competency, subskill = _resolve_taxonomy(db, record.competency_name, record.subskill_name)
+        competency, subskill = resolve_taxonomy(db, record.competency_name, record.subskill_name)
         fingerprint = question_bank_fingerprint(
             record.competency_name,
             record.subskill_name,
@@ -151,25 +152,3 @@ def _validate_difficulty(value: Any) -> str:
 def _serialize_options(options: tuple[str, str, str, str]) -> str:
     labelled = [f"{label}. {text}" for label, text in zip(OPTION_LABELS, options)]
     return json.dumps(labelled)
-
-
-def _resolve_taxonomy(db: Session, competency_name: str, subskill_name: str) -> tuple[Competency, SubSkill]:
-    competency = db.execute(select(Competency).where(Competency.name == competency_name)).scalar_one_or_none()
-    if competency is None:
-        raise ValueError(f"Invalid competency reference: {competency_name}")
-
-    subskill = db.execute(
-        select(SubSkill).where(
-            SubSkill.competency_id == competency.id,
-            SubSkill.name == subskill_name,
-        )
-    ).scalar_one_or_none()
-    if subskill is not None:
-        return competency, subskill
-
-    elsewhere = db.execute(select(SubSkill.id).where(SubSkill.name == subskill_name)).first()
-    if elsewhere is not None:
-        raise ValueError(
-            f"Subskill '{subskill_name}' does not belong to competency '{competency_name}'"
-        )
-    raise ValueError(f"Invalid subskill reference: {subskill_name}")
