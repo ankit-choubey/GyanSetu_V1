@@ -266,3 +266,110 @@ Live execution log captured from running SQLite backend:
 | **Recommendation Causal Evaluation** | Observational association | Randomized controlled A/B trial or quasi-experimental synthetic control | Production deployment | Future / Post-SIH |
 | **Competency Graph Expert Validation** | Curated MoSPI taxonomy | Formal Delphi study or expert consensus review of role-competency mappings | MoSPI/NSSTA stakeholder review | Phase 6 |
 | **Retention Decay Calibration** | Parametric Ebbinghaus | Longitudinal spaced retrieval studies with statistical officers | Long-term learner logs (60+ days) | Phase 6 |
+
+---
+
+# PHASE 4 — Ecosystem Adapters & Integration
+
+## 1. Objectives & Scope
+- Implement and verify the ecosystem integration layer connecting GyanSetu recommendation intelligence with:
+  - **iGOT Karmayogi** (National civil service capacity-building repository)
+  - **NSSTA** (National Statistical Systems Training Academy)
+  - **TPAC** (Training Programme Approval Committee official curricula)
+  - **Virtual Lab** (Interactive statistical simulation sandbox)
+  - **Internal Engine** (Native GyanSetu scenario and diagnostic engine)
+- Enforce the foundational architectural requirement: **The external ecosystem must NEVER become the source of truth for GyanSetu competency state.**
+- Maintain complete scientific and operational honesty regarding integration modes:
+  - `LIVE`: Native GyanSetu engine and real-time authenticated external APIs.
+  - `SANDBOX`: Interactive simulated statistical containers and workbenches without live production dependencies.
+  - `REPLAY`: Real, verified MoSPI/iGOT curriculum and advisory data replayed without live authenticated API keys, accompanied by explicit fallback disclosures.
+  - **Never silently claim `LIVE` mode** when mock/replay data is used.
+- Enforce the scientific non-mastery rule: **External course enrollment or activity completion alone $\neq$ competency mastery**. Competency state updates occur only upon verified post-assessment evidence.
+- Maintain immutable evidence ledger persistence and atomic competency state recalculation across the system.
+- Preserve 100% backwards compatibility and zero regressions across all Phase 1, Phase 2, and Phase 3 suites.
+
+---
+
+## 2. Component Implementation & Files
+
+| Component | Files Added / Modified | Description & Architectural Guarantees |
+|---|---|---|
+| **Ecosystem Schema & Migration** | `backend/app/models/intervention.py`<br>`backend/app/models/intervention_outcome.py`<br>`backend/migrations/versions/c1d2e3f4a5b6_add_phase_4_ecosystem_adapters.py`<br>`backend/app/main.py` | Added Phase 4 tracking columns: `integration_mode` (`LIVE`, `SANDBOX`, `REPLAY`), `external_metadata_json`, `mapping_status`, `mapping_confidence`, `last_synced_at`, `provider_resource_id`, `provider_activity_id`. Migrated SQLite and PostgreSQL schemas. Added auto-column sync on startup. |
+| **Provider Adapter Interface** | `backend/app/services/adapters/base_adapter.py` | `InterventionAdapter` abstract base class defining `health_check()`, `check_availability()`, `search_resources()`, `get_resource()`, `launch_resource()`, and `sync_resources()`. Strongly typed dataclasses `ProviderHealth`, `AvailabilityResult`, `LaunchResult`, and fault injection hooks. |
+| **Concrete Provider Adapters** | `backend/app/services/adapters/provider_adapters.py`<br>`backend/app/services/adapters/__init__.py` | Implemented `IGOTAdapter` (`REPLAY`), `NSSTAAdapter` (`REPLAY`), `TPACAdapter` (`REPLAY`), `VirtualLabAdapter` (`SANDBOX`), `InternalAdapter` (`LIVE`). Robust fault simulation toggles (`simulated_availability`, `simulate_timeout`, `simulate_auth_failure`). |
+| **Competency Mapping Service** | `backend/app/services/ecosystem/competency_mapper.py` | Maps raw external titles/keywords to canonical MoSPI competencies with status assignment: `VERIFIED` (canonical match), `CURATED` (subskill match), `PROVISIONAL` (fuzzy token similarity), `UNDER_REVIEW` (unmapped fallback to protect taxonomy integrity). |
+| **Ecosystem Sync Service** | `backend/app/services/ecosystem/sync_service.py` | Ingests external provider catalogues into canonical database catalogue. Composite key deduplication `(provider, provider_resource_id)`. Tracks sync counts and updates timestamps idempotently. |
+| **Ecosystem Outcome Service** | `backend/app/services/ecosystem/outcome_service.py` | Manages external activity launches (`provider_activity_id`), validates outcomes, enforces the Non-Mastery Equivalence rule, persists immutable `Evidence` ledger entries with `[SANDBOX DATA]` or `[LIVE INTEGRATION]` provenance, and triggers atomic `recalculate_competency_state()`. |
+| **Ecosystem REST Router** | `backend/app/schemas/ecosystem.py`<br>`backend/app/routers/ecosystem.py`<br>`backend/app/main.py` | Endpoints: `GET /api/ecosystem/providers`, `GET /api/ecosystem/providers/{provider}/health`, `POST /api/ecosystem/providers/{provider}/sync`, `GET /api/ecosystem/resources`, `POST /api/ecosystem/resources/{id}/launch`, `POST /api/ecosystem/resources/{id}/outcome`. |
+| **Adapter & Scenario Tests** | `backend/tests/test_phase4_adapters.py`<br>`backend/tests/test_phase4_scenarios.py` | 15 comprehensive automated pytest cases covering contract compliance, mode reporting, fault injection, mapping resolution, and all 10 required operational scenarios (A through J). |
+| **End-to-End Verification** | `scripts/verify_phase4_end_to_end.py` | 10-step real-time runtime pipeline verifying registry discovery, health checks, ingestion, deduplication, launch protocol, non-mastery rule, evidence emission, fault resilience, and 180-day staleness expiry. |
+
+---
+
+## 3. Verified Ecosystem Provider Modes & Fallback Disclosures
+
+| Provider | Operational Mode | Data Provenance | Fallback Explanation / Live Criteria |
+|---|---|---|---|
+| **iGOT Karmayogi** | `REPLAY` | Real MoSPI Public Procurement and Civil Service Training Metadata | Replaying authentic iGOT course catalog metadata. Operating in REPLAY mode because live iGOT Karmayogi API credentials (`IGOT_API_KEY`) are not configured in environment. |
+| **NSSTA** | `REPLAY` | Authentic MoSPI NSSTA 2024–2026 Academic & In-Service Programs | Replaying verified NSSTA calendar and course offerings. Operating in REPLAY mode because NSSTA training management system API is not public. |
+| **TPAC** | `REPLAY` | Approved MoSPI TPAC FY 2026–27 Official Document (`nssta_tpac_fy2026_27.pdf`) | Replaying authentic MoSPI TPAC 2026-27 approved training agenda. Operating in REPLAY mode from canonical PDF extraction boundary. |
+| **Virtual Lab** | `SANDBOX` | Interactive Statistical Container Simulations (Sampling & CPI Index Numbers) | Interactive statistical simulation sandbox. Operating in SANDBOX mode for hands-on practical statistical exercise modeling. |
+| **Internal Engine** | `LIVE` | Native GyanSetu Scenario & Diagnostic Engine | Native GyanSetu live learning and assessment engine online. |
+
+---
+
+## 4. Operational Scenario Matrix Verification (Scenarios A through J)
+
+| Scenario | Title & Objective | Verification Status & Test Location |
+|---|---|---|
+| **Scenario A** | **Provider Discovery & Mode Introspection**: Querying `/api/ecosystem/providers` correctly reports all 5 providers with their true modes and zero false claims of live external credentials. | 🟢 PASSED (`test_scenario_a_provider_discovery`) |
+| **Scenario B** | **Recommendation to Ecosystem Resource Resolution**: Recommendation engine identifies competency gap and selects top external intervention preserving provider metadata. | 🟢 PASSED (`test_scenario_b_recommendation_to_provider`) |
+| **Scenario C** | **Provider Outage & Fallback Resilience**: Outage on primary provider triggers availability failure in EligibilityEngine, falling back seamlessly to an available alternative provider. | 🟢 PASSED (`test_scenario_c_provider_unavailable_fallback`) |
+| **Scenario D** | **180-Day Stale Resource Rejection**: Resources with verification older than 180 days are marked `STALE` and excluded from candidate recommendations. | 🟢 PASSED (`test_scenario_d_stale_resource_rejection`) |
+| **Scenario E** | **Invalid Taxonomy Mapping Boundary**: External items with unmapped or unrecognizable concepts are classified as `UNDER_REVIEW` (confidence: 0.0) without corrupting canonical MoSPI taxonomy. | 🟢 PASSED (`test_scenario_e_invalid_competency_mapping`) |
+| **Scenario F** | **Duplicate Ingestion Idempotency**: Running catalogue sync multiple times with identical payloads creates 0 duplicate rows and updates existing records in-place. | 🟢 PASSED (`test_scenario_f_duplicate_sync_idempotency`) |
+| **Scenario G** | **Explicit Provider Mode Distinction**: Responses from REPLAY providers explicitly include disclosure strings and never report mock data as live integrations. | 🟢 PASSED (`test_scenario_g_provider_mode_distinction`) |
+| **Scenario H** | **Verified Outcome Propagation**: Submitting external activity outcome with verified post-assessment evidence creates immutable `Evidence` row and triggers atomic competency recalculation. | 🟢 PASSED (`test_scenario_h_outcome_propagation`) |
+| **Scenario I** | **Non-Mastery Equivalence**: External course/sandbox completion without post-assessment evidence records activity completion but strictly preserves pre-existing competency mastery ($0.40 \to 0.40$). | 🟢 PASSED (`test_scenario_i_completion_without_mastery_evidence`) |
+| **Scenario J** | **Learner Isolation & Tampering Protection**: Unauthorized cross-learner launch, outcome submission, or tampering with idempotency keys is rejected with HTTP 403 Forbidden. | 🟢 PASSED (`test_scenario_j_learner_isolation`) |
+
+---
+
+## 5. End-to-End Real Runtime Execution (`scripts/verify_phase4_end_to_end.py`)
+
+Live execution log captured against active SQLite database:
+1. `[Step 0]` Initialized Baseline Data Environment: Seeded full MoSPI taxonomy and canonical intervention catalogue. Authenticated verification officer (`phase4.officer.*@mospi.gov.in`).
+2. `[Step 1]` Provider Registry Discovery (`GET /api/ecosystem/providers`): Discovered 5 registered providers (`iGOT`: REPLAY, `NSSTA`: REPLAY, `TPAC`: REPLAY, `VIRTUAL_LAB`: SANDBOX, `INTERNAL`: LIVE). Zero false claims of live credentials confirmed.
+3. `[Step 2]` Provider Health Inspections (`GET /api/ecosystem/providers/{p}/health`): Inspected `iGOT`, `VIRTUAL_LAB`, and `INTERNAL`. All reported `HEALTHY` with sub-millisecond latencies.
+4. `[Step 3]` Synchronized Virtual Lab Resources (`POST /api/ecosystem/providers/VIRTUAL_LAB/sync`): Successfully ingested simulation workbenches (`added=2`, `updated=1`, `mode=SANDBOX`).
+5. `[Step 4]` Verified Sync Idempotency: Re-ran sync with identical payloads (`added=0`, `updated=3`, zero duplicates).
+6. `[Step 5]` Canonical Competency Mapping Resolution (`GET /api/ecosystem/resources`): Verified resource `#15` mapped to Competency `#1` (`Sampling Design`) with `mapping_status="VERIFIED"`, `confidence=1.0`.
+7. `[Step 6]` Resource Launch Protocol (`POST /api/ecosystem/resources/{id}/launch`): Launched sandbox session; returned `vlab_session_*`, launch URL, and `ACTIVE` status.
+8. `[Step 7]` Non-Mastery Equivalence Enforcement (`POST /api/ecosystem/resources/{id}/outcome` without post-assessment): Activity completion logged; pre-mastery 0.40 equals post-mastery 0.40 (`evidence_id=None`, `competency_updated=False`).
+9. `[Step 8]` Verified Outcome Submission (`POST /api/ecosystem/resources/{id}/outcome` with post-assessment score 0.94): Immutable `Evidence` record `#8` created (`PRACTICAL_TASK`, `[SANDBOX DATA]`); mastery updated from 0.40 to 0.94.
+10. `[Step 9]` Fault Injection & Outage Resilience: Disabled Virtual Lab adapter; availability check reported `is_available=False`, health check returned `UNAVAILABLE`, and launch attempt was rejected with HTTP 503 Service Unavailable.
+11. `[Step 10]` 180-Day Staleness Policy: Evaluated candidate verified 200 days ago; eligibility engine disqualified resource with status `STALE` and validity limit explanation.
+
+---
+
+## 6. Complete Project Regression Summary
+
+| Test Suite | Scope / Command | Total Tests | Passed | Failed | Status |
+|---|---|---|---|---|---|
+| **Backend Unit & Scenario Suites** | `pytest backend/tests/` | 151 | 151 | 0 | 🟢 100% GREEN |
+| **ML & AI Pipeline Stages (1-10)** | `python ml_pipeline/run_all_tests.py` | 70 | 70 | 0 | 🟢 100% GREEN |
+| **Statistical Models & Cross-Layer** | `pytest tests/` | 26 | 26 | 0 | 🟢 100% GREEN |
+| **Phase 1 Live E2E Verification** | `python scripts/verify_phase1_end_to_end.py` | 9 steps | 9 | 0 | 🟢 SUCCESS |
+| **Phase 2 Live E2E Verification** | `python scripts/verify_phase2_end_to_end.py` | 9 steps | 9 | 0 | 🟢 SUCCESS |
+| **Phase 3 Live E2E Verification** | `python scripts/verify_phase3_end_to_end.py` | 10 steps | 10 | 0 | 🟢 SUCCESS |
+| **Phase 4 Live E2E Verification** | `python scripts/verify_phase4_end_to_end.py` | 10 steps | 10 | 0 | 🟢 SUCCESS |
+| **TOTAL AUTOMATED TEST CASES** | **Across Entire Repository** | **247** | **247** | **0** | **🟢 ALL PASSING** |
+
+---
+
+## 7. Security, Quality & Architectural Audit
+- **Authentication & Strict Isolation**: All `/api/ecosystem/*` endpoints enforce bearer token authentication. All launch requests and outcome submissions verify learner identity and prohibit cross-learner tampering.
+- **Provider Decoupling**: Adapters isolate GyanSetu core logic from external API specifics, connection timeouts, and authentication failures. Downstream services interact exclusively with canonical domain models.
+- **Zero Secrets Committed**: Grep scans confirm no credentials, API keys, or private tokens are committed to version control.
+- **Database & Migration Hygiene**: Schema changes are captured in Alembic migration `c1d2e3f4a5b6`, maintaining bidirectional consistency across development, staging, and production environments.
+

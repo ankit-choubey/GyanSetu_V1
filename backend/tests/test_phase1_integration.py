@@ -71,10 +71,6 @@ def setup_database():
         load_canonical_question_bank(db)
         db.commit()
     yield
-    SQLModel.metadata.drop_all(engine)
-    engine.dispose()
-    if _db_path.exists():
-        _db_path.unlink(missing_ok=True)
 
 
 

@@ -31,5 +31,9 @@ class CompetencyState(SQLModel, table=True):
     def uncertainty(self) -> float:
         return round(max(0.0, 1.0 - (self.confidence or 0.0)), 2)
 
+    @property
+    def estimated_mastery(self) -> float | None:
+        return self.mastery
+
     user: Optional["User"] = Relationship(back_populates="competency_states")
     competency: Optional["Competency"] = Relationship(back_populates="competency_states")

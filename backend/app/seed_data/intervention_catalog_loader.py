@@ -51,6 +51,10 @@ def seed_intervention_catalog(db: Session) -> dict[str, int]:
         description: str | None = None,
         priority: int = 1,
         last_verified_at: datetime | None = None,
+        integration_mode: str = "REPLAY",
+        mapping_status: str = "CURATED",
+        mapping_confidence: float = 1.0,
+        external_metadata_json: str | None = None,
     ) -> Intervention:
         existing = db.execute(
             select(Intervention).where(Intervention.source_id == source_id)
@@ -82,6 +86,10 @@ def seed_intervention_catalog(db: Session) -> dict[str, int]:
             existing.description = description
             existing.priority = priority
             existing.last_verified_at = last_verified_at
+            existing.integration_mode = integration_mode
+            existing.mapping_status = mapping_status
+            existing.mapping_confidence = mapping_confidence
+            existing.external_metadata_json = external_metadata_json
             return existing
 
         new_item = Intervention(
@@ -104,6 +112,10 @@ def seed_intervention_catalog(db: Session) -> dict[str, int]:
             description=description,
             priority=priority,
             last_verified_at=last_verified_at,
+            integration_mode=integration_mode,
+            mapping_status=mapping_status,
+            mapping_confidence=mapping_confidence,
+            external_metadata_json=external_metadata_json,
         )
         db.add(new_item)
         return new_item
@@ -259,6 +271,8 @@ def seed_intervention_catalog(db: Session) -> dict[str, int]:
     ]
 
     for item in curated_items:
+        mode = "SANDBOX" if item["provider"] == "VIRTUAL_LAB" else "LIVE"
+        provenance = "[SANDBOX DATA]" if item["provider"] == "VIRTUAL_LAB" else "[CURATED]"
         get_or_create(
             source_id=item["source_id"],
             title=item["title"],
@@ -271,9 +285,12 @@ def seed_intervention_catalog(db: Session) -> dict[str, int]:
             difficulty=item["difficulty"],
             source="MoSPI Training Framework",
             source_url=None,
-            provenance="[CURATED]",
+            provenance=provenance,
             description=item["description"],
             priority=item["priority"],
+            integration_mode=mode,
+            mapping_status="VERIFIED",
+            mapping_confidence=1.0,
         )
         counts["curated"] += 1
 

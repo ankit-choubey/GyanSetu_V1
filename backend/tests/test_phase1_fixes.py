@@ -32,8 +32,8 @@ def database():
     SQLModel.metadata.create_all(engine)
     seed_data("test-seed-password")
     yield
-    SQLModel.metadata.drop_all(engine)
-    engine.dispose()
+
+
 
 
 @pytest.fixture

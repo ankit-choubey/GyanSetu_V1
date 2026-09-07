@@ -36,8 +36,16 @@ class Intervention(SQLModel, table=True):
     last_verified_at: datetime | None = Field(default=None)
     target_misconception_pattern: str | None = Field(default=None, max_length=255, index=True)
 
+    # Phase 4 Ecosystem Integration fields
+    integration_mode: str = Field(default="REPLAY", max_length=20, index=True)  # LIVE, SANDBOX, REPLAY
+    external_metadata_json: str | None = Field(default=None)
+    mapping_status: str = Field(default="CURATED", max_length=50, index=True)  # VERIFIED, CURATED, PROVISIONAL, UNDER_REVIEW
+    mapping_confidence: float = Field(default=1.0)
+    last_synced_at: datetime | None = Field(default=None)
+
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     user: Optional["User"] = Relationship(back_populates="interventions")
     competency: Optional["Competency"] = Relationship(back_populates="interventions")
     subskill: Optional["SubSkill"] = Relationship(back_populates="interventions")
+

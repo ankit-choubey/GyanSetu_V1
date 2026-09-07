@@ -75,12 +75,15 @@ class EligibilityEngine:
 
         # 3. Check Adapter / Provider Availability
         adapter = get_adapter_for_provider(intervention.provider)
-        if not adapter.check_availability(intervention.source_id):
+        avail_res = adapter.check_availability(intervention.source_id)
+        is_avail = avail_res if isinstance(avail_res, bool) else getattr(avail_res, "is_available", False)
+        if not is_avail:
+            reason = getattr(avail_res, "reason", None) or f"External provider adapter '{intervention.provider}' reported resource or service unavailable."
             return EligibilityDecision(
                 intervention_id=iid,
                 is_eligible=False,
                 status="UNAVAILABLE",
-                reason=f"External provider adapter '{intervention.provider}' reported resource or service unavailable.",
+                reason=reason,
             )
 
         # 4. Check Prior Completion (Avoid repeating already mastered interventions unless practice)

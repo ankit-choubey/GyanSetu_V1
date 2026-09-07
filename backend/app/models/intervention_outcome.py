@@ -25,6 +25,14 @@ class InterventionOutcome(SQLModel, table=True):
     pre_competency_mastery: float | None = Field(default=None)
     post_competency_mastery: float | None = Field(default=None)
 
+    # Phase 4 Ecosystem Provider Tracking
+    provider: str | None = Field(default=None, max_length=100, index=True)
+    provider_resource_id: str | None = Field(default=None, max_length=100, index=True)
+    provider_activity_id: str | None = Field(default=None, max_length=128, index=True)
+    integration_mode: str | None = Field(default=None, max_length=20)
+    started_at: datetime | None = Field(default=None)
+    completed_at: datetime | None = Field(default=None)
+
     idempotency_key: str | None = Field(default=None, unique=True, index=True, max_length=128)
     notes: str | None = Field(default=None, max_length=500)
 
