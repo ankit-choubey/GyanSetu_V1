@@ -7,6 +7,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useDashboard } from "@/components/ui/dashboard/DashboardContext";
 import Link from "next/link";
+import { ForgotPasswordModal } from "./ForgotPasswordModal";
+import { UserPlus, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export function LoginForm() {
@@ -23,28 +25,44 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [userNotFound, setUserNotFound] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null);
+    setUserNotFound(false);
 
-    setTimeout(() => {
-      login(role, email);
+    try {
+      const user = await login(email.trim(), password);
 
       try {
-        setPersona(role === "admin" ? "admin" : "jso");
+        setPersona(user.role === "admin" ? "admin" : "jso");
       } catch {
         // Dashboard context may not be mounted outside dashboard
       }
 
-      if (redirectTarget && (role === "admin" || !redirectTarget.includes("workforce"))) {
+      if (redirectTarget && (user.role === "admin" || !redirectTarget.includes("workforce"))) {
         router.push(redirectTarget);
-      } else if (role === "admin") {
+      } else if (user.role === "admin") {
         router.push("/dashboard/workforce");
       } else {
         router.push("/dashboard");
       }
-    }, 600);
+    } catch (err: any) {
+      const detail = err?.data?.detail || err.message || "Failed to sign in.";
+      if (detail.includes("USER_NOT_FOUND")) {
+        setUserNotFound(true);
+      } else if (detail.includes("INVALID_PASSWORD")) {
+        setErrorMessage("Incorrect password. Please verify your password or use forgot password below.");
+      } else {
+        setErrorMessage(detail);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
 
@@ -58,6 +76,34 @@ export function LoginForm() {
             <span className="font-semibold block mb-0.5">Sign In Required</span>
             Please sign in to access your GyanSetu Competency Dashboard.
           </div>
+        </div>
+      )}
+
+      {/* User Not Found Prompt Banner */}
+      {userNotFound && (
+        <div className="mb-5 p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col gap-2.5 text-xs text-amber-900 shadow-xs">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold block text-slate-900 mb-0.5">No Account Found</span>
+              This email is not registered in our database. Create a new official account to access your personal dashboard.
+            </div>
+          </div>
+          <Link
+            href={`/signup?email=${encodeURIComponent(email)}`}
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Create Account with this Email</span>
+          </Link>
+        </div>
+      )}
+
+      {/* General Error Banner */}
+      {errorMessage && (
+        <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 text-xs text-rose-800 shadow-xs">
+          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <span>{errorMessage}</span>
         </div>
       )}
 
@@ -148,7 +194,11 @@ export function LoginForm() {
               Remember me
             </span>
           </label>
-          <button type="button" className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
+          <button
+            type="button"
+            onClick={() => setIsForgotPasswordOpen(true)}
+            className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          >
             Forgot password?
           </button>
         </div>
@@ -171,7 +221,7 @@ export function LoginForm() {
               className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full"
             />
           ) : (
-            "Get Started"
+            "Sign In"
           )}
         </motion.button>
       </form>
@@ -185,6 +235,12 @@ export function LoginForm() {
           </Link>
         </p>
       </div>
+
+      <ForgotPasswordModal
+        isOpen={isForgotPasswordOpen}
+        onClose={() => setIsForgotPasswordOpen(false)}
+        initialEmail={email}
+      />
     </div>
   );
 }

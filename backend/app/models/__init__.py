@@ -43,6 +43,7 @@ from .content import (
 )
 from .audit import AuditEvent
 from .user import User
+from .password_reset import PasswordResetOTP
 
 __all__ = [
     "User",
@@ -90,6 +91,7 @@ __all__ = [
     "ContentStatus",
     "JobStatus",
     "AuditEvent",
+    "PasswordResetOTP",
 ]
 
 

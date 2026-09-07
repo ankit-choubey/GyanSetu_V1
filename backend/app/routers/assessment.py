@@ -194,9 +194,73 @@ def submit_assessment(
                 message="Assessment submitted successfully",
                 assessment_id=snapshots[0].id,
                 score=score,
+                evidence_id=attempt.id,
             )
     except HTTPException:
         raise
     except SQLAlchemyError as exc:
+        raise HTTPException(status_code=500, detail="Database error during submission") from exc
+
+
+class RunnerAssessmentSubmitRequest(BaseModel):
+    competency_id: int = 1
+    tier: str = "easy"
+    score: int
+    passed: bool
+    total_questions: int
+    correct_count: int
+
+
+@router.post("/assessment/runner-submit")
+def runner_submit_assessment(
+    payload: RunnerAssessmentSubmitRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    try:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Assessment submission failed; no changes were saved") from exc
+        with db.begin():
+            attempt = AssessmentAttempt(
+                user_id=user.id,
+                competency_id=payload.competency_id,
+                score=payload.score / 100.0,
+                completed_at=datetime.now(timezone.utc),
+            )
+            db.add(attempt)
+            db.flush()
+
+            db.add(
+                Evidence(
+                    user_id=user.id,
+                    competency_id=payload.competency_id,
+                    evidence_type=EvidenceType.KNOWLEDGE_ASSESSMENT,
+                    title=f"Assessment Tier {payload.tier.upper()} ({payload.score}%)",
+                    description=f"Completed {payload.total_questions}-question assessment. Score: {payload.score}% ({payload.correct_count}/{payload.total_questions} correct).",
+                    score=payload.score / 100.0,
+                    weight=1.0,
+                    evidence_metadata=json.dumps({
+                        "tier": payload.tier,
+                        "total_questions": payload.total_questions,
+                        "correct_count": payload.correct_count,
+                        "passed": payload.passed,
+                    }),
+                )
+            )
+            db.flush()
+
+            try:
+                recalculate_competency_state(db, user.id, payload.competency_id)
+            except Exception as orch_err:
+                print(f"[WARN] Failed recalculating competency state: {orch_err}")
+
+        return {
+            "status": "success",
+            "message": "Assessment and evidence recorded successfully",
+            "attempt_id": attempt.id,
+            "user_id": user.id,
+            "score": payload.score,
+            "passed": payload.passed,
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))

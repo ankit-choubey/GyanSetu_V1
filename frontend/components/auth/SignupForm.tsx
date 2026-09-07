@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { AlertCircle, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useDashboard } from "@/components/ui/dashboard/DashboardContext";
 import Link from "next/link";
@@ -11,46 +11,78 @@ import { cn } from "@/lib/cn";
 
 export function SignupForm() {
   const router = useRouter();
-  const { login } = useAuth();
+  const searchParams = useSearchParams();
+  const { register } = useAuth();
   const { setPersona } = useDashboard();
   
+  const initialEmail = searchParams.get("email") || "";
   const [role, setRole] = useState<"learner" | "admin">("learner");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setErrorMessage("Passwords do not match. Please re-enter.");
       return;
     }
 
     setIsLoading(true);
+    setErrorMessage(null);
 
-    setTimeout(() => {
-      login(role, email, name);
+    try {
+      const user = await register({
+        email: email.trim(),
+        full_name: name.trim(),
+        password,
+        role,
+      });
+
       try {
-        setPersona(role === "admin" ? "admin" : "new"); 
+        setPersona(role === "admin" ? "admin" : "jso");
       } catch {
         // Outside dashboard
       }
+
       if (role === "admin") {
         router.push("/dashboard/workforce");
       } else {
         router.push("/dashboard");
       }
-    }, 600);
+    } catch (err: any) {
+      const detail = err?.data?.detail || err.message || "Registration failed.";
+      if (detail.includes("USER_ALREADY_EXISTS")) {
+        setErrorMessage("An account is already registered with this email. Please sign in instead.");
+      } else {
+        setErrorMessage(detail);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
 
   return (
     <div className="w-full">
+      {errorMessage && (
+        <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 text-xs text-rose-800 shadow-xs">
+          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
+
       {/* Role Toggle */}
       <div className="flex p-1 bg-slate-100 rounded-lg mb-6">
         <button

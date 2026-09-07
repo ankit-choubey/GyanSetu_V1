@@ -152,7 +152,7 @@ export default function DashboardPage() {
             <Activity className="w-5 h-5 animate-pulse" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Live Synced
@@ -160,8 +160,15 @@ export default function DashboardPage() {
               <span className="text-xs font-bold text-slate-900">
                 {data.full_name || (persona === "jso" ? "Sample Learner" : "Sandbox Analyst")} • {data.role_name || "Statistical Officer"}
               </span>
+              <span className="text-xs text-slate-400 hidden md:inline">•</span>
+              <span className="text-[11px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded hidden sm:inline">
+                Evaluations: <strong className="text-slate-900">{data.evaluations_completed || 0}</strong>
+              </span>
+              <span className="text-[11px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded hidden sm:inline">
+                Evidence Logged: <strong className="text-slate-900">{data.total_evidence_records || 0}</strong>
+              </span>
             </div>
-            <p className="text-xs text-slate-500 font-sans mt-0.5">
+            <p className="text-xs text-slate-500 font-sans mt-1">
               {isAllUnassessed
                 ? "New officer profile — 0 of 7 competencies diagnosed. Initial baseline assessment ready."
                 : `Active diagnostic state — ${kpiSummary.assessed_count} of ${kpiSummary.total_count} competencies diagnosed via adaptive assessment & evidence fusion.`}

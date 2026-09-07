@@ -318,7 +318,7 @@ def get_content_candidates(
 class YouTubeIngestRequest(BaseModel):
     url: str
     difficulty: str = "medium"
-    num_questions: int = 5
+    num_questions: int = 15
 
 
 @router.post("/youtube-ingest")
@@ -439,7 +439,7 @@ def ingest_youtube_video(
 @router.post("/document-ingest")
 async def ingest_document(
     file: UploadFile = File(...),
-    num_questions: int = Query(default=4, ge=1, le=10),
+    num_questions: int = Query(default=15, ge=1, le=15),
     difficulty: str = Query(default="medium"),
     db: Session = Depends(get_db),
 ) -> dict:
@@ -500,7 +500,7 @@ async def ingest_document(
         mcqs = generate_mcqs(
             context_text,
             competency=doc_title,
-            num_questions=max(1, min(num_questions, 10)),
+            num_questions=max(1, min(num_questions, 15)),
             difficulty=difficulty,
         )
     except Exception as exc:

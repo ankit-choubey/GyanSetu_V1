@@ -151,6 +151,7 @@ def generate_mcqs(
         model=GROQ_MODEL_PRIMARY,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,
+        max_tokens=4096,
     )
     raw = response.choices[0].message.content
     parsed = parse_mcq_response(raw)

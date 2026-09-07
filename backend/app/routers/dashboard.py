@@ -1,12 +1,14 @@
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_current_user, get_db
+from app.models.assessment import AssessmentAttempt
 from app.models.competency import Competency, Role, RoleCompetency
 from app.models.competency_state import CompetencyState
+from app.models.evidence import Evidence
 from app.models.user import User
 from app.schemas.dashboard import DashboardResponse
 
@@ -56,10 +58,30 @@ def get_learner_dashboard(
             }
         competency_summaries.append(state_payload)
 
+    # Calculate real activity & work completed by this specific user
+    total_evidence = db.execute(
+        select(func.count(Evidence.id)).where(Evidence.user_id == user.id)
+    ).scalar_one() or 0
+
+    sum_comp_evidence = sum(c.get("evidence_count", 0) for c in competency_summaries)
+    total_evidence = max(total_evidence, sum_comp_evidence)
+
+    evaluations_completed = db.execute(
+        select(func.count(AssessmentAttempt.id)).where(
+            AssessmentAttempt.user_id == user.id,
+        )
+    ).scalar_one() or 0
+
+    is_admin = (role and "admin" in role.name.lower()) or user.role_id == 9
+
     return DashboardResponse(
         user_id=user.id,
         full_name=user.full_name,
-        role_name=role.name if role else None,
+        role_name=role.name if role else ("Administrator" if is_admin else "Statistical Officer"),
+        designation="Workforce Platform Administrator" if is_admin else "Statistical Officer",
+        department="DIID & Training Planning (MoSPI)" if is_admin else "National Accounts Division (NAD)",
         competencies=competency_summaries,
         total_competencies=len(competency_summaries),
+        evaluations_completed=evaluations_completed,
+        total_evidence_records=total_evidence,
     )

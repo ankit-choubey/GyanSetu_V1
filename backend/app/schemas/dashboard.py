@@ -15,5 +15,9 @@ class DashboardResponse(BaseModel):
     user_id: int
     full_name: str
     role_name: str | None = None
+    designation: str | None = "Statistical Officer"
+    department: str | None = "National Accounts Division (NAD)"
     competencies: list[CompetencySummary] = []
     total_competencies: int = 0
+    evaluations_completed: int = 0
+    total_evidence_records: int = 0

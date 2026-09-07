@@ -25,9 +25,9 @@ export function getCompetencyStateSync(
 }
 
 const DEMO_LEARNER_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzg4OTA1MjU0fQ.3vttz6_9enGhy2SXwMtPgzfpBFZL414SDNcrXO8FpI4";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzkxNDEzNjM2fQ.TaeM6oIGwPkeJWH2o4WjMnQnCXKyYKJ_lfw9P_7jYDE";
 const NEW_LEARNER_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZXhwIjoxNzg4OTA2MDM5fQ.I7K0poC0VsqwR-UAOOAD0XkO-7W9OTeMqR5JFMXa9Ls";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZXhwIjoxNzkxNDEzNjM2fQ.EZy7aK9oysirxKQDEy-mBJ2f7GH0n8AQ19c8P_wbh2k";
 
 export async function getCompetencyState(
   persona: "jso" | "new" | "admin" = "jso"
@@ -39,8 +39,14 @@ export async function getCompetencyState(
   }
 
   try {
-    const token = persona === "new" ? NEW_LEARNER_TOKEN : DEMO_LEARNER_TOKEN;
-    const res = await client.get<DashboardResponse>("/api/dashboard/learner", { token });
+    // If an authenticated user token exists in localStorage, client.get will use it automatically.
+    // Only pass explicit fallback token if not logged in.
+    let explicitToken: string | undefined = undefined;
+    if (typeof window !== "undefined" && !localStorage.getItem("gyansetu_auth_token")) {
+      explicitToken = persona === "new" ? NEW_LEARNER_TOKEN : DEMO_LEARNER_TOKEN;
+    }
+
+    const res = await client.get<DashboardResponse>("/api/dashboard/learner", { token: explicitToken });
     if (res && res.competencies && res.competencies.length > 0) {
       return res;
     }

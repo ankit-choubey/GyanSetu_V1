@@ -17,7 +17,7 @@ export class ApiError extends Error {
 }
 
 const DEFAULT_DEMO_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzg4OTA1MjU0fQ.3vttz6_9enGhy2SXwMtPgzfpBFZL414SDNcrXO8FpI4";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzkxNDEzNjM2fQ.TaeM6oIGwPkeJWH2o4WjMnQnCXKyYKJ_lfw9P_7jYDE";
 
 function getHeaders(customHeaders?: Record<string, string>, customToken?: string): Record<string, string> {
   const headers: Record<string, string> = {

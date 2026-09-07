@@ -2,7 +2,10 @@
 
 import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
 
+import { client } from "@/lib/api/client";
+
 export interface UserProfile {
+  id?: number;
   name: string;
   email: string;
   role: "learner" | "admin";
@@ -14,7 +17,13 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: UserProfile | null;
   isLoading: boolean;
-  login: (role: "learner" | "admin", email: string, name?: string) => UserProfile;
+  login: (email: string, password: string) => Promise<UserProfile>;
+  register: (payload: {
+    email: string;
+    full_name: string;
+    password: string;
+    role?: "learner" | "admin";
+  }) => Promise<UserProfile>;
   logout: () => void;
 }
 
@@ -22,79 +31,133 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
   isLoading: true,
-  login: () => ({
-    name: "Ramesh Kumar",
-    email: "officer.sharma@mospi.gov.in",
-    role: "learner",
-    designation: "Statistical Officer",
-    department: "National Accounts Division (MoSPI)",
-  }),
+  login: async () => {
+    throw new Error("AuthProvider not mounted");
+  },
+  register: async () => {
+    throw new Error("AuthProvider not mounted");
+  },
   logout: () => {},
 });
 
 const STORAGE_KEY = "gyansetu_auth_session";
 const TOKEN_KEY = "gyansetu_auth_token";
-const DEMO_LEARNER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzg4OTA1MjU0fQ.3vttz6_9enGhy2SXwMtPgzfpBFZL414SDNcrXO8FpI4";
-const DEMO_ADMIN_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzg4OTA1Mjg0fQ.hw-gi8MeOTWNqawFp3gqRCe6C8C6lPm0g_sWl1EpxrI";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Restore session on mount
+  // Restore and verify session on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed && parsed.email) {
-          setUser(parsed);
-          if (!localStorage.getItem(TOKEN_KEY)) {
-            localStorage.setItem(TOKEN_KEY, parsed.role === "admin" ? DEMO_ADMIN_TOKEN : DEMO_LEARNER_TOKEN);
+    async function restoreSession() {
+      try {
+        const storedToken = localStorage.getItem(TOKEN_KEY);
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored && storedToken) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.email) {
+            try {
+              const me = await client.get<any>("/api/auth/me", { token: storedToken });
+              const verifiedProfile: UserProfile = {
+                id: me.id,
+                name: me.full_name,
+                email: me.email,
+                role: me.role,
+                designation: me.designation,
+                department: me.department,
+              };
+              setUser(verifiedProfile);
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(verifiedProfile));
+              setIsLoading(false);
+              return;
+            } catch (err) {
+              console.warn("Stored session expired or invalid:", err);
+              localStorage.removeItem(STORAGE_KEY);
+              localStorage.removeItem(TOKEN_KEY);
+              setUser(null);
+            }
           }
-          setIsLoading(false);
-          return;
         }
+      } catch {
+        // Storage unavailable
+      } finally {
+        setIsLoading(false);
       }
-      // Provide default demo official session for seamless review
-      const defaultUser: UserProfile = {
-        name: "Ramesh Kumar",
-        email: "officer.sharma@mospi.gov.in",
-        role: "learner",
-        designation: "Statistical Officer",
-        department: "National Accounts Division (MoSPI)",
-      };
-      setUser(defaultUser);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUser));
-      localStorage.setItem(TOKEN_KEY, DEMO_LEARNER_TOKEN);
-    } catch {
-      // Ignore localStorage errors
-    } finally {
-      setIsLoading(false);
     }
+    restoreSession();
   }, []);
 
-  const login = (role: "learner" | "admin", email: string, customName?: string): UserProfile => {
-    const newUser: UserProfile = {
-      name:
-        customName ||
-        (role === "admin"
-          ? "System Administrator"
-          : email.split("@")[0].replace(".", " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Ramesh Kumar"),
-      email,
-      role,
-      designation: role === "admin" ? "Workforce Platform Administrator" : "Statistical Officer",
-      department: role === "admin" ? "DIID & Training Planning (MoSPI)" : "National Accounts Division (NAD)",
+  const login = async (email: string, password: string): Promise<UserProfile> => {
+    const res = await client.post<{
+      access_token: string;
+      token_type: string;
+      user: {
+        id: number;
+        email: string;
+        full_name: string;
+        role: "learner" | "admin";
+        designation: string;
+        department: string;
+      };
+    }>("/api/auth/login", { email, password });
+
+    const u = res.user;
+    const profile: UserProfile = {
+      id: u.id,
+      name: u.full_name,
+      email: u.email,
+      role: u.role,
+      designation: u.designation,
+      department: u.department,
     };
 
-    setUser(newUser);
+    setUser(profile);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
-      localStorage.setItem(TOKEN_KEY, role === "admin" ? DEMO_ADMIN_TOKEN : DEMO_LEARNER_TOKEN);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      localStorage.setItem(TOKEN_KEY, res.access_token);
     } catch {
       // Storage unavailable
     }
-    return newUser;
+    return profile;
+  };
+
+  const register = async (payload: {
+    email: string;
+    full_name: string;
+    password: string;
+    role?: "learner" | "admin";
+  }): Promise<UserProfile> => {
+    const res = await client.post<{
+      access_token: string;
+      token_type: string;
+      user: {
+        id: number;
+        email: string;
+        full_name: string;
+        role: "learner" | "admin";
+        designation: string;
+        department: string;
+      };
+    }>("/api/auth/register", payload);
+
+    const u = res.user;
+    const profile: UserProfile = {
+      id: u.id,
+      name: u.full_name,
+      email: u.email,
+      role: u.role,
+      designation: u.designation,
+      department: u.department,
+    };
+
+    setUser(profile);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      localStorage.setItem(TOKEN_KEY, res.access_token);
+    } catch {
+      // Storage unavailable
+    }
+    return profile;
   };
 
   const logout = () => {
@@ -113,6 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       isLoading,
       login,
+      register,
       logout,
     }),
     [user, isLoading]

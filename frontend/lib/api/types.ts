@@ -30,8 +30,12 @@ export interface DashboardResponse {
   user_id: number;
   full_name: string;
   role_name: string;
+  designation?: string;
+  department?: string;
   total_competencies: number;
   competencies: BackendCompetency[];
+  evaluations_completed?: number;
+  total_evidence_records?: number;
   next_best_action?: NextBestActionResponse | null;
 }
 
