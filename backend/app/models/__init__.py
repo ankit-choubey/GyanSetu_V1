@@ -2,6 +2,7 @@ from .assessment import AssessmentAttempt, AssessmentItem, AssessmentResponse
 from .assessment_signal import AssessmentSignal
 from .competency import Competency, CompetencyDomain, Role, RoleCompetency, SubSkill
 from .competency_state import CompetencyState
+from .content import ContentCompetencyMapping, ContentConcept, ContentItem
 from .evidence import Evidence, EvidenceType
 from .intervention import Intervention
 from .misconception import Misconception
@@ -24,6 +25,9 @@ __all__ = [
     "AssessmentSignal",
     "Intervention",
     "CompetencyState",
+    "ContentItem",
+    "ContentConcept",
+    "ContentCompetencyMapping",
     "Misconception",
     "MonitoringEvent",
     "ScenarioItem",

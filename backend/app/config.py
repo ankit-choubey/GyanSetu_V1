@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440
     cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    content_storage_dir: str = "./content_storage"
+    content_max_upload_bytes: int = 25 * 1024 * 1024
 
     model_config = SettingsConfigDict(
         env_file=".env",

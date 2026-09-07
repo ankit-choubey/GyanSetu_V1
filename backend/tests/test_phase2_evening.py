@@ -79,6 +79,10 @@ def test_chatbot_default_is_explicit_abstention():
 def test_document_upload_validates_format_and_preserves_partial_extraction():
     app.dependency_overrides[content_router.get_current_admin] = lambda: User(id=1, email="admin@example.com", full_name="Admin", password_hash="hashed")
     app.dependency_overrides[content_router.get_document_processor] = lambda: DocumentDouble()
+    engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    SQLModel.metadata.create_all(engine)
+    session = sessionmaker(autocommit=False, autoflush=False, bind=engine)()
+    app.dependency_overrides[content_router.get_db] = lambda: session
     try:
         client = TestClient(app)
         response = client.post(
@@ -92,8 +96,11 @@ def test_document_upload_validates_format_and_preserves_partial_extraction():
     finally:
         app.dependency_overrides.pop(content_router.get_current_admin, None)
         app.dependency_overrides.pop(content_router.get_document_processor, None)
+        app.dependency_overrides.pop(content_router.get_db, None)
+        session.close()
+        engine.dispose()
     assert response.status_code == 200
-    assert response.json()["status"] == "PARTIAL_EXTRACTION"
+    assert response.json()["status"] == "PARTIAL"
     assert response.json()["trusted"] is False
     assert response.json()["failed_pages"] == [2]
     assert unsupported.status_code == 400

@@ -58,15 +58,58 @@ class DocumentProcessResult:
     warning: str | None = None
 
 
+@dataclass(frozen=True)
+class ContentConceptResult:
+    concept: str
+    description: str
+    subskills: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class ContentMappingResult:
+    concept: str
+    competency: str
+    subskills: tuple[str, ...]
+    confidence: float
+    rationale: str
+
+
+@dataclass(frozen=True)
+class ContentProcessResult:
+    status: str
+    concepts: tuple[ContentConceptResult, ...] = ()
+    competency_mappings: tuple[ContentMappingResult, ...] = ()
+    source_reference: str | None = None
+    metadata: dict[str, object] | None = None
+    warnings: tuple[dict[str, str], ...] = ()
+    errors: tuple[dict[str, str], ...] = ()
+
+
 class DocumentIngestionProvider(Protocol):
-    def process(self, filename: str, content_type: str | None, content: bytes) -> DocumentProcessResult:
+    def process(
+        self,
+        filename: str,
+        content_type: str | None,
+        content: bytes,
+        *,
+        content_id: str | None = None,
+        storage_reference: str | None = None,
+    ) -> DocumentProcessResult | ContentProcessResult:
         ...
 
 
 class UnavailableDocumentIngestionProvider:
     """Explicit fallback until the ML/document component is available."""
 
-    def process(self, filename: str, content_type: str | None, content: bytes) -> DocumentProcessResult:
+    def process(
+        self,
+        filename: str,
+        content_type: str | None,
+        content: bytes,
+        *,
+        content_id: str | None = None,
+        storage_reference: str | None = None,
+    ) -> DocumentProcessResult | ContentProcessResult:
         return DocumentProcessResult(
             status="UNKNOWN_PROCESSING_ERROR",
             trusted=False,
