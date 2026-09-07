@@ -91,12 +91,12 @@ export const ActiveGapCard = React.memo(function ActiveGapCard({
     >
       <div>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-sans">
             Priority Attention
           </span>
           {isLowMastery && (
             <StatusChip status="low">
-              <AlertCircle className="w-3 h-3" />
+              <AlertCircle className="w-3.5 h-3.5" />
               Priority gap
             </StatusChip>
           )}
@@ -107,10 +107,10 @@ export const ActiveGapCard = React.memo(function ActiveGapCard({
           )}
         </div>
 
-        <h3 className="font-heading text-xl sm:text-2xl text-slate-900 mb-1">
+        <h3 className="font-heading text-2xl sm:text-3xl text-slate-900 mb-2 tracking-wide">
           {name}
         </h3>
-        <p className="text-xs text-slate-500 mb-4 font-sans">
+        <p className="text-sm text-slate-600 mb-5 leading-relaxed font-sans">
           {isUnassessed
             ? "No baseline evidence has been recorded for this competency."
             : isLowMastery
@@ -119,7 +119,7 @@ export const ActiveGapCard = React.memo(function ActiveGapCard({
         </p>
 
         {/* Flattened Stats Grid (No nested bordered sub-boxes) */}
-        <div className="grid grid-cols-2 gap-y-4 gap-x-6 py-4 my-2 border-y border-slate-100">
+        <div className="grid grid-cols-2 gap-y-5 gap-x-6 py-5 my-2 border-y border-slate-100">
           <StatCell
             label="Current Mastery"
             value={isUnassessed ? "—" : `${Math.round(m * 100)}%`}
@@ -142,25 +142,25 @@ export const ActiveGapCard = React.memo(function ActiveGapCard({
 
       {/* Action footer */}
       <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-        <span className="text-xs text-slate-500 font-sans">
+        <span className="text-sm text-slate-600 font-sans">
           {isUnassessed ? "Take first assessment" : "Role target: 80% benchmark"}
         </span>
         {handleAction ? (
           <button
             type="button"
             onClick={handleAction}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-xs"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm hover:shadow"
           >
             <span>Start Assessment</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-4 h-4" />
           </button>
         ) : (
           <Link
             href="/dashboard/assessments"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-xs"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm hover:shadow"
           >
             <span>Start Assessment</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-4 h-4" />
           </Link>
         )}
       </div>

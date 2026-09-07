@@ -18,54 +18,54 @@ export function MapStatCards({
   className,
 }: MapStatCardsProps) {
   return (
-    <div className={cn("grid grid-cols-1 sm:grid-cols-3 gap-4", className)}>
+    <div className={cn("grid grid-cols-1 sm:grid-cols-3 gap-5", className)}>
       {/* Total Competencies */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between min-h-[120px]">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between min-h-[145px]">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-sans">
             Total Nodes
           </span>
-          <GitFork className="w-4 h-4 text-blue-600" />
+          <GitFork className="w-5 h-5 text-blue-600" />
         </div>
         <div>
-          <div className="font-body font-bold text-3xl tabular-nums tracking-tight text-slate-900 mt-1">
+          <div className="font-body font-extrabold text-3xl sm:text-4xl tabular-nums tracking-tight text-slate-900 mt-2">
             {totalCount}
           </div>
-          <p className="text-xs text-slate-500 mt-1">Curriculum syllabus competencies</p>
+          <p className="text-sm text-slate-600 mt-1.5 font-sans">Curriculum syllabus competencies</p>
         </div>
       </div>
 
       {/* Assessed */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between min-h-[120px]">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between min-h-[145px]">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-sans">
             Assessed Nodes
           </span>
-          <CheckCircle2 className="w-4 h-4 text-teal-600" />
+          <CheckCircle2 className="w-5 h-5 text-teal-600" />
         </div>
         <div>
-          <div className="font-body font-bold text-3xl tabular-nums tracking-tight text-slate-900 mt-1">
+          <div className="font-body font-extrabold text-3xl sm:text-4xl tabular-nums tracking-tight text-slate-900 mt-2">
             {assessedCount} of {totalCount}
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-1.5 font-sans">
             {Math.round((assessedCount / (totalCount || 1)) * 100)}% mapped and verified
           </p>
         </div>
       </div>
 
       {/* Average Coverage */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between min-h-[120px]">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between min-h-[145px]">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-sans">
             Average Coverage
           </span>
-          <Layers className="w-4 h-4 text-amber-600" />
+          <Layers className="w-5 h-5 text-amber-600" />
         </div>
         <div>
-          <div className="font-body font-bold text-3xl tabular-nums tracking-tight text-slate-900 mt-1">
+          <div className="font-body font-extrabold text-3xl sm:text-4xl tabular-nums tracking-tight text-slate-900 mt-2">
             {Math.round(avgCoverage * 100)}%
           </div>
-          <p className="text-xs text-slate-500 mt-1">Overall tested syllabus breadth</p>
+          <p className="text-sm text-slate-600 mt-1.5 font-sans">Overall tested syllabus breadth</p>
         </div>
       </div>
     </div>

@@ -29,22 +29,22 @@ export function TaskListTable({ tasks, className }: TaskListTableProps) {
             Hands-on exercises and workplace problem-solving drills
           </p>
         </div>
-        <span className="text-xs text-slate-400 font-medium">
+        <span className="text-sm text-slate-500 font-medium">
           {tasks.length} total assignments
         </span>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs border-collapse">
+        <table className="w-full text-left text-sm border-collapse">
           <thead>
-            <tr className="border-b border-slate-200 text-slate-500 text-[11px] uppercase tracking-wider bg-slate-50/60 font-semibold">
-              <th className="py-3 px-4">Task Title</th>
-              <th className="py-3 px-4">Type</th>
-              <th className="py-3 px-4">Target Competency</th>
-              <th className="py-3 px-4">Priority</th>
-              <th className="py-3 px-4">Progress</th>
-              <th className="py-3 px-4">Status</th>
-              <th className="py-3 px-4 text-right">Action</th>
+            <tr className="border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider bg-slate-50/60 font-semibold">
+              <th className="py-3.5 px-4">Task Title</th>
+              <th className="py-3.5 px-4">Type</th>
+              <th className="py-3.5 px-4">Target Competency</th>
+              <th className="py-3.5 px-4">Priority</th>
+              <th className="py-3.5 px-4">Progress</th>
+              <th className="py-3.5 px-4">Status</th>
+              <th className="py-3.5 px-4 text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -55,26 +55,26 @@ export function TaskListTable({ tasks, className }: TaskListTableProps) {
                   key={task.id}
                   className="hover:bg-slate-50/80 transition"
                 >
-                  <td className="py-3 px-4">
-                    <div className="font-semibold text-slate-900 text-xs">
+                  <td className="py-3.5 px-4">
+                    <div className="font-semibold text-slate-900 text-sm">
                       {task.title}
                     </div>
-                    <div className="text-[11px] text-slate-400 mt-0.5 truncate max-w-xs">
+                    <div className="text-xs text-slate-500 mt-0.5 truncate max-w-xs">
                       Due: {new Date(task.due_date).toLocaleDateString()}
                     </div>
                   </td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  <td className="py-3.5 px-4">
+                    <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
                       {task.type}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-slate-700 font-medium">
+                  <td className="py-3.5 px-4 text-slate-700 font-medium text-sm">
                     {task.competency_name}
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-3.5 px-4">
                     <span
                       className={cn(
-                        "px-2 py-0.5 rounded text-[11px] font-medium border",
+                        "px-2.5 py-1 rounded-md text-xs font-semibold border",
                         task.priority === 1
                           ? "bg-rose-50 text-rose-700 border-rose-200"
                           : task.priority === 2
@@ -85,12 +85,12 @@ export function TaskListTable({ tasks, className }: TaskListTableProps) {
                       P{task.priority}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-3.5 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900 text-xs w-8">
+                      <span className="font-semibold text-slate-900 text-sm w-9 tabular-nums">
                         {task.progress_pct}%
                       </span>
-                      <div className="w-20 sm:w-28 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="w-20 sm:w-28 h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div
                           className={cn(
                             "h-full rounded-full transition-all duration-500",
@@ -105,10 +105,10 @@ export function TaskListTable({ tasks, className }: TaskListTableProps) {
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-3.5 px-4">
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border",
+                        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border",
                         task.status === "completed"
                           ? "bg-teal-50 text-teal-800 border-teal-200"
                           : task.status === "active"
@@ -117,20 +117,20 @@ export function TaskListTable({ tasks, className }: TaskListTableProps) {
                       )}
                     >
                       {task.status === "completed" ? (
-                        <CheckCircle2 className="w-3 h-3 text-teal-600" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
                       ) : task.status === "active" ? (
-                        <Clock className="w-3 h-3 text-blue-600" />
+                        <Clock className="w-3.5 h-3.5 text-blue-600" />
                       ) : (
-                        <Circle className="w-3 h-3 text-slate-400" />
+                        <Circle className="w-3.5 h-3.5 text-slate-400" />
                       )}
                       <span className="capitalize">{task.status.replace("_", " ")}</span>
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right">
+                  <td className="py-3.5 px-4 text-right">
                     <button
                       type="button"
                       onClick={() => setSelectedTask(task)}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition"
+                      className="p-2 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition"
                       title="View Task Details"
                       aria-label="View task details"
                     >

@@ -50,14 +50,14 @@ export function StatCell({ label, value, sublabel, status = "neutral", className
 
   return (
     <div className={cn("flex flex-col", className)}>
-      <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 mb-1">
+      <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 font-sans">
         {label}
       </span>
-      <div className={cn("font-body font-bold text-2xl sm:text-3xl tabular-nums tracking-tight", valueColor)}>
+      <div className={cn("font-body font-bold text-2xl sm:text-3xl tabular-nums tracking-tight leading-none", valueColor)}>
         {value}
       </div>
       {sublabel && (
-        <span className="text-xs text-slate-500 mt-1 font-sans">
+        <span className="text-sm text-slate-600 mt-1.5 font-sans">
           {sublabel}
         </span>
       )}
@@ -85,12 +85,12 @@ export function StatusChip({ status, size = "md", className, children }: StatusC
     info: "bg-blue-50 text-blue-700 border-blue-200",
   }[status];
 
-  const sizeStyles = size === "sm" ? "text-[10px] px-2 py-0.5" : "text-xs px-2.5 py-0.5";
+  const sizeStyles = size === "sm" ? "text-xs px-2.5 py-0.5" : "text-xs sm:text-sm px-3 py-1 font-medium";
 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 font-medium rounded-full border shrink-0",
+        "inline-flex items-center gap-1.5 font-medium rounded-full border shrink-0",
         statusStyles,
         sizeStyles,
         className
@@ -102,7 +102,7 @@ export function StatusChip({ status, size = "md", className, children }: StatusC
 }
 
 /**
- * 4. IconTile: Neutral 32x32 icon container (1 per card header max)
+ * 4. IconTile: Neutral 36x36 icon container (1 per card header max)
  */
 export interface IconTileProps {
   icon: React.ElementType;
@@ -114,12 +114,12 @@ export function IconTile({ icon: Icon, tone = "neutral", className }: IconTilePr
   return (
     <div
       className={cn(
-        "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
-        tone === "brand" ? "bg-blue-50 text-blue-600 border border-blue-100" : "bg-slate-100 text-slate-500",
+        "w-9 h-9 rounded-xl flex items-center justify-center shrink-0",
+        tone === "brand" ? "bg-blue-50 text-blue-600 border border-blue-100" : "bg-slate-100 text-slate-600",
         className
       )}
     >
-      <Icon className="w-4 h-4" />
+      <Icon className="w-5 h-5" />
     </div>
   );
 }
@@ -141,15 +141,15 @@ export function SectionHeader({ eyebrow, title, subtitle, action, className }: S
     <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between gap-3", className)}>
       <div>
         {eyebrow && (
-          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-0.5">
+          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">
             {eyebrow}
           </span>
         )}
-        <h2 className="font-heading text-lg sm:text-xl text-slate-900 tracking-normal leading-tight">
+        <h2 className="font-heading text-xl sm:text-2xl text-slate-900 tracking-wide leading-tight">
           {title}
         </h2>
         {subtitle && (
-          <p className="text-xs text-slate-500 font-sans mt-0.5 leading-relaxed">
+          <p className="text-sm text-slate-600 font-sans mt-1 leading-relaxed">
             {subtitle}
           </p>
         )}

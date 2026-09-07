@@ -256,34 +256,34 @@ export default function DashboardPage() {
       )}
 
       {/* ROW 4: COMPETENCY BREAKDOWN TABLE */}
-      <motion.section variants={itemVariants} className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
+      <motion.section variants={itemVariants} className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-5">
           <div>
-            <h3 className="font-heading text-xl sm:text-2xl tracking-normal text-slate-900">
+            <h3 className="font-heading text-2xl sm:text-3xl tracking-wide text-slate-900">
               Competency Breakdown
             </h3>
-            <p className="text-xs text-slate-500 font-sans">
+            <p className="text-sm text-slate-600 font-sans mt-0.5">
               Measured competency performance and evidence records
             </p>
           </div>
-          <span className="text-xs text-slate-400 font-medium">
+          <span className="text-sm text-slate-500 font-medium">
             {data.competencies.length} competencies
           </span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-xs border-collapse">
+          <table className="w-full text-sm border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 text-slate-400 text-[11px] uppercase tracking-wider bg-slate-50/60 font-medium">
-                <th className="py-3 px-4 text-left">Competency</th>
-                <th className="py-3 px-4 text-right">Mastery</th>
-                <th className="py-3 px-4 text-right">Confidence</th>
-                <th className="py-3 px-4 text-right">Coverage</th>
-                <th className="py-3 px-4 text-right">Evidence</th>
-                <th className="py-3 px-4 text-left">Status</th>
+              <tr className="border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider bg-slate-50/70 font-semibold">
+                <th className="py-3.5 px-4 text-left">Competency</th>
+                <th className="py-3.5 px-4 text-right">Mastery</th>
+                <th className="py-3.5 px-4 text-right">Confidence</th>
+                <th className="py-3.5 px-4 text-right">Coverage</th>
+                <th className="py-3.5 px-4 text-right">Evidence</th>
+                <th className="py-3.5 px-4 text-left">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-sans">
+            <tbody className="divide-y divide-slate-100 font-sans text-sm">
               {data.competencies.map((c) => {
                 const isUnassessed = c.mastery === null;
                 return (
@@ -292,22 +292,22 @@ export default function DashboardPage() {
                     onClick={() => handleSelectCompetency(c)}
                     className="hover:bg-slate-50/80 cursor-pointer transition"
                   >
-                    <td className="py-3 px-4">
-                      <div className="font-semibold text-slate-900 text-xs">
+                    <td className="py-4 px-4">
+                      <div className="font-semibold text-slate-900 text-sm">
                         {c.competency_name}
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-4 text-right">
                       {isUnassessed ? (
-                        <span className="inline-flex items-center gap-1 text-slate-400 text-xs">
+                        <span className="inline-flex items-center gap-1 text-slate-400 text-sm">
                           Unassessed
                         </span>
                       ) : (
-                        <div className="flex items-center justify-end gap-2">
-                          <span className="font-semibold text-slate-900 text-xs tabular-nums">
+                        <div className="flex items-center justify-end gap-2.5">
+                          <span className="font-semibold text-slate-900 text-sm tabular-nums">
                             {(c.mastery! * 100).toFixed(0)}%
                           </span>
-                          <div className="w-14 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
                             <div
                               className={cn(
                                 "h-full rounded-full",
@@ -323,22 +323,22 @@ export default function DashboardPage() {
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-4 text-right">
                       {isUnassessed ? (
-                        <span className="text-slate-400 text-xs">—</span>
+                        <span className="text-slate-400 text-sm">—</span>
                       ) : (
-                        <span className="font-medium text-slate-700 text-xs tabular-nums">
+                        <span className="font-medium text-slate-700 text-sm tabular-nums">
                           {(c.confidence * 100).toFixed(0)}%
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-600 tabular-nums">
+                    <td className="py-4 px-4 text-right text-slate-700 font-medium tabular-nums text-sm">
                       {isUnassessed ? "—" : `${(c.coverage * 100).toFixed(0)}%`}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-600 tabular-nums">
+                    <td className="py-4 px-4 text-right text-slate-700 font-medium tabular-nums text-sm">
                       {c.evidence_count}
                     </td>
-                    <td className="py-3 px-4 text-left">
+                    <td className="py-4 px-4 text-left">
                       <StatusChip
                         status={
                           c.status === "ASSESSED"

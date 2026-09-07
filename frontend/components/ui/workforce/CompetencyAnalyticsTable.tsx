@@ -80,15 +80,15 @@ export function CompetencyAnalyticsTable({
             Role curriculum benchmarks, learner participation, and calibration metrics
           </p>
         </div>
-        <span className="text-xs text-slate-400">
+        <span className="text-sm text-slate-500 font-medium">
           {competencies.length} registered competencies
         </span>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs border-collapse">
+        <table className="w-full text-left text-sm border-collapse">
           <thead>
-            <tr className="border-b border-slate-200 text-slate-500 text-[11px] uppercase tracking-wider bg-slate-50/60 font-semibold">
+            <tr className="border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider bg-slate-50/60 font-semibold">
               <th
                 className="py-3 px-4 cursor-pointer select-none"
                 onClick={() => handleSort("competency_name")}
@@ -171,24 +171,24 @@ export function CompetencyAnalyticsTable({
                   key={comp.competency_id}
                   className="hover:bg-slate-50/80 transition"
                 >
-                  <td className="py-3 px-4 font-semibold text-slate-900">
+                  <td className="py-3.5 px-4 font-semibold text-slate-900">
                     {comp.competency_name}
                   </td>
-                  <td className="py-3 px-4 text-slate-600">
+                  <td className="py-3.5 px-4 text-slate-600">
                     {comp.role_name}
                   </td>
-                  <td className="py-3 px-4 font-medium text-slate-900">
+                  <td className="py-3.5 px-4 font-semibold text-slate-900 tabular-nums">
                     {comp.learner_count}
                   </td>
-                  <td className="py-3 px-4 text-slate-600">
+                  <td className="py-3.5 px-4 text-slate-600 tabular-nums">
                     {comp.assessed_count} of {comp.learner_count}
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-3.5 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900 w-8">
+                      <span className="font-semibold text-slate-900 w-9 tabular-nums">
                         {masteryPct}%
                       </span>
-                      <div className="w-16 sm:w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="w-16 sm:w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div
                           className={cn(
                             "h-full rounded-full",
@@ -203,15 +203,15 @@ export function CompetencyAnalyticsTable({
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-teal-50 text-teal-700 border border-teal-200">
+                  <td className="py-3.5 px-4">
+                    <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 tabular-nums">
                       {Math.round(comp.average_confidence * 100)}%
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-slate-600">
+                  <td className="py-3.5 px-4 text-slate-600 tabular-nums">
                     {Math.round(comp.average_coverage * 100)}%
                   </td>
-                  <td className="py-3 px-4 text-right font-medium text-slate-900">
+                  <td className="py-3.5 px-4 text-right font-medium text-slate-900 tabular-nums">
                     {comp.total_evidence} items
                   </td>
                 </tr>

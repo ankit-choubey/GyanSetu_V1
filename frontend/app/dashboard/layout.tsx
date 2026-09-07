@@ -245,24 +245,24 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                   onClick={() => setMobileMenuOpen(false)}
                   title={isCollapsed ? item.name : undefined}
                   className={cn(
-                    "flex items-center px-3 py-2 rounded-lg text-xs font-medium transition relative",
+                    "flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium transition relative",
                     isCollapsed ? "justify-center" : "justify-between",
                     item.active
-                      ? "bg-blue-50 text-blue-700 font-semibold border-l-[3px] border-blue-600 pl-[9px]"
+                      ? "bg-blue-50 text-blue-700 font-semibold border-l-[3px] border-blue-600 pl-[11px]"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   )}
                 >
-                  <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-2.5")}>
+                  <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-3")}>
                     <Icon
                       className={cn(
-                        "w-4 h-4 shrink-0",
+                        "w-4.5 h-4.5 shrink-0",
                         item.active ? "text-blue-600" : "text-slate-400"
                       )}
                     />
                     {!isCollapsed && <span>{item.name}</span>}
                   </div>
                   {!isCollapsed && item.badge && (
-                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                       {item.badge}
                     </span>
                   )}
@@ -273,24 +273,24 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-3 border-t border-slate-200 bg-slate-50/50 space-y-1">
+        <div className="p-3.5 border-t border-slate-200 bg-slate-50/50 space-y-1.5">
           {/* Toggle Sidebar Button */}
           <button
             type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className={cn("w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition", isCollapsed ? "justify-center" : "")}
+            className={cn("w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition", isCollapsed ? "justify-center" : "")}
             title={isCollapsed ? "Expand Sidebar" : undefined}
           >
-            {isCollapsed ? <ChevronsRight className="w-3.5 h-3.5 shrink-0" /> : <ChevronsLeft className="w-3.5 h-3.5 shrink-0" />}
+            {isCollapsed ? <ChevronsRight className="w-4 h-4 shrink-0" /> : <ChevronsLeft className="w-4 h-4 shrink-0" />}
             {!isCollapsed && <span>Collapse Sidebar</span>}
           </button>
           
           <Link
             href="/"
-            className={cn("flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition", isCollapsed ? "justify-center" : "")}
+            className={cn("flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition", isCollapsed ? "justify-center" : "")}
             title={isCollapsed ? "Back to Home" : undefined}
           >
-            <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+            <ArrowLeft className="w-4 h-4 shrink-0" />
             {!isCollapsed && <span>Back to Home</span>}
           </Link>
           <button
@@ -299,10 +299,10 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
               logout();
               router.push("/login");
             }}
-            className={cn("w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition", isCollapsed ? "justify-center" : "text-left")}
+            className={cn("w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-sm font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition", isCollapsed ? "justify-center" : "text-left")}
             title={isCollapsed ? "Sign Out" : undefined}
           >
-            <LogOut className="w-3.5 h-3.5 shrink-0" />
+            <LogOut className="w-4 h-4 shrink-0" />
             {!isCollapsed && <span>Sign Out</span>}
           </button>
         </div>
@@ -311,11 +311,11 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       {/* MAIN VIEWPORT CONTAINER */}
       <div className={cn("flex-1 flex flex-col min-w-0 transition-all duration-300", isCollapsed ? "lg:pl-20" : "lg:pl-60")}>
         {/* TOP BAR */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-8 h-[60px] flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-8 h-[68px] flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
             <button
               type="button"
-              className="lg:hidden text-slate-600 hover:text-slate-900 p-1"
+              className="lg:hidden text-slate-600 hover:text-slate-900 p-1.5"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open sidebar"
             >
@@ -323,32 +323,32 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             </button>
 
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-heading text-lg sm:text-xl tracking-normal text-slate-900">
+              <div className="flex items-center gap-2.5">
+                <h1 className="font-heading text-xl sm:text-2xl tracking-wide text-slate-900">
                   {pageInfo.title}
                 </h1>
                 <StatusChip status="info" size="sm">
                   Demo data
                 </StatusChip>
               </div>
-              <p className="text-xs text-slate-500 hidden sm:block">
+              <p className="text-sm text-slate-600 hidden sm:block font-sans">
                 {pageInfo.subtitle}
               </p>
             </div>
           </div>
 
           {/* Persona Switcher & User Avatar */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400 font-medium hidden md:inline">View as:</span>
-              <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2.5">
+              <span className="text-sm text-slate-500 font-medium hidden md:inline font-sans">View as:</span>
+              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-sm">
                 <button
                   type="button"
                   onClick={() => setPersona("jso")}
                   className={cn(
-                    "px-2.5 py-1 rounded-md transition text-xs",
+                    "px-3 py-1.5 rounded-lg transition text-sm font-semibold",
                     persona === "jso"
-                      ? "bg-white text-slate-900 font-semibold shadow-xs"
+                      ? "bg-white text-slate-900 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   )}
                 >
@@ -358,9 +358,9 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                   type="button"
                   onClick={() => setPersona("new")}
                   className={cn(
-                    "px-2.5 py-1 rounded-md transition text-xs",
+                    "px-3 py-1.5 rounded-lg transition text-sm font-semibold",
                     persona === "new"
-                      ? "bg-white text-slate-900 font-semibold shadow-xs"
+                      ? "bg-white text-slate-900 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   )}
                 >

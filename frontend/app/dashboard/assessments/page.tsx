@@ -129,18 +129,18 @@ export default function AssessmentsPage() {
       initial="hidden"
       animate="visible"
     >
-      <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="font-heading text-xl sm:text-2xl text-slate-900 tracking-normal mb-0.5">
+          <h2 className="font-heading text-2xl sm:text-3xl text-slate-900 tracking-wide mb-1">
             Assessment
           </h2>
-          <p className="text-xs text-slate-500 font-sans">
+          <p className="text-sm text-slate-600 font-sans">
             Three levels, unlocked in order
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500 font-sans">
+        <div className="flex items-center gap-2.5 text-sm text-slate-600 font-sans">
           <span>Session:</span>
-          <span className="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-700 border border-slate-200 font-medium">
+          <span className="font-mono text-xs sm:text-sm bg-slate-100 px-2.5 py-1 rounded-md text-slate-800 border border-slate-200 font-semibold">
             {sessionId}
           </span>
         </div>
@@ -151,7 +151,7 @@ export default function AssessmentsPage() {
           <div 
             key={tier.id}
             className={cn(
-              "relative border rounded-xl overflow-hidden flex flex-col h-full transition-all duration-300",
+              "relative border rounded-2xl overflow-hidden flex flex-col justify-between min-h-[300px] transition-all duration-300",
               !tier.unlocked 
                 ? "bg-slate-50 border-slate-200 opacity-60" 
                 : "bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300"
@@ -159,7 +159,7 @@ export default function AssessmentsPage() {
           >
             {/* Top color strip (thin 2px rule, semantic status only) */}
             <div className={cn(
-              "h-0.5 w-full",
+              "h-1 w-full",
               tier.id === "easy" ? "bg-teal-500" :
               tier.id === "medium" ? "bg-amber-500" : "bg-rose-500"
             )} />
@@ -168,23 +168,23 @@ export default function AssessmentsPage() {
               <div className="flex items-start justify-between mb-4">
                 <StatusChip
                   status={tier.id === "easy" ? "high" : tier.id === "medium" ? "med" : "low"}
-                  size="sm"
+                  size="md"
                 >
                   {tier.name}
                 </StatusChip>
                 {!tier.unlocked && <Lock className="w-4 h-4 text-slate-400" />}
-                {tier.completed && <CheckCircle2 className="w-4 h-4 text-teal-600" />}
+                {tier.completed && <CheckCircle2 className="w-5 h-5 text-teal-600" />}
               </div>
 
-              <h3 className="font-heading text-lg text-slate-900 mb-2">{tier.difficultyText}</h3>
-              <p className="text-xs text-slate-600 flex-1 leading-relaxed font-sans">{tier.description}</p>
+              <h3 className="font-heading text-xl sm:text-2xl text-slate-900 mb-2.5 tracking-wide">{tier.difficultyText}</h3>
+              <p className="text-sm text-slate-600 flex-1 leading-relaxed font-sans mb-4">{tier.description}</p>
 
               {tier.completed && tier.score !== null && (
-                <div className="mt-4 py-2 border-t border-slate-100 font-sans">
-                  <div className="flex justify-between items-center text-xs">
+                <div className="mt-4 pt-3 border-t border-slate-100 font-sans">
+                  <div className="flex justify-between items-center text-sm">
                     <span className="text-slate-500 font-medium">Score:</span>
                     <span className={cn(
-                      "font-bold tabular-nums",
+                      "font-bold tabular-nums text-base",
                       tier.score >= tier.passing_score ? "text-teal-600" : "text-rose-600"
                     )}>
                       {tier.score}% {tier.score >= tier.passing_score ? "(Passed)" : "(Needs review)"}
@@ -194,24 +194,24 @@ export default function AssessmentsPage() {
               )}
             </div>
 
-            <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+            <div className="p-5 border-t border-slate-100 bg-slate-50/50">
               {tier.unlocked ? (
                 <button
                   onClick={() => handleStartTier(tier.id)}
                   className={cn(
-                    "w-full py-2.5 px-4 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm",
+                    "w-full py-3 px-5 rounded-xl text-sm font-bold flex items-center justify-center gap-2.5 transition shadow-sm",
                     tier.completed 
                       ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50" 
                       : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
                   )}
                 >
-                  {tier.completed ? "Retake Assessment" : "Start Assessment"}
+                  <span>{tier.completed ? "Retake Assessment" : "Start Assessment"}</span>
                   <PlayCircle className="w-4 h-4" />
                 </button>
               ) : (
-                <div className="w-full py-2.5 px-4 rounded-lg bg-slate-100 text-slate-400 text-xs font-medium text-center flex items-center justify-center gap-2 cursor-not-allowed" title={tier.unlock_requirement}>
-                  <Lock className="w-3.5 h-3.5" />
-                  Locked
+                <div className="w-full py-3 px-5 rounded-xl bg-slate-100 text-slate-400 text-sm font-semibold text-center flex items-center justify-center gap-2 cursor-not-allowed" title={tier.unlock_requirement}>
+                  <Lock className="w-4 h-4" />
+                  <span>Locked</span>
                 </div>
               )}
             </div>

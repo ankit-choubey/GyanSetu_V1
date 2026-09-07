@@ -67,7 +67,7 @@ export const MetricCard = React.memo(function MetricCard({
 
     if (displayValue) {
       return (
-        <span className={cn("font-body font-bold text-3xl tabular-nums tracking-tight", valueColor)}>
+        <span className={cn("font-body font-extrabold text-3xl sm:text-4xl tabular-nums tracking-tight", valueColor)}>
           {displayValue}
         </span>
       );
@@ -76,20 +76,20 @@ export const MetricCard = React.memo(function MetricCard({
     if (typeof value === "number") {
       if (type === "mastery" || type === "confidence" || type === "coverage") {
         return (
-          <span className={cn("font-body font-bold text-3xl tabular-nums tracking-tight", valueColor)}>
+          <span className={cn("font-body font-extrabold text-3xl sm:text-4xl tabular-nums tracking-tight", valueColor)}>
             {(value * 100).toFixed(0)}%
           </span>
         );
       }
       return (
-        <span className={cn("font-body font-bold text-3xl tabular-nums tracking-tight", valueColor)}>
+        <span className={cn("font-body font-extrabold text-3xl sm:text-4xl tabular-nums tracking-tight", valueColor)}>
           {value}
         </span>
       );
     }
 
     return (
-      <span className={cn("font-body font-bold text-3xl tabular-nums tracking-tight", valueColor)}>
+      <span className={cn("font-body font-extrabold text-3xl sm:text-4xl tabular-nums tracking-tight", valueColor)}>
         {value}
       </span>
     );
@@ -101,15 +101,15 @@ export const MetricCard = React.memo(function MetricCard({
   return (
     <div
       className={cn(
-        "relative rounded-xl border border-slate-200 bg-white p-5 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col justify-between min-h-[140px]",
+        "relative rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col justify-between min-h-[155px]",
         className
       )}
     >
       {/* Top Header: Eyebrow Label + Status Chip */}
       <div className="flex items-center justify-between gap-2 mb-3">
-        <div className="flex items-center gap-1.5">
-          <span className={cn("w-2 h-2 rounded-full shrink-0", statusIndicatorColor)} />
-          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+        <div className="flex items-center gap-2">
+          <span className={cn("w-2.5 h-2.5 rounded-full shrink-0", statusIndicatorColor)} />
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
             {label}
           </span>
         </div>
@@ -129,12 +129,12 @@ export const MetricCard = React.memo(function MetricCard({
       </div>
 
       {/* Main Metric Figure (Inter font with tabular-nums) */}
-      <div className="my-1 flex items-baseline">
+      <div className="my-1.5 flex items-baseline">
         {renderFormattedValue()}
       </div>
 
       {/* Subtitle / Benchmark */}
-      <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-sans">
+      <div className="mt-2.5 pt-2.5 border-t border-slate-100 flex items-center justify-between text-sm text-slate-600 font-sans">
         <span className="truncate">{cleanSublabel || "Baseline benchmark"}</span>
       </div>
     </div>
