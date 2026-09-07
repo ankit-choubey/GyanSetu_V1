@@ -1,131 +1,36 @@
 {
-  "_meta": {
-    "source": "SANDBOX DATA",
-    "persona": "New Officer Inductee (Unassessed Baseline)",
-    "version": "1.0.0"
-  },
-  "officer": {
-    "name": "Priya Sharma",
-    "role": "Junior Statistical Officer",
-    "cadre": "Subordinate Statistical Service (SSS - Batch 2026)",
-    "designation": "Probationer (Induction Training)",
-    "organization": "National Statistical Systems Training Academy (NSSTA)",
-    "posting": "Greater Noida Campus"
-  },
-  "kpi_summary": {
-    "mastery_avg": null,
-    "confidence_level": "Low",
-    "confidence_score": 0.0,
-    "coverage_pct": 0.0,
-    "recency_label": "Never assessed",
-    "diversity_count": 0,
-    "diversity_total": 6
-  },
+  "user_id": 2,
+  "full_name": "Priya Verma",
+  "role_name": "Junior Statistical Officer",
+  "total_competencies": 3,
   "competencies": [
     {
-      "id": "C-101",
-      "name": "Sampling Design & Methodology",
-      "domain": "Survey Statistics",
+      "competency_id": 1,
+      "competency_name": "Sampling Design",
       "mastery": null,
       "confidence": 0.0,
       "coverage": 0.0,
-      "last_assessed": null,
-      "gap": null,
-      "status": "unassessed",
-      "conflicting_evidence": false
+      "evidence_count": 0,
+      "status": "UNASSESSED"
     },
     {
-      "id": "C-102",
-      "name": "Field Data Scrutiny & Validation",
-      "domain": "Data Operations",
+      "competency_id": 2,
+      "competency_name": "Data Quality",
       "mastery": null,
       "confidence": 0.0,
       "coverage": 0.0,
-      "last_assessed": null,
-      "gap": null,
-      "status": "unassessed",
-      "conflicting_evidence": false
+      "evidence_count": 0,
+      "status": "UNASSESSED"
     },
     {
-      "id": "C-103",
-      "name": "Official Statistics Governance & DPDPA",
-      "domain": "Compliance & Ethics",
+      "competency_id": 3,
+      "competency_name": "Python for Analytics",
       "mastery": null,
       "confidence": 0.0,
       "coverage": 0.0,
-      "last_assessed": null,
-      "gap": null,
-      "status": "unassessed",
-      "conflicting_evidence": false
-    },
-    {
-      "id": "C-104",
-      "name": "Price Index & CPI Compilation",
-      "domain": "Economic Statistics",
-      "mastery": null,
-      "confidence": 0.0,
-      "coverage": 0.0,
-      "last_assessed": null,
-      "gap": null,
-      "status": "unassessed",
-      "conflicting_evidence": false
-    },
-    {
-      "id": "C-105",
-      "name": "National Accounts & SUT Analysis",
-      "domain": "Macroeconomic Frameworks",
-      "mastery": null,
-      "confidence": 0.0,
-      "coverage": 0.0,
-      "last_assessed": null,
-      "gap": null,
-      "status": "unassessed",
-      "conflicting_evidence": false
+      "evidence_count": 0,
+      "status": "UNASSESSED"
     }
   ],
-  "radar_data": [
-    { "axis": "Mastery", "current": 0, "target": 80, "fullMark": 100, "isUnassessed": true },
-    { "axis": "Confidence", "current": 0, "target": 75, "fullMark": 100, "isUnassessed": true },
-    { "axis": "Coverage", "current": 0, "target": 70, "fullMark": 100, "isUnassessed": true },
-    { "axis": "Recency", "current": 0, "target": 85, "fullMark": 100, "isUnassessed": true },
-    { "axis": "Diversity", "current": 0, "target": 67, "fullMark": 100, "isUnassessed": true }
-  ],
-  "active_gap": {
-    "title": "Baseline Competency Profile Not Established",
-    "competency_name": "Full SSS JSO Competency Framework",
-    "severity": "medium",
-    "evidence_basis": "No assessment, task, or project evidence submitted yet. Officer registered on induction roster.",
-    "impact": "Competency engine cannot prescribe targeted micro-interventions until baseline diagnostic is completed.",
-    "recommendation_action": "Complete MoSPI Foundation Diagnostic Assessment (25 min adaptive test)."
-  },
-  "next_best_action": {
-    "selected_action": "MoSPI Foundation Competency Diagnostic (Batch 2026)",
-    "justification": "Initial baseline evaluation across all 5 core statistical domains to initialize officer belief state with calibrated uncertainty.",
-    "role_relevance": "Mandatory induction milestone under NSSTA Foundation Curriculum.",
-    "competency_alignment": "Foundational Survey & Economic Statistics Framework",
-    "subskill_coverage": "Sampling fundamentals, CAPI operation, Official Statistics Act, Basic CPI calculation",
-    "prerequisites": "None (Induction entry point)",
-    "gap_severity": "Medium",
-    "evidence_confidence": "Low",
-    "learner_state": "New Inductee (Ready for first baseline diagnostic)",
-    "modality": "NSSTA Workshop",
-    "availability": "Immediate",
-    "expected_outcome": "Establishes baseline belief state across all 5 competencies with initial confidence scores."
-  },
-  "agent_activity": [
-    {
-      "id": "ACT-101",
-      "agent": "Monitoring",
-      "action": "Induction profile initialized from NSSTA enrollment roster.",
-      "timestamp": "Today",
-      "status": "completed"
-    },
-    {
-      "id": "ACT-102",
-      "agent": "Diagnostic",
-      "action": "Generated tailored baseline diagnostic package (15 items). Waiting for officer to start.",
-      "timestamp": "Today",
-      "status": "pending"
-    }
-  ]
+  "next_best_action": null
 }

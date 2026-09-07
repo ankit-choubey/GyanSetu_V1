@@ -1,90 +1,116 @@
 /**
  * GyanSetu — Competency Intelligence Platform
- * TypeScript Data Models mirroring the Build Guide (§12, §29) and Dashboard Plan (§2)
+ * TypeScript Data Models mirroring the Backend API Contract (dashboard_plan.md §1)
  */
 
-export type EvidenceType =
-  | "ASSESSMENT"
-  | "PRACTICAL_TASK"
-  | "PROJECT"
-  | "PEER_REVIEW"
-  | "SELF_REPORT"
-  | "CERTIFICATION";
+export interface BackendCompetency {
+  competency_id: number;
+  competency_name: string;
+  mastery: number | null; // float | null (null = UNASSESSED, never treat as 0)
+  confidence: number; // float 0.0–1.0
+  coverage: number; // float 0.0–1.0
+  evidence_count: number; // int
+  status: "UNASSESSED" | "ASSESSED" | "CONFLICTING_EVIDENCE";
+}
 
-export type CompetencyStatus =
-  | "mastered"
-  | "proficient"
-  | "needs_improvement"
-  | "unassessed";
+export interface NextBestActionResponse {
+  target_subskill_id: number | null;
+  gap_reason: string;
+  selected_intervention: {
+    id: number;
+    title: string;
+    type: string; // "PRACTICE" | "TRAINING"
+    reason: string;
+  };
+  explanation: string;
+  uncertainty: number | null;
+}
 
-export interface CompetencyMetric {
-  id: number | string;
-  name: string;
-  domain: string;
-  /**
-   * Mastery range 0.0–1.0 or null.
-   * NOTE (Honesty Rule): null = Unassessed / Unknown. NEVER treat null as 0.0 or failing.
-   */
-  mastery: number | null;
-  /** Confidence in the measurement: 0.0–1.0 */
+export interface DashboardResponse {
+  user_id: number;
+  full_name: string;
+  role_name: string;
+  total_competencies: number;
+  competencies: BackendCompetency[];
+  next_best_action?: NextBestActionResponse | null;
+}
+
+export interface AdaptiveQuestionResponse {
+  status: "QUESTION_PROPOSED" | "SUFFICIENT_EVIDENCE";
+  sufficient_evidence: boolean;
+  stop_reason?: string | null;
+  question_id?: number;
+  competency_id?: number;
+  subskill_id?: number;
+  question_text?: string;
+  options?: string[];
+  difficulty?: "easy" | "medium" | "hard";
+}
+
+export interface QuestionFeedbackItem {
+  question_id: number;
+  selected: string;
+  is_correct: boolean;
+  feedback: string;
+  identified_gap?: string | null;
+}
+
+export interface AssessmentSubmitResponse {
+  status: string;
+  message: string;
+  assessment_id: number;
+  score: number;
+  feedback: QuestionFeedbackItem[];
+  competency_status: string;
+  mastery: number;
   confidence: number;
-  /** Coverage of tested subskills: 0.0–1.0 (percentage) */
-  coverage: number;
-  /** Last assessed ISO date string or null if unassessed */
-  last_assessed: string | null;
-  /** Primary identified subskill gap */
-  gap: string | null;
-  gap_severity?: "low" | "medium" | "high";
-  status: CompetencyStatus;
-  /** Flagged if different evidence modalities disagree */
-  conflicting_evidence?: boolean;
+  next_best_action?: NextBestActionResponse | null;
 }
 
-/**
- * 12 Explainability Fields for the Next-Best-Action (Build Guide §29)
- */
-export interface NextBestAction {
-  /** 1. The specific training/lab action proposed */
-  selected_action: string;
-  /** 2. Defensible causal justification */
-  justification: string;
-  /** 3. Relevance to official statistical officer duties */
-  role_relevance: string;
-  /** 4. Target competency mapped to KCM/TPAC */
-  competency_alignment: string;
-  /** 5. Specific subskills covered */
-  subskill_coverage: string;
-  /** 6. Prior knowledge or course prerequisites */
-  prerequisites: string;
-  /** 7. Urgency / severity of the gap */
-  gap_severity: "High" | "Medium" | "Low";
-  /** 8. Confidence level in the gap estimation */
-  evidence_confidence: "High" | "Medium" | "Low";
-  /** 9. Cognitive / workload readiness state */
-  learner_state: string;
-  /** 10. Platform delivery modality */
-  modality: "iGOT Karmayogi" | "NSSTA Workshop" | "TPAC Practical" | "Self-Paced Lab";
-  /** 11. Availability status */
-  availability: "Immediate" | "Scheduled" | "Upcoming";
-  /** 12. Measurable expected competency gain */
-  expected_outcome: string;
+export interface CompetencyAnalytics {
+  role_id: number;
+  role_name: string;
+  competency_id: number;
+  competency_name: string;
+  learner_count: number;
+  assessed_count: number;
+  average_mastery: number;
+  average_confidence: number;
+  average_coverage: number;
+  total_evidence: number;
+  status_distribution: {
+    ASSESSED: number;
+    UNASSESSED: number;
+    CONFLICTING_EVIDENCE?: number;
+  };
 }
 
-export interface AgentActivity {
-  id: string;
-  agent: "Diagnostic" | "Competency Engine" | "Intervention" | "Monitoring";
-  action: string;
-  timestamp: string;
-  status: "completed" | "in_progress" | "pending";
+export interface AdminAnalyticsResponse {
+  total_competencies: number;
+  competencies: CompetencyAnalytics[];
 }
 
-export interface OfficerProfile {
-  name: string;
-  role: string;
-  cadre: string;
-  designation: string;
-  organization: string;
-  posting: string;
+export interface TaskItem {
+  id: number;
+  title: string;
+  description: string;
+  type: "PRACTICE" | "TRAINING";
+  competency_name: string;
+  priority: number;
+  status: "active" | "completed" | "not_started";
+  progress_pct: number;
+  due_date: string;
+}
+
+export interface TaskSummary {
+  active: number;
+  completed: number;
+  total: number;
+}
+
+export interface TasksResponse {
+  tasks: TaskItem[];
+  summary: TaskSummary;
 }
 
 export interface RadarDataPoint {
@@ -93,38 +119,22 @@ export interface RadarDataPoint {
   target: number;
   fullMark: number;
   isUnassessed?: boolean;
+  evidence_count?: number;
 }
 
-export interface ActiveGap {
-  title: string;
+export interface ActiveGapDerived {
+  competency_id: number;
   competency_name: string;
-  severity: "high" | "medium" | "low";
-  evidence_basis: string;
-  impact: string;
-  recommendation_action: string;
+  mastery: number | null;
+  confidence: number;
+  coverage: number;
+  evidence_count: number;
 }
 
-export interface KPISummary {
+export interface KPISummaryDerived {
   mastery_avg: number | null;
-  confidence_level: "Low" | "Medium" | "High";
-  confidence_score: number;
-  coverage_pct: number;
-  recency_label: string;
-  diversity_count: number;
-  diversity_total: number;
-}
-
-export interface CompetencyState {
-  _meta: {
-    source: "SANDBOX DATA" | "LIVE API";
-    persona: string;
-    version: string;
-  };
-  officer: OfficerProfile;
-  kpi_summary: KPISummary;
-  competencies: CompetencyMetric[];
-  radar_data: RadarDataPoint[];
-  active_gap: ActiveGap;
-  next_best_action: NextBestAction;
-  agent_activity: AgentActivity[];
+  confidence_avg: number;
+  coverage_avg: number;
+  assessed_count: number;
+  total_count: number;
 }

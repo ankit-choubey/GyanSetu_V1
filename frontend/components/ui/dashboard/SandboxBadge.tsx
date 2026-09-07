@@ -11,19 +11,19 @@ interface SandboxBadgeProps {
 
 export function SandboxBadge({
   className,
-  label = "SANDBOX DATA",
+  label = "DEMO DATA",
 }: SandboxBadgeProps) {
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-medium",
-        "bg-amber-50 text-amber-800 border border-amber-200 shadow-sm",
+        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium",
+        "bg-amber-50 text-amber-800 border border-amber-200 shadow-xs",
         className
       )}
-      title="Non-negotiable Honesty Rule: Simulation sandbox data. Never presented as measured official statistics."
+      title="Demonstration data mode"
     >
-      <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-      <span>[{label}]</span>
+      <AlertCircle className="w-3 h-3 text-amber-600 shrink-0" />
+      <span>{label}</span>
     </div>
   );
 }
