@@ -13,12 +13,4 @@ passlib[bcrypt]>=1.7.4
 bcrypt<4.0
 email-validator>=2.2.0
 pytest>=8.0.0
-
-# ML / AI pipeline dependencies
-openai>=1.0.0
-chromadb>=0.4.20
-pymupdf>=1.23.0
-python-pptx>=0.6.23
-pdfplumber>=0.10.0
-pytesseract>=0.3.10
-Pillow>=10.0.0
+-e ../ml_pipeline

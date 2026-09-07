@@ -1,0 +1,89 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "domain": "Official Statistics and Survey Methodology",
+    "supported_languages": ["hi", "ta", "te", "bn", "mr"]
+  },
+  "terms": {
+    "Sampling Design": {
+      "hi": "प्रतिचयन अभिकल्प (Sampling Design)",
+      "ta": "மாதிரி வடிவமைப்பு (Sampling Design)",
+      "te": "శాంప్లింగ్ రూపకల్పన (Sampling Design)",
+      "bn": "নমুনা নকশা (Sampling Design)",
+      "mr": "नमुना रचना (Sampling Design)",
+      "keep_english": true
+    },
+    "Stratified Random Sampling": {
+      "hi": "स्तरीकृत यादृच्छिक प्रतिचयन (Stratified Random Sampling)",
+      "ta": "அடுக்கு சீரற்ற மாதிரி (Stratified Random Sampling)",
+      "te": "స్తరీకరించిన యాదృచ్ఛిక నమూనా",
+      "bn": "স্তরবিন্যস্ত দৈব নমুনা",
+      "mr": "स्तरीकृत यादृच्छिक नमुना",
+      "keep_english": true
+    },
+    "Standard Deviation": {
+      "hi": "मानक विचलन",
+      "ta": "நிலையான விலகல்",
+      "te": "ప్రామాణిక విచలనం",
+      "bn": "পরিমিত ব্যবধান",
+      "mr": "प्रमाण विचलन",
+      "keep_english": false
+    },
+    "Consumer Price Index": {
+      "hi": "उपभोक्ता मूल्य सूचकांक (CPI)",
+      "ta": "நுகர்வோர் விலைக் குறியீடு (CPI)",
+      "te": "వినియోగదారుల ధరల సూచిక (CPI)",
+      "bn": "ভোক্তா মূল্য সূচক (CPI)",
+      "mr": "ग्राहक किंमत निर्देशांक (CPI)",
+      "keep_english": true
+    },
+    "Wholesale Price Index": {
+      "hi": "थोक मूल्य सूचकांक (WPI)",
+      "ta": "மொத்த விலைக் குறியீடு (WPI)",
+      "te": "టోకు ధరల సూచిక (WPI)",
+      "bn": "পাইকারি মূল্য সূচক (WPI)",
+      "mr": "घाऊक किंमत निर्देशांक (WPI)",
+      "keep_english": true
+    },
+    "Gross Domestic Product": {
+      "hi": "सकल घरेलू उत्पाद (GDP)",
+      "ta": "மொத்த உள்நாட்டு உற்பத்தி (GDP)",
+      "te": "స్థూల జాతీయోత్పత్తి (GDP)",
+      "bn": "মোট দেশজ উৎপাদন (GDP)",
+      "mr": "एकूण देशांतर्गत उत्पादन (GDP)",
+      "keep_english": true
+    },
+    "Sampling Frame": {
+      "hi": "प्रतिचयन ढांचा (Sampling Frame)",
+      "ta": "மாதிரி கட்டமைப்பு",
+      "te": "శాంప్లింగ్ ఫ్రేమ్",
+      "bn": "নমুনা ফ্রেম",
+      "mr": "नमुना आराखडा",
+      "keep_english": true
+    },
+    "Census": {
+      "hi": "जनगणना (Census)",
+      "ta": "மக்கள் தொகை கணக்கெடுப்பு",
+      "te": "జనాభా లెక్కల సేకరణ",
+      "bn": "আদমশুমারি",
+      "mr": "जनगणना",
+      "keep_english": true
+    },
+    "Non-sampling Error": {
+      "hi": "गैर-प्रतिचयन त्रुटि (Non-sampling Error)",
+      "ta": "மாதிரி அல்லாத பிழை",
+      "te": "శాంప్లింగ్ కాని లోపం",
+      "bn": "নমুনা-বহির্ভূত ত্রুটি",
+      "mr": "बिगर-नमुना त्रुटी",
+      "keep_english": true
+    },
+    "Confidence Interval": {
+      "hi": "विश्वास्यता अंतराल (Confidence Interval)",
+      "ta": "நம்பகத்தன்மை இடைவெளி",
+      "te": "విశ్వసనీయత విరామం",
+      "bn": "আস্থা ব্যবধান",
+      "mr": "विश्वास अंतर",
+      "keep_english": false
+    }
+  }
+}

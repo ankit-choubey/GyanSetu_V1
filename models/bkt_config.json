@@ -1,0 +1,11 @@
+{
+  "model": "Bayesian Knowledge Tracing",
+  "parameters": {
+    "p_init": 0.2,
+    "p_learn": 0.15,
+    "p_guess": 0.2,
+    "p_slip": 0.1
+  },
+  "data_source": "[SANDBOX DATA]",
+  "training_data": "synthetic_data/data/learner_interactions.csv"
+}

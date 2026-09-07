@@ -1,0 +1,28 @@
+{
+  "model": "Random Forest Regressor",
+  "target": "retention_factor",
+  "features": [
+    "days_since_learning",
+    "mastery_before_decay",
+    "decay_amount",
+    "intervention_count",
+    "intervention_boost",
+    "mastery"
+  ],
+  "n_rows": 18000,
+  "n_learners": 200,
+  "train_rows": 14400,
+  "test_rows": 3600,
+  "mae": 4.9444445798688425e-08,
+  "rmse": 2.96666666672792e-06,
+  "r2": 0.9999999998575226,
+  "feature_importance": {
+    "days_since_learning": 0.9999343145322556,
+    "mastery_before_decay": 7.547041907313324e-10,
+    "decay_amount": 6.568287385819205e-05,
+    "intervention_count": 5.049858578089344e-16,
+    "intervention_boost": 1.247229538519107e-15,
+    "mastery": 1.8391802170083092e-09
+  },
+  "data_source": "[SANDBOX DATA]"
+}

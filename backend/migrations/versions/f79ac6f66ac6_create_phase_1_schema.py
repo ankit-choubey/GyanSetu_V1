@@ -1,7 +1,7 @@
 """create phase 1 schema
 
 Revision ID: f79ac6f66ac6
-Revises: 
+Revises:
 Create Date: 2026-09-05 17:01:42.495044
 
 """

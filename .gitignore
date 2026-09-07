@@ -7,43 +7,11 @@
 
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-.pytest_cache/
-
-# Virtual environment
+*.pyc
 .venv/
 venv/
 env/
-backend/.venv/
-
-# Database & Chroma
-*.db
-*.sqlite
-*.sqlite3
-backend/*.db
-chroma_db/
-chroma_data/
-backend/chroma_db/
-.cache/
-models/
+*.egg-info/
 
 # Node / Next.js
 node_modules/
@@ -51,13 +19,35 @@ node_modules/
 out/
 .vercel/
 
-# OS / Editor
+# Vector store / local model caches
+chroma_db/
+chroma_data/
+*.sqlite3
+.cache/
+# models/ directory contains project code; ignore large downloads if any
+!models/*.py
+!models/*.json
+!models/*.csv
+
+# OS / editor
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
 
-# Logs & test artifacts
+# Logs and local artifacts
 *.log
 /tmp/
+
+# Local test documents
 test_data/
+# Seed content source PDFs are kept locally and not committed
+ml_pipeline/seed_content/raw/*.pdf
+
+ml_pipeline/seed_content/question_bank_checkpoint.json
+
+# Extracted text from public TPAC source PDF
+real_data/sources/nssta_tpac_fy2026_27.txt
+
+# Local database files
+*.db

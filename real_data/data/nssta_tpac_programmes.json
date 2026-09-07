@@ -1,0 +1,98 @@
+[
+  {
+    "programme_title": "Application of remote sensing, GIS in official statistics",
+    "target_audience": "In-service JSOs",
+    "topic": "Remote sensing, GIS, GPS, digital image processing, geospatial technology and alternate data sources for official statistics",
+    "content": "Concept of remote sensing with GIS mapping and tools of disaster management, UFS applications. Basics of GIS, GPS and their operations, Digital Image Processing, Multi Criteria Analysis using GIS, Smart sampling using geospatial technology, Crop Acreage Estimation using geospatial technology, Space Technology Applications in Crop Cutting Experiment, GIS Analysis of Census Data, Geo-spatial Technology applications in smart Governance, UAV Remote Sensing Applications, Exposure to alternate data sources like scanner data, mobile data, GIS, nightlight data, web-scrapped data etc and its use for policy formulation",
+    "proposed_institute": "Indian Institute of Remote Sensing (IIRS), Dehradun / National Remote Sensing Centre (NRSC) Hyderabad / Space Applications Centre (SAC) Ahmedabad / NESAC, Meghalaya",
+    "duration": "One week",
+    "year": "FY 2026-27",
+    "source_document": "Minutes of the Meeting of TPAC FY 2026-27",
+    "source_url": "https://nssta.gov.in/document",
+    "data_source": "[REAL/PUBLIC DATA]"
+  },
+  {
+    "programme_title": "Course on Machine Learning using Python",
+    "target_audience": "In-service JSOs",
+    "topic": "Python, data science, exploratory data analysis and machine learning",
+    "content": "Commands in Python, Lambda function, Map, Filter, Reduce, String formatting, Tuples, Lists, Dictionaries, Sets and Mutability, List and Dictionary Comprehensions, File operations, Modules and Packages, Error and Exception handling, Mini Project, Packages for Data Science, NumPy, Pandas, Packages for EDA-sci-kit learn, Importing Data, Data Pre-Processing, Types of Learning, Types of Models, Model Building.",
+    "proposed_institute": "IIT Madras/IISc Bengaluru /IIT Kharagpur / C.R. Rao AIMSCS, Hyderabad / IIT Mumbai / IIT Delhi",
+    "duration": "One week",
+    "year": "FY 2026-27",
+    "source_document": "Minutes of the Meeting of TPAC FY 2026-27",
+    "source_url": "https://nssta.gov.in/document",
+    "data_source": "[REAL/PUBLIC DATA]"
+  },
+  {
+    "programme_title": "National Security System and Cyber Security",
+    "target_audience": "In-service JSOs",
+    "topic": "National security, cyber security, data security, privacy and forensic science",
+    "content": "Concept of National Security, tool of Cyber security, Data Security, Introduction to Privacy & significance of Anonymity over Internet, Types of Social Networks and related crimes, Prevention of Corruption Act, Tools and techniques to secure personal devices/data, Types of Financial Frauds and their modus operandi, Best practices of Cyber Hygiene & Cyber Security, Introduction to Forensic Science- and its importance in Crime Investigation, Forensic Science and Statistics as partners in Criminal Justice System",
+    "proposed_institute": "NFSU, Gandhinagar /CDTI Jaipur/Ghaziabad/ Sardar Vallabhbhai Patel National Policy Academy (SVPNPA), Hyderabad",
+    "duration": "One week",
+    "year": "FY 2026-27",
+    "source_document": "Minutes of the Meeting of TPAC FY 2026-27",
+    "source_url": "https://nssta.gov.in/document",
+    "data_source": "[REAL/PUBLIC DATA]"
+  },
+  {
+    "programme_title": "Data security and appropriate use of AI in the Government setup",
+    "target_audience": "In-service JSOs",
+    "topic": "Data security, artificial intelligence, AI capabilities and limitations, ethics in government operations",
+    "content": "Importance of Data, how to ensure security of data, and fundamentals of AI, its capabilities and limitations, recognize ethical considerations and challenges in using AI in Government Operations.",
+    "proposed_institute": "NSSTA/ISTM/C.R. Rao Hyderabad/IIT Madras/IIT Mumbai",
+    "duration": "One week",
+    "year": "FY 2026-27",
+    "source_document": "Minutes of the Meeting of TPAC FY 2026-27",
+    "source_url": "https://nssta.gov.in/document",
+    "data_source": "[REAL/PUBLIC DATA]"
+  },
+  {
+    "programme_title": "Application of remote sensing, GIS in official statistics",
+    "target_audience": "In-service SSOs",
+    "topic": "Remote sensing, GIS, GPS, digital image processing, geospatial technology and alternate data sources for official statistics",
+    "content": "Concept of remote sensing with GIS mapping and tools of disaster management, UFS applications. Basics of GIS, GPS and their operations, Digital Image Processing, Multi Criteria Analysis using GIS, Smart sampling using geospatial technology, Crop Acreage Estimation using geospatial technology, Space Technology Applications in Crop Cutting Experiment, GIS Analysis of Census Data, Geo-spatial Technology applications in smart Governance, UAV Remote Sensing Applications, Exposure to alternate data sources like scanner data, mobile data, GIS, nightlight data, web-scrapped data etc and its use for policy formulation",
+    "proposed_institute": "Indian Institute of Remote Sensing (IIRS), Dehradun / National Remote Sensing Centre (NRSC) Hyderabad / Space Applications Centre (SAC) Ahmedabad / NESAC, Meghalaya",
+    "duration": "One week",
+    "year": "FY 2026-27",
+    "source_document": "Minutes of the Meeting of TPAC FY 2026-27",
+    "source_url": "https://nssta.gov.in/document",
+    "data_source": "[REAL/PUBLIC DATA]"
+  },
+  {
+    "programme_title": "Handling Large-Scale Data & Data Analysis using R",
+    "target_audience": "In-service SSOs",
+    "topic": "Large-scale data analysis using R, statistical analysis and unit-level NSSO data",
+    "content": "Practical orientation to data analysis in R, including basic descriptive analysis, regression analysis, logistic / log-linear analysis, factor analysis, cluster analysis - preferably using live NSSO / Census data, handling of unit-level data of NSSO, including understanding concept and use of multipliers and estimation procedure.",
+    "proposed_institute": "IIT Kanpur / IASRI New Delhi / IIT Kharagpur",
+    "duration": "One week",
+    "year": "FY 2026-27",
+    "source_document": "Minutes of the Meeting of TPAC FY 2026-27",
+    "source_url": "https://nssta.gov.in/document",
+    "data_source": "[REAL/PUBLIC DATA]"
+  },
+  {
+    "programme_title": "Course on Machine Learning using Python",
+    "target_audience": "In-service SSOs",
+    "topic": "Python, data science, exploratory data analysis and machine learning",
+    "content": "Commands in Python, Lambda function, Map, Filter, Reduce, String formatting, Tuples, Lists, Dictionaries, Sets and Mutability, List and Dictionary Comprehensions, File operations, Modules and Packages, Error and Exception handling, Mini Project, Packages for Data Science, NumPy, Pandas, Packages for EDA-sci-kit learn, Importing Data, Data Pre-Processing, Types of Learning, Types of Models, Model Building.",
+    "proposed_institute": "IIT Madras/IISc Bengaluru /IIT Kharagpur / C.R. Rao AIMSCS, Hyderabad / IIT Mumbai / IIT Delhi",
+    "duration": "One week",
+    "year": "FY 2026-27",
+    "source_document": "Minutes of the Meeting of TPAC FY 2026-27",
+    "source_url": "https://nssta.gov.in/document",
+    "data_source": "[REAL/PUBLIC DATA]"
+  },
+  {
+    "programme_title": "Data security and appropriate use of AI in the Government setup",
+    "target_audience": "In-service SSOs",
+    "topic": "Data security, artificial intelligence, AI capabilities and limitations, ethics in government operations",
+    "content": "Importance of Data, how to ensure security of data, and fundamentals of AI, its capabilities and limitations, recognize ethical considerations and challenges in using AI in Government Operations.",
+    "proposed_institute": "NSSTA/ISTM/C. R Rao, Hyderabad/ IIT Madras/IIT Mumbai",
+    "duration": "One week",
+    "year": "FY 2026-27",
+    "source_document": "Minutes of the Meeting of TPAC FY 2026-27",
+    "source_url": "https://nssta.gov.in/document",
+    "data_source": "[REAL/PUBLIC DATA]"
+  }
+]

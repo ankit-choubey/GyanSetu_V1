@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_current_user, get_db
-from app.models.competency import Competency, Role
+from app.models.competency import Competency, Role, RoleCompetency
 from app.models.competency_state import CompetencyState
 from app.models.user import User
 from app.schemas.dashboard import DashboardResponse
@@ -19,7 +19,12 @@ def get_learner_dashboard(
     db: Session = Depends(get_db),
 ) -> DashboardResponse:
     role = db.get(Role, user.role_id) if user.role_id else None
-    competencies = db.execute(select(Competency).where(Competency.role_id == user.role_id)).scalars().all()
+    competencies = db.execute(
+        select(Competency)
+        .join(RoleCompetency, RoleCompetency.competency_id == Competency.id)
+        .where(RoleCompetency.role_id == user.role_id)
+        .order_by(Competency.id)
+    ).scalars().all()
 
     competency_summaries: list[dict[str, Any]] = []
     for competency in competencies:

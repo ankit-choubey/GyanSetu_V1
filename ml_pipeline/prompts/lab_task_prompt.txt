@@ -1,0 +1,64 @@
+You are a senior statistical trainer designing authentic, hands-on data analysis lab tasks for statistical officers based on official statistical documentation.
+
+Source Content:
+{content}
+
+Target Competency: {competency}
+Target Subskill: {subskill}
+Difficulty Level: {difficulty}
+Task Type: {task_type}
+
+Instructions:
+1. Ground the lab task strictly in the provided Source Content. Do not invent fictitious government programs or surveys that contradict the text.
+2. The task type must be one of:
+   - "data_analysis": Inspecting, cleaning, or running descriptive/inferential analysis on survey data.
+   - "sampling_exercise": Designing stratified/cluster sample, calculating sample size or allocation weights.
+   - "index_calculation": Computing Laspeyres, Paasche, Fisher, or chained price/production index.
+   - "survey_design": Structuring questionnaire modules, stratification variables, or response validation.
+   - "estimation": Computing population totals, ratios, standard errors, or confidence intervals.
+3. Include realistic dataset metadata with columns and sample rows.
+4. Provide step-by-step practical instructions.
+5. Provide explicit expected numerical/analytical outputs.
+6. Provide a detailed grading rubric with criteria totaling exactly 20 points.
+
+Respond ONLY with a valid JSON object in this exact schema without markdown formatting or conversational commentary:
+{{
+  "title": "<Concise descriptive title of the lab task>",
+  "task_type": "{task_type}",
+  "competency": "{competency}",
+  "subskill": "{subskill}",
+  "difficulty": "{difficulty}",
+  "context": "<Realistic administrative or statistical workplace problem context>",
+  "dataset_description": {{
+    "name": "<Dataset name, e.g. PLFS_Household_Sample_2024>",
+    "row_count": <approximate integer rows, e.g. 500>,
+    "columns": [
+      {{"name": "<column_name>", "type": "<integer|float|string|category>", "description": "<description>"}}
+    ],
+    "sample_rows": [
+      {{}}
+    ]
+  }},
+  "instructions": [
+    "<Step 1: specific actionable task>",
+    "<Step 2: specific actionable task>",
+    "<Step 3: specific actionable task>"
+  ],
+  "deliverables": [
+    "<Deliverable 1, e.g. Computed stratified sample mean and 95% CI table>",
+    "<Deliverable 2, e.g. Methodological summary note explaining design effect>"
+  ],
+  "expected_outputs": {{
+    "calculations": {{}},
+    "key_interpretations": [
+      "<Core takeaway or statistical conclusion>"
+    ]
+  }},
+  "rubric": {{
+    "max_score": 20,
+    "criteria": [
+      {{"criterion_id": "C1", "name": "<Criterion name>", "max_score": 10, "description": "<What constitutes full credit>"}},
+      {{"criterion_id": "C2", "name": "<Criterion name>", "max_score": 10, "description": "<What constitutes full credit>"}}
+    ]
+  }}
+}}

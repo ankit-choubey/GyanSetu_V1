@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_current_admin, get_db
-from app.models.competency import Competency, Role
+from app.models.competency import Competency, Role, RoleCompetency
 from app.models.competency_state import CompetencyState
 from app.models.user import User
 from app.schemas.evening import AdminAnalyticsResponse, CompetencyAnalytics
@@ -28,14 +28,18 @@ def competency_analytics(
 
     analytics: list[CompetencyAnalytics] = []
     for competency in db.execute(select(Competency).order_by(Competency.id)).scalars().all():
-        role = roles.get(competency.role_id)
-        role_users = [user for user in users if user.role_id == competency.role_id]
+        role_links = db.execute(
+            select(RoleCompetency).where(RoleCompetency.competency_id == competency.id)
+        ).scalars().all()
+        role_ids = {link.role_id for link in role_links}
+        role = roles.get(next(iter(role_ids))) if len(role_ids) == 1 else None
+        role_users = [user for user in users if user.role_id in role_ids]
         competency_states = states_by_competency.get(competency.id, [])
         mastery_values = [state.mastery for state in competency_states if state.mastery is not None]
         status_distribution = Counter(state.status for state in competency_states)
         analytics.append(
             CompetencyAnalytics(
-                role_id=competency.role_id,
+                role_id=next(iter(role_ids)) if len(role_ids) == 1 else None,
                 role_name=role.name if role else None,
                 competency_id=competency.id,
                 competency_name=competency.name,

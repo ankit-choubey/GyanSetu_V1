@@ -13,11 +13,6 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440
     cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
-    groq_api_key: str | None = None
-    groq_base_url: str = "https://api.groq.com/openai/v1"
-    groq_model_primary: str = "llama-3.3-70b-versatile"
-    groq_model_fast: str = "llama-3.1-8b-instant"
-    chroma_persist_dir: str = "./chroma_db"
 
     model_config = SettingsConfigDict(
         env_file=".env",

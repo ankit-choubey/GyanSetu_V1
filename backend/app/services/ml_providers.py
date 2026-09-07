@@ -1,230 +1,229 @@
+"""
+ML Providers Bridge Module
+GyanSetu - Phase 4.1b + 4.5b
+
+Connects trained psychometric and cognitive ML models to FastAPI backend services:
+- RetentionProvider (models/retention_model.pkl) -> monitoring_agent (stale evidence detection)
+- LearningStateProvider (models/learning_state_model.pkl) -> signal_collector (learning state classification)
+- MisconceptionClassifierProvider (ml_pipeline/misconception_classifier.py) -> misconception_tracker
+- IRTProvider (models/irt_item_params.json) -> 2PL IRT item lookup and probability
+- InterventionProvider (models/intervention_effectiveness.json) -> targeted intervention recommendations
+"""
 from __future__ import annotations
 
 import json
+import math
 import os
-import tempfile
-from pathlib import Path
-from typing import Any, Mapping
+import sys
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+try:
+    import models.retention_model as _rm
+    sys.modules.setdefault("retention_model", _rm)
+except ImportError:
+    pass
 
-from app.models.assessment import AssessmentItem
-from app.services.evening_interfaces import (
-    ABSTENTION_MESSAGE,
-    ChatAnswer,
-    ChatRequest,
-    DocumentProcessResult,
-    DocumentIngestionProvider,
-    RagProvider,
+try:
+    import models.learning_state_classifier as _lsc
+    sys.modules.setdefault("learning_state_classifier", _lsc)
+except ImportError:
+    pass
+
+MODELS_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "models")
 )
-from app.services.ml_interfaces import (
-    ProposedQuestion,
-    QuestionSelectionRequest,
-    QuestionSelector,
-)
-from ml_pipeline.api_interface import (
-    query_gyansetu_chatbot,
-    get_next_adaptive_mcq,
-)
-from ml_pipeline.chunker import chunk_structured_document
-from ml_pipeline.document_processor import process_document_structured
-from ml_pipeline.vector_store import add_chunks
 
 
-class ChromaRagProvider(RagProvider):
-    """Grounded RAG provider connected to ChromaDB with strict abstention."""
+class RetentionProvider:
+    """Provides retention factor inference from models/retention_model.pkl."""
 
-    def answer(self, request: ChatRequest) -> ChatAnswer:
-        if not request.question or not request.question.strip():
-            return ChatAnswer(
-                status="ABSTAINED",
-                answer=ABSTENTION_MESSAGE,
-                sources=(),
-                source_mode="STRICT_ABSTENTION",
-            )
-        try:
-            res = query_gyansetu_chatbot(
-                query=request.question,
-                competency_filter=str(request.competency_id) if request.competency_id else None,
-                similarity_threshold=0.15,
-            )
-            if res.get("abstained"):
-                return ChatAnswer(
-                    status="ABSTAINED",
-                    answer=res.get("answer", ABSTENTION_MESSAGE),
-                    sources=(),
-                    source_mode="UNAVAILABLE",
-                )
-            return ChatAnswer(
-                status="SUCCESS",
-                answer=res.get("answer", ""),
-                sources=tuple(res.get("sources", ())),
-                source_mode="GROUNDED_RAG",
-            )
-        except Exception:
-            return ChatAnswer(
-                status="ABSTAINED",
-                answer=ABSTENTION_MESSAGE,
-                sources=(),
-                source_mode="UNAVAILABLE",
-            )
+    REQUIRED_FEATURES = [
+        "days_since_learning",
+        "mastery_before_decay",
+        "decay_amount",
+        "intervention_count",
+        "intervention_boost",
+        "mastery",
+    ]
 
+    def __init__(self, model_path: Optional[str] = None):
+        self.model_path = model_path or os.path.join(MODELS_DIR, "retention_model.pkl")
+        self._model = None
 
-class PipelineDocumentIngestionProvider(DocumentIngestionProvider):
-    """Processes, extracts, chunks, and indexes training documents into ChromaDB."""
-
-    def process(self, filename: str, content_type: str | None, content: bytes) -> DocumentProcessResult:
-        if not content:
-            return DocumentProcessResult(
-                status="EMPTY_CONTENT",
-                trusted=False,
-                coverage=0.0,
-                warning="Uploaded document is empty.",
-            )
-
-        suffix = Path(filename).suffix.lower()
-        if suffix not in {".pdf", ".ppt", ".pptx"}:
-            return DocumentProcessResult(
-                status="UNSUPPORTED_FORMAT",
-                trusted=False,
-                coverage=0.0,
-                warning=f"Unsupported format: {suffix}",
-            )
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            tmp_path = os.path.join(tmpdir, f"upload_{filename}")
+    def _ensure_model(self):
+        if self._model is None:
+            if not os.path.exists(self.model_path):
+                raise FileNotFoundError(f"Retention model artifact not found at {self.model_path}")
             try:
-                with open(tmp_path, "wb") as f:
-                    f.write(content)
-
-                pages = process_document_structured(tmp_path)
-            except ValueError as e:
-                return DocumentProcessResult(
-                    status="CORRUPTED_FILE",
-                    trusted=False,
-                    coverage=0.0,
-                    warning=f"File could not be parsed: {e}",
-                )
-            except Exception as e:
-                return DocumentProcessResult(
-                    status="UNKNOWN_PROCESSING_ERROR",
-                    trusted=False,
-                    coverage=0.0,
-                    warning=f"Processing failed: {e}",
-                )
-
-            if not pages:
-                return DocumentProcessResult(
-                    status="EMPTY_CONTENT",
-                    trusted=False,
-                    coverage=0.0,
-                    warning="No extractable text or pages found.",
-                )
-
-            successful_pages: list[int] = []
-            failed_pages: list[int] = []
-            ocr_used = False
-
-            for page in pages:
-                p_num = page.page_number
-                if page.content_type == "ocr":
-                    ocr_used = True
-                if page.content_type in {"text", "table", "ocr", "pptx_slide"} and page.text.strip():
-                    successful_pages.append(p_num)
-                else:
-                    failed_pages.append(p_num)
-
-            # Chunk and index into ChromaDB
-            try:
-                chunks = chunk_structured_document(pages, target="rag", source_id=filename)
-                if chunks:
-                    add_chunks(chunks)
+                from models.retention_model import RetentionModel
+                self._model = RetentionModel.load(self.model_path)
             except Exception:
-                pass
+                import joblib
+                self._model = joblib.load(self.model_path)
 
-            total_pages = len(pages)
-            coverage = len(successful_pages) / total_pages if total_pages > 0 else 0.0
-            trusted = coverage >= 0.70
+    def predict_retention(self, features: Dict[str, float]) -> float:
+        """
+        Predicts retention factor in [0.0, 1.0].
+        Fills defaults for missing features safely.
+        """
+        self._ensure_model()
+        payload = {
+            "days_since_learning": float(features.get("days_since_learning", 30.0)),
+            "mastery_before_decay": float(features.get("mastery_before_decay", 0.75)),
+            "decay_amount": float(features.get("decay_amount", 0.05)),
+            "intervention_count": float(features.get("intervention_count", 0.0)),
+            "intervention_boost": float(features.get("intervention_boost", 0.0)),
+            "mastery": float(features.get("mastery", 0.70)),
+        }
+        if hasattr(self._model, "predict_one"):
+            return float(self._model.predict_one(payload))
+        import pandas as pd
+        df = pd.DataFrame([payload])
+        return float(self._model.predict(df)[0])
 
-            status = "SUCCESS" if trusted else "PARTIAL_EXTRACTION"
-            warning = None if trusted else "Partial document extraction; coverage fell below confidence threshold."
+    def evaluate_stale_evidence(
+        self,
+        observed_at: datetime,
+        current_mastery: float = 0.7,
+        reassessment_threshold: float = 0.65,
+    ) -> Tuple[float, bool]:
+        """
+        Calculates predicted retention and determines if reassessment is recommended.
+        Returns: (predicted_retention, reassessment_needed)
+        """
+        now = datetime.now(timezone.utc)
+        if observed_at.tzinfo is None:
+            observed_at = observed_at.replace(tzinfo=timezone.utc)
+        days = max(0.0, (now - observed_at).total_seconds() / 86400.0)
+        retention = self.predict_retention({
+            "days_since_learning": days,
+            "mastery_before_decay": current_mastery,
+            "decay_amount": 0.05,
+            "intervention_count": 0.0,
+            "intervention_boost": 0.0,
+            "mastery": current_mastery,
+        })
+        return retention, retention < reassessment_threshold
 
-            return DocumentProcessResult(
-                status=status,
-                trusted=trusted,
-                coverage=round(coverage, 2),
-                successful_pages=tuple(successful_pages),
-                failed_pages=tuple(failed_pages),
-                ocr_used=ocr_used,
-                warning=warning,
-            )
 
+class LearningStateProvider:
+    """Provides learning state classification from models/learning_state_model.pkl."""
 
-class AdaptiveItemQuestionSelector(QuestionSelector):
-    """Adaptive question selector querying the stored item bank and using ML adaptive logic."""
+    REQUIRED_FEATURES = [
+        "accuracy",
+        "average_response_time_seconds",
+        "hints_used",
+        "completion_rate",
+        "engagement_score",
+        "mastery_change",
+        "session_quality_score",
+    ]
 
-    def __init__(self, db: Session, session_history: list[dict[str, Any]] | None = None):
-        self.db = db
-        self.session_history = session_history or []
+    def __init__(self, model_path: Optional[str] = None):
+        self.model_path = model_path or os.path.join(MODELS_DIR, "learning_state_model.pkl")
+        self._model = None
 
-    def select_next_question(self, request: QuestionSelectionRequest) -> ProposedQuestion | Mapping[str, Any]:
-        stmt = select(AssessmentItem).where(
-            AssessmentItem.competency_id == request.competency_id,
-            AssessmentItem.user_id.is_(None),
-        )
-        items = self.db.execute(stmt).scalars().all()
-
-        if not items:
-            raise ValueError(f"No stored assessment items available for competency {request.competency_id}")
-
-        item_bank: list[dict[str, Any]] = []
-        for item in items:
+    def _ensure_model(self):
+        if self._model is None:
+            if not os.path.exists(self.model_path):
+                raise FileNotFoundError(f"Learning state model artifact not found at {self.model_path}")
             try:
-                options = json.loads(item.options_json)
+                from models.learning_state_classifier import LearningStateClassifier
+                self._model = LearningStateClassifier.load(self.model_path)
             except Exception:
-                continue
-            item_bank.append({
-                "question_id": item.id,
-                "id": item.id,
-                "competency_id": item.competency_id,
-                "competency": str(item.competency_id),
-                "subskill_id": item.subskill_id,
-                "subskill": request.subskill_name or "",
-                "question": item.question_text,
-                "options": options,
-                "correct_answer": item.correct_option,
-                "difficulty": item.difficulty or "medium",
-                "source_reference": item.source_reference,
-            })
+                import joblib
+                self._model = joblib.load(self.model_path)
 
-        if not item_bank:
-            raise ValueError(f"No valid assessment items found for competency {request.competency_id}")
+    def classify_state(self, signals: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Classifies learner session into one of: 'mastered', 'improving', 'needs_practice', 'struggling'.
+        """
+        self._ensure_model()
+        payload = {
+            "accuracy": float(signals.get("accuracy", 0.7)),
+            "average_response_time_seconds": float(signals.get("average_response_time_seconds", signals.get("response_time", 25.0))),
+            "hints_used": float(signals.get("hints_used", signals.get("hints_requested", 0.0))),
+            "completion_rate": float(signals.get("completion_rate", 1.0)),
+            "engagement_score": float(signals.get("engagement_score", 0.75)),
+            "mastery_change": float(signals.get("mastery_change", 0.05)),
+            "session_quality_score": float(signals.get("session_quality_score", 0.8)),
+        }
+        if hasattr(self._model, "predict_one"):
+            return self._model.predict_one(payload)
+        import pandas as pd
+        df = pd.DataFrame([payload])
+        pred = self._model.predict(df)[0]
+        return {"predicted_state": str(pred), "confidence": 0.8, "data_source": "[SANDBOX DATA]"}
 
-        candidates = item_bank
-        if request.subskill_id is not None:
-            sub_candidates = [i for i in item_bank if i.get("subskill_id") == request.subskill_id]
-            if sub_candidates:
-                candidates = sub_candidates
 
-        selection_result = get_next_adaptive_mcq(
-            item_bank=candidates,
-            session_history=self.session_history,
-            competency=str(request.competency_id),
+class MisconceptionClassifierProvider:
+    """Wraps ml_pipeline/misconception_classifier.py for backend service injection."""
+
+    def __init__(self):
+        from ml_pipeline.misconception_classifier import LLMMisconceptionClassifier
+        self._classifier = LLMMisconceptionClassifier()
+
+    def classify(self, response: Any) -> Any:
+        return self._classifier.classify(response)
+
+
+class IRTProvider:
+    """Loads 2PL IRT calibrated parameters from models/irt_item_params.json."""
+
+    def __init__(self, params_path: Optional[str] = None):
+        self.params_path = params_path or os.path.join(MODELS_DIR, "irt_item_params.json")
+        self._items_by_id: Optional[Dict[str, Dict[str, Any]]] = None
+
+    def _ensure_loaded(self):
+        if self._items_by_id is None:
+            if not os.path.exists(self.params_path):
+                raise FileNotFoundError(f"IRT params not found at {self.params_path}")
+            with open(self.params_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            self._items_by_id = {
+                item["item_id"]: item for item in data.get("items", [])
+            }
+
+    def get_item_params(self, item_id: str) -> Optional[Dict[str, Any]]:
+        self._ensure_loaded()
+        return self._items_by_id.get(item_id)
+
+    def predict_probability(self, theta: float, item_id: str) -> float:
+        """Computes 2PL IRT response probability P(theta) = 1 / (1 + exp(-1.702 * a * (theta - b)))."""
+        params = self.get_item_params(item_id)
+        if not params:
+            return 1.0 / (1.0 + math.exp(-theta))
+        a = float(params.get("calibrated_discrimination_a", 1.0))
+        b = float(params.get("calibrated_difficulty_b", 0.0))
+        exponent = -1.702 * a * (theta - b)
+        exponent = max(-30.0, min(30.0, exponent))
+        return 1.0 / (1.0 + math.exp(exponent))
+
+
+class InterventionProvider:
+    """Loads intervention effectiveness matrix from models/intervention_effectiveness.json."""
+
+    def __init__(self, matrix_path: Optional[str] = None):
+        self.matrix_path = matrix_path or os.path.join(MODELS_DIR, "intervention_effectiveness.json")
+        self._matrix: Optional[List[Dict[str, Any]]] = None
+
+    def _ensure_loaded(self):
+        if self._matrix is None:
+            if not os.path.exists(self.matrix_path):
+                raise FileNotFoundError(f"Intervention effectiveness matrix not found at {self.matrix_path}")
+            with open(self.matrix_path, "r", encoding="utf-8") as f:
+                self._matrix = json.load(f)
+
+    def recommend_interventions(self, mastery_band: str = "medium", top_k: int = 3) -> List[Dict[str, Any]]:
+        self._ensure_loaded()
+        band = mastery_band.lower()
+        candidates = [row for row in self._matrix if row.get("mastery_band", "").lower() == band]
+        if not candidates:
+            candidates = self._matrix
+        sorted_candidates = sorted(
+            candidates,
+            key=lambda x: x.get("score", x.get("improvement", 0.0)),
+            reverse=True,
         )
-
-        chosen = selection_result.get("next_question")
-        if not chosen:
-            chosen = candidates[0]
-
-        qid = chosen.get("question_id") or chosen.get("id") or items[0].id
-        return ProposedQuestion(
-            question_id=int(qid),
-            competency_id=request.competency_id,
-            subskill_id=request.subskill_id,
-            question_text=str(chosen.get("question", "")),
-            options=tuple(str(opt) for opt in chosen.get("options", ())),
-            difficulty=str(chosen.get("difficulty", "medium")),
-            source_reference=chosen.get("source_reference"),
-            correct_option=None,
-        )
+        return sorted_candidates[:top_k]

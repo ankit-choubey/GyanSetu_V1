@@ -3,14 +3,13 @@ from fastapi import APIRouter, Depends
 from app.dependencies import get_current_user
 from app.models.user import User
 from app.schemas.evening import ChatbotRequest, ChatbotResponse
-from app.services.evening_interfaces import ChatRequest, RagProvider
-from app.services.ml_providers import ChromaRagProvider
+from app.services.evening_interfaces import ChatRequest, RagProvider, UnavailableRagProvider
 
 router = APIRouter(tags=["chatbot"])
 
 
 def get_rag_provider() -> RagProvider:
-    return ChromaRagProvider()
+    return UnavailableRagProvider()
 
 
 @router.post("/chatbot/ask", response_model=ChatbotResponse)
