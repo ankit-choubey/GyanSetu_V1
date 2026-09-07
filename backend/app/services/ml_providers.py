@@ -18,21 +18,32 @@ import sys
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+MODELS_DIR = os.path.join(_REPO_ROOT, "models")
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+if MODELS_DIR not in sys.path:
+    sys.path.insert(0, MODELS_DIR)
+
 try:
     import models.retention_model as _rm
-    sys.modules.setdefault("retention_model", _rm)
+    sys.modules["retention_model"] = _rm
 except ImportError:
-    pass
+    try:
+        import retention_model as _rm
+        sys.modules["retention_model"] = _rm
+    except ImportError:
+        pass
 
 try:
     import models.learning_state_classifier as _lsc
-    sys.modules.setdefault("learning_state_classifier", _lsc)
+    sys.modules["learning_state_classifier"] = _lsc
 except ImportError:
-    pass
-
-MODELS_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "..", "models")
-)
+    try:
+        import learning_state_classifier as _lsc
+        sys.modules["learning_state_classifier"] = _lsc
+    except ImportError:
+        pass
 
 
 class RetentionProvider:
@@ -59,8 +70,12 @@ class RetentionProvider:
                 from models.retention_model import RetentionModel
                 self._model = RetentionModel.load(self.model_path)
             except Exception:
-                import joblib
-                self._model = joblib.load(self.model_path)
+                try:
+                    from retention_model import RetentionModel
+                    self._model = RetentionModel.load(self.model_path)
+                except Exception:
+                    import joblib
+                    self._model = joblib.load(self.model_path)
 
     def predict_retention(self, features: Dict[str, float]) -> float:
         """
