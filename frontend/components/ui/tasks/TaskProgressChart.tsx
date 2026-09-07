@@ -61,7 +61,7 @@ export const TaskProgressChart = React.memo(function TaskProgressChart({
       </div>
 
       <div className="w-full h-[250px] relative">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" debounce={50}>
           <BarChart
             layout="vertical"
             data={chartData}

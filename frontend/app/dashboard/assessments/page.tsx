@@ -1,223 +1,214 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { useDashboard } from "@/components/ui/dashboard/DashboardContext";
-import {
-  getCompetencyState,
-  getCompetencyStateSync,
-  deriveKPISummary,
-  fetchAssessmentNext,
-  submitAssessment,
-} from "@/lib/api/competency";
-import {
-  DashboardResponse,
-  BackendCompetency,
-  AdaptiveQuestionResponse,
-  AssessmentSubmitResponse,
-} from "@/lib/api/types";
-import { AssessmentStatCards } from "@/components/ui/assessments/AssessmentStatCards";
-import { CompetencyAssessmentCard } from "@/components/ui/assessments/CompetencyAssessmentCard";
-import { QuestionPanel } from "@/components/ui/assessments/QuestionPanel";
-import { ResultsPanel } from "@/components/ui/assessments/ResultsPanel";
-import { DashboardSkeleton } from "@/components/ui/dashboard/states/CardSkeleton";
-import { ErrorState } from "@/components/ui/dashboard/states/ErrorState";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { ShieldAlert, CheckCircle2, Lock, ArrowRight, Loader2, PlayCircle } from "lucide-react";
+import { cn } from "@/lib/cn";
+import { AssessmentRunner } from "@/components/assessments/AssessmentRunner";
+
+type TierStatus = {
+  id: "easy" | "medium" | "tough";
+  name: string;
+  badgeColor: string;
+  difficultyText: string;
+  unlocked: boolean;
+  completed: boolean;
+  score: number | null;
+  passing_score: number;
+  description: string;
+  unlock_requirement?: string;
+};
+
+// Mock Tiers
+const initialTiers: TierStatus[] = [
+  {
+    id: "easy",
+    name: "Tier 1: Foundation",
+    badgeColor: "text-emerald-600 bg-emerald-50 border-emerald-200",
+    difficultyText: "Easy • Recall & Definitions",
+    unlocked: true,
+    completed: false,
+    score: null,
+    passing_score: 70,
+    description: "Core definitions, terminology, and foundational knowledge of the statistical concept."
+  },
+  {
+    id: "medium",
+    name: "Tier 2: Application",
+    badgeColor: "text-amber-600 bg-amber-50 border-amber-200",
+    difficultyText: "Medium • Formulas & Calculations",
+    unlocked: false,
+    completed: false,
+    score: null,
+    passing_score: 70,
+    description: "Apply formulas and solve direct computational problems using real data sets.",
+    unlock_requirement: "Complete Tier 1 with ≥ 70% to unlock."
+  },
+  {
+    id: "tough",
+    name: "Tier 3: Analysis",
+    badgeColor: "text-purple-600 bg-purple-50 border-purple-200",
+    difficultyText: "Hard • Multi-Step & Policy",
+    unlocked: false,
+    completed: false,
+    score: null,
+    passing_score: 70,
+    description: "Complex multi-step problems requiring deep analytical reasoning and policy trade-offs.",
+    unlock_requirement: "Complete Tier 2 with ≥ 70% to unlock."
+  }
+];
 
 export default function AssessmentsPage() {
-  const { persona } = useDashboard();
-  const [data, setData] = useState<DashboardResponse>(() =>
-    getCompetencyStateSync(persona)
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const sessionId = searchParams?.get("session_id") || "demo_session";
 
-  // Assessment flow modal state
-  const [activeCompetency, setActiveCompetency] = useState<BackendCompetency | null>(null);
-  const [activeQuestion, setActiveQuestion] = useState<AdaptiveQuestionResponse | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [assessmentResult, setAssessmentResult] = useState<AssessmentSubmitResponse | null>(null);
+  const [tiers, setTiers] = useState<TierStatus[]>(initialTiers);
+  const [activeTier, setActiveTier] = useState<"easy" | "medium" | "tough" | null>(null);
 
-  // Sync state on persona change
+  // In a real app, fetch tiers status from GET /api/v1/assessment/tiers
   useEffect(() => {
-    let isSubscribed = true;
-    const isMock = process.env.NEXT_PUBLIC_USE_MOCK !== "false";
+    // We are using the mock data above for now.
+  }, [sessionId]);
 
-    if (isMock) {
-      setData(getCompetencyStateSync(persona));
-      setIsLoading(false);
-      return;
-    }
+  const handleStartTier = (tierId: "easy" | "medium" | "tough") => {
+    setActiveTier(tierId);
+  };
 
-    setIsLoading(true);
-    setError(null);
-
-    getCompetencyState(persona)
-      .then((res) => {
-        if (isSubscribed) {
-          setData(res);
-          setIsLoading(false);
+  const handleCloseRunner = (score?: number, passed?: boolean) => {
+    if (activeTier && score !== undefined && passed !== undefined) {
+      setTiers(prev => {
+        const newTiers = [...prev];
+        const currentIdx = newTiers.findIndex(t => t.id === activeTier);
+        if (currentIdx > -1) {
+          newTiers[currentIdx] = {
+            ...newTiers[currentIdx],
+            completed: true,
+            score: score
+          };
+          
+          // Unlock next tier if passed
+          if (passed && currentIdx + 1 < newTiers.length) {
+            newTiers[currentIdx + 1] = {
+              ...newTiers[currentIdx + 1],
+              unlocked: true
+            };
+          }
         }
-      })
-      .catch((err) => {
-        if (isSubscribed) {
-          setError(err.message || "Failed to load competencies.");
-          setIsLoading(false);
-        }
+        return newTiers;
       });
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [persona]);
-
-  const kpiSummary = useMemo(() => deriveKPISummary(data), [data]);
-
-  // Handle starting assessment
-  const handleStartAssessment = useCallback(async (comp: BackendCompetency) => {
-    setActiveCompetency(comp);
-    setAssessmentResult(null);
-    try {
-      const q = await fetchAssessmentNext({ competency_id: comp.competency_id });
-      setActiveQuestion(q);
-    } catch (e) {
-      console.error("Failed to fetch adaptive question:", e);
     }
-  }, []);
+    setActiveTier(null);
+  };
 
-  // Handle answering question
-  const handleSubmitAnswer = useCallback(
-    async (selectedOption: string) => {
-      if (!activeCompetency || !activeQuestion) return;
-      setIsSubmitting(true);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
 
-      try {
-        const result = await submitAssessment({
-          competency_id: activeCompetency.competency_id,
-          question_id: activeQuestion.question_id || 101,
-          selected_option: selectedOption,
-        });
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 400, damping: 30 } }
+  };
 
-        setAssessmentResult(result);
-
-        // Optimistically update competency list in local state
-        setData((prev) => ({
-          ...prev,
-          competencies: prev.competencies.map((c) =>
-            c.competency_id === activeCompetency.competency_id
-              ? {
-                  ...c,
-                  mastery: result.mastery,
-                  confidence: result.confidence,
-                  status: "ASSESSED",
-                  evidence_count: c.evidence_count + 1,
-                }
-              : c
-          ),
-          next_best_action: result.next_best_action || prev.next_best_action,
-        }));
-      } catch (err) {
-        console.error("Assessment submit error:", err);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [activeCompetency, activeQuestion]
-  );
-
-  const handleCloseFlow = useCallback(() => {
-    setActiveCompetency(null);
-    setActiveQuestion(null);
-    setAssessmentResult(null);
-  }, []);
-
-  if (isLoading) {
-    return <DashboardSkeleton />;
-  }
-
-  if (error || !data) {
+  if (activeTier) {
     return (
-      <ErrorState
-        title="Could not load assessments"
-        message={error || "Unexpected error"}
-        onRetry={() => {
-          setIsLoading(true);
-          getCompetencyState(persona)
-            .then(setData)
-            .catch((e) => setError(e.message))
-            .finally(() => setIsLoading(false));
-        }}
+      <AssessmentRunner 
+        sessionId={sessionId} 
+        tier={activeTier} 
+        onClose={handleCloseRunner} 
       />
     );
   }
 
   return (
-    <div className="space-y-8 pb-12">
-      {/* Header */}
-      <div>
-        <h2 className="font-heading text-2xl sm:text-3xl text-slate-900 tracking-normal">
-          Assessments
+    <motion.div 
+      className="space-y-6 w-full"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h2 className="font-heading text-2xl text-slate-900 tracking-normal mb-1">
+          3-Tier Gated Assessment
         </h2>
-        <p className="text-sm text-slate-500 font-sans mt-1">
-          Take adaptive assessments to evaluate your competencies and calibrate your profile
+        <p className="text-sm text-slate-500 font-sans">
+          Session ID: <span className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded text-slate-600">{sessionId}</span>
         </p>
-      </div>
+      </motion.div>
 
-      {/* ROW 1: STAT CARDS */}
-      <AssessmentStatCards
-        totalCompetencies={kpiSummary.total_count}
-        assessedCount={kpiSummary.assessed_count}
-        avgMastery={kpiSummary.mastery_avg}
-      />
-
-      {/* ROW 2: ASSESSMENT CARDS */}
-      <section aria-labelledby="available-assessments-heading">
-        <div className="flex items-center justify-between mb-4">
-          <h3
-            id="available-assessments-heading"
-            className="font-heading text-lg sm:text-xl text-slate-900"
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {tiers.map((tier) => (
+          <div 
+            key={tier.id}
+            className={cn(
+              "relative border rounded-xl overflow-hidden flex flex-col h-full transition-all duration-300",
+              !tier.unlocked 
+                ? "bg-slate-50 border-slate-200 opacity-60" 
+                : "bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300"
+            )}
           >
-            Available Competency Modules
-          </h3>
-          <span className="text-xs text-slate-500">
-            {data.competencies.length} modules available
-          </span>
-        </div>
+            {/* Top color strip */}
+            <div className={cn(
+              "h-1.5 w-full",
+              tier.id === "easy" ? "bg-emerald-500" :
+              tier.id === "medium" ? "bg-amber-500" : "bg-purple-500"
+            )} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.competencies.map((c, index) => (
-            <CompetencyAssessmentCard
-              key={c.competency_id}
-              competency={c}
-              index={index}
-              onStart={handleStartAssessment}
-            />
-          ))}
-        </div>
-      </section>
+            <div className="p-6 flex-1 flex flex-col">
+              <div className="flex items-start justify-between mb-4">
+                <span className={cn(
+                  "inline-flex items-center px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border",
+                  tier.badgeColor
+                )}>
+                  {tier.name}
+                </span>
+                {!tier.unlocked && <Lock className="w-5 h-5 text-slate-400" />}
+                {tier.completed && <CheckCircle2 className="w-5 h-5 text-teal-500" />}
+              </div>
 
-      {/* ACTIVE ASSESSMENT MODAL OVERLAY */}
-      {activeCompetency && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          {assessmentResult ? (
-            <ResultsPanel
-              competencyName={activeCompetency.competency_name}
-              result={assessmentResult}
-              onFinish={handleCloseFlow}
-            />
-          ) : activeQuestion ? (
-            <QuestionPanel
-              competencyName={activeCompetency.competency_name}
-              question={activeQuestion}
-              isSubmitting={isSubmitting}
-              onSubmit={handleSubmitAnswer}
-              onCancel={handleCloseFlow}
-            />
-          ) : (
-            <div className="bg-white rounded-xl p-8 max-w-sm w-full text-center">
-              <div className="text-sm text-slate-600">Loading diagnostic question...</div>
+              <h3 className="font-heading text-lg text-slate-900 mb-2">{tier.difficultyText}</h3>
+              <p className="text-xs text-slate-600 flex-1 leading-relaxed">{tier.description}</p>
+
+              {tier.completed && tier.score !== null && (
+                <div className="mt-4 py-2 border-t border-slate-100">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-slate-500 font-medium">Score:</span>
+                    <span className={cn(
+                      "font-bold",
+                      tier.score >= tier.passing_score ? "text-teal-600" : "text-rose-600"
+                    )}>
+                      {tier.score}% {tier.score >= tier.passing_score ? "(Passed)" : "(Failed)"}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      )}
-    </div>
+
+            <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+              {tier.unlocked ? (
+                <button
+                  onClick={() => handleStartTier(tier.id)}
+                  className={cn(
+                    "w-full py-2.5 px-4 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm",
+                    tier.completed 
+                      ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50" 
+                      : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
+                  )}
+                >
+                  {tier.completed ? "Retake Assessment" : "Start Assessment"}
+                  <PlayCircle className="w-4 h-4" />
+                </button>
+              ) : (
+                <div className="w-full py-2.5 px-4 rounded-lg bg-slate-100 text-slate-400 text-xs font-medium text-center flex items-center justify-center gap-2 cursor-not-allowed" title={tier.unlock_requirement}>
+                  <Lock className="w-3.5 h-3.5" />
+                  Locked
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </motion.div>
+    </motion.div>
   );
 }

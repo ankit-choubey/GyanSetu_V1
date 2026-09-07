@@ -16,7 +16,7 @@ import newOfficerMockData from "@/lib/mock/officer-new.json";
 // --- Synchronous Mock Readers ---
 
 export function getCompetencyStateSync(
-  persona: "jso" | "new" = "jso"
+  persona: "jso" | "new" | "admin" = "jso"
 ): DashboardResponse {
   if (persona === "new") {
     return newOfficerMockData as unknown as DashboardResponse;
@@ -25,7 +25,7 @@ export function getCompetencyStateSync(
 }
 
 export async function getCompetencyState(
-  persona: "jso" | "new" = "jso"
+  persona: "jso" | "new" | "admin" = "jso"
 ): Promise<DashboardResponse> {
   const useMock = process.env.NEXT_PUBLIC_USE_MOCK !== "false";
 

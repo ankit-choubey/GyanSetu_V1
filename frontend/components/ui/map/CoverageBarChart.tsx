@@ -66,7 +66,7 @@ export const CoverageBarChart = React.memo(function CoverageBarChart({
       </div>
 
       <div className="w-full h-[180px] relative">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" debounce={50}>
           <BarChart
             layout="vertical"
             data={data}

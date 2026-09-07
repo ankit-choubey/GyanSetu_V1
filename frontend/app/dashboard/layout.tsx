@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   ClipboardCheck,
@@ -12,15 +12,87 @@ import {
   ArrowLeft,
   Menu,
   X,
+  Lock,
+  LogOut,
+  UploadCloud,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 import { SandboxBadge } from "@/components/ui/dashboard/SandboxBadge";
 import { DashboardProvider, useDashboard } from "@/components/ui/dashboard/DashboardContext";
 import { cn } from "@/lib/cn";
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { persona, setPersona, userName, roleName } = useDashboard();
+  const { isAuthenticated, isLoading: isAuthLoading, user, logout } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === "admin" && persona !== "admin") {
+        setPersona("admin");
+      }
+    }
+  }, [user, persona, setPersona]);
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 text-slate-600">
+        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Verifying session...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#E6F0FA] flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Background Atmosphere */}
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src="/images/auth_sky_bg.jpg"
+            alt="Security Background"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-white/30 via-transparent to-blue-900/5" />
+
+        <div className="relative z-10 bg-white rounded-[28px] p-8 sm:p-9 max-w-md w-full shadow-[0_25px_60px_-15px_rgba(59,130,246,0.18),0_10px_30px_-5px_rgba(0,0,0,0.06)] border border-slate-100 text-center">
+          <div className="w-14 h-14 bg-amber-50 border border-amber-200 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xs">
+            <Lock className="w-7 h-7" />
+          </div>
+          <h2 className="font-heading text-2xl text-slate-900 mb-2 tracking-tight">
+            Authentication Required
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 mb-6 leading-relaxed">
+            You must be signed in with your official government credentials to access the GyanSetu Competency & Workforce Intelligence Platform.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link
+              href={`/login?redirect=${encodeURIComponent(pathname || "/dashboard")}&notice=required`}
+              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl transition shadow-md hover:shadow-lg text-center"
+            >
+              Sign In to Continue
+            </Link>
+            <Link
+              href="/signup"
+              className="w-full py-2.5 px-4 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs rounded-xl transition border border-slate-200 text-center"
+            >
+              Register New Official Profile
+            </Link>
+          </div>
+          <div className="mt-6 pt-5 border-t border-slate-100">
+            <Link href="/" className="text-xs font-medium text-slate-400 hover:text-slate-700 transition">
+              ← Return to Home Page
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   const navItems = [
     {
@@ -28,6 +100,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       href: "/dashboard",
       icon: LayoutDashboard,
       active: pathname === "/dashboard",
+    },
+    {
+      name: "Data Ingestion",
+      href: "/dashboard/ingestion",
+      icon: UploadCloud,
+      active: pathname?.startsWith("/dashboard/ingestion"),
     },
     {
       name: "Assessments",
@@ -73,40 +151,45 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         />
       )}
 
-      {/* LEFT SIDEBAR (Fixed w-60) */}
+      {/* LEFT SIDEBAR */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-50 w-60 bg-white border-r border-slate-200 flex flex-col justify-between transition-transform duration-300 lg:translate-x-0",
-          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed top-0 bottom-0 left-0 z-50 bg-white border-r border-slate-200 flex flex-col justify-between transition-all duration-300",
+          mobileMenuOpen ? "translate-x-0 w-60" : "-translate-x-full lg:translate-x-0",
+          isCollapsed && !mobileMenuOpen ? "w-20" : "w-60"
         )}
       >
         <div>
           {/* Brand Header */}
-          <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-heading text-lg font-bold shadow-xs">
+          <div className={cn("p-4 border-b border-slate-200 flex items-center h-[61px]", isCollapsed ? "justify-center" : "justify-between")}>
+            <Link href="/" className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-2.5")}>
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-heading text-lg font-bold shadow-xs shrink-0">
                 GS
               </div>
-              <div>
-                <span className="font-heading text-lg tracking-wide text-slate-900 block leading-tight">
-                  GYANSETU
-                </span>
-              </div>
+              {!isCollapsed && (
+                <div>
+                  <span className="font-heading text-lg tracking-wide text-slate-900 block leading-tight">
+                    GYANSETU
+                  </span>
+                </div>
+              )}
             </Link>
-            <button
-              type="button"
-              className="lg:hidden text-slate-500 hover:text-slate-800 p-1"
-              onClick={() => setMobileMenuOpen(false)}
-              aria-label="Close sidebar"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            {!isCollapsed && (
+              <button
+                type="button"
+                className="lg:hidden text-slate-500 hover:text-slate-800 p-1"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close sidebar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           {/* Navigation Links */}
           <div className="p-3 space-y-1">
-            <div className="px-3 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-              Navigation
+            <div className={cn("px-3 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider", isCollapsed ? "text-center" : "")}>
+              {!isCollapsed ? "Navigation" : "Nav"}
             </div>
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -115,23 +198,25 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
                   key={item.name}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
+                  title={isCollapsed ? item.name : undefined}
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition relative",
+                    "flex items-center px-3 py-2 rounded-lg text-xs font-medium transition relative",
+                    isCollapsed ? "justify-center" : "justify-between",
                     item.active
                       ? "bg-blue-50 text-blue-700 font-semibold border-l-[3px] border-blue-600 pl-[9px]"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   )}
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-2.5")}>
                     <Icon
                       className={cn(
-                        "w-4 h-4",
+                        "w-4 h-4 shrink-0",
                         item.active ? "text-blue-600" : "text-slate-400"
                       )}
                     />
-                    <span>{item.name}</span>
+                    {!isCollapsed && <span>{item.name}</span>}
                   </div>
-                  {item.badge && (
+                  {!isCollapsed && item.badge && (
                     <span
                       className={cn(
                         "text-[9px] font-medium px-1.5 py-0.5 rounded",
@@ -149,20 +234,44 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        {/* Sidebar Footer: Clean Return to Home */}
-        <div className="p-4 border-t border-slate-200 bg-slate-50/50">
+        {/* Sidebar Footer */}
+        <div className="p-3 border-t border-slate-200 bg-slate-50/50 space-y-1">
+          {/* Toggle Sidebar Button */}
+          <button
+            type="button"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={cn("w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition", isCollapsed ? "justify-center" : "")}
+            title={isCollapsed ? "Expand Sidebar" : undefined}
+          >
+            <Menu className="w-3.5 h-3.5 shrink-0" />
+            {!isCollapsed && <span>Collapse Sidebar</span>}
+          </button>
+          
           <Link
             href="/"
-            className="flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-blue-600 transition"
+            className={cn("flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition", isCollapsed ? "justify-center" : "")}
+            title={isCollapsed ? "Back to Home" : undefined}
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
+            <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+            {!isCollapsed && <span>Back to Home</span>}
           </Link>
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              router.push("/login");
+            }}
+            className={cn("w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition", isCollapsed ? "justify-center" : "text-left")}
+            title={isCollapsed ? "Sign Out" : undefined}
+          >
+            <LogOut className="w-3.5 h-3.5 shrink-0" />
+            {!isCollapsed && <span>Sign Out</span>}
+          </button>
         </div>
       </aside>
 
       {/* MAIN VIEWPORT CONTAINER */}
-      <div className="flex-1 lg:pl-60 flex flex-col min-w-0">
+      <div className={cn("flex-1 flex flex-col min-w-0 transition-all duration-300", isCollapsed ? "lg:pl-20" : "lg:pl-60")}>
         {/* TOP BAR */}
         <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -178,17 +287,17 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="font-heading text-lg sm:text-xl tracking-normal text-slate-900">
-                  {userName}
+                  {user?.name || userName}
                 </h1>
-                <SandboxBadge label="DEMO DATA" />
+                <SandboxBadge label="OFFICIAL SESSION" />
               </div>
               <p className="text-xs text-slate-500 hidden sm:block">
-                {roleName}
+                {user?.designation || roleName} • {user?.department || "MoSPI"}
               </p>
             </div>
           </div>
 
-          {/* Persona Switcher (Demo Tool) */}
+          {/* Persona Switcher (Demo Tool) & Logout */}
           <div className="flex items-center gap-3">
             <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
               <button
@@ -218,14 +327,35 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* User Avatar */}
-            <div className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0">
-              {initials}
+            <div 
+              className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0 shadow-xs"
+              title={`${user?.name || userName} (${user?.role || "Learner"})`}
+            >
+              {(user?.name || userName)
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase()}
             </div>
+
+            {/* Fast Logout Button */}
+            <button
+              type="button"
+              onClick={() => {
+                logout();
+                router.push("/login");
+              }}
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded-lg transition"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </header>
 
         {/* Page Content Viewport */}
-        <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-8 w-full">
           {children}
         </main>
       </div>

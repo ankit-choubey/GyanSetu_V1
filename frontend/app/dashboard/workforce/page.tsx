@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import workforceData from "@/lib/mock/workforce-mock.json";
 import { AdminAnalyticsResponse } from "@/lib/api/types";
 import { WorkforceStatCards } from "@/components/ui/workforce/WorkforceStatCards";
@@ -36,10 +37,32 @@ export default function WorkforcePage() {
     };
   }, [data]);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 400, damping: 30 },
+    },
+  };
+
   return (
-    <div className="space-y-8 pb-12">
+    <motion.div 
+      className="space-y-8 pb-12 w-full"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <h2 className="font-heading text-2xl sm:text-3xl text-slate-900 tracking-normal">
@@ -55,19 +78,21 @@ export default function WorkforcePage() {
             Aggregate competency calibration and syllabus progress across cadre officers
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* ROW 1: STAT CARDS */}
-      <WorkforceStatCards
-        totalLearners={stats.totalLearners}
-        avgMastery={stats.avgMastery}
-        assessedCount={stats.assessedCount}
-        totalEvaluations={stats.totalEvaluations}
-        totalEvidence={stats.totalEvidence}
-      />
+      <motion.div variants={itemVariants}>
+        <WorkforceStatCards
+          totalLearners={stats.totalLearners}
+          avgMastery={stats.avgMastery}
+          assessedCount={stats.assessedCount}
+          totalEvaluations={stats.totalEvaluations}
+          totalEvidence={stats.totalEvidence}
+        />
+      </motion.div>
 
       {/* ROW 2: CHARTS (DONUT COL 5 + COMPARISON COL 7) */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <motion.section variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         <div className="lg:col-span-5 flex flex-col">
           <StatusDistributionDonut
             competencies={data.competencies}
@@ -80,15 +105,15 @@ export default function WorkforcePage() {
             className="h-full"
           />
         </div>
-      </section>
+      </motion.section>
 
       {/* ROW 3: COMPETENCY ANALYTICS TABLE */}
-      <section aria-labelledby="analytics-table-heading">
+      <motion.section variants={itemVariants} aria-labelledby="analytics-table-heading">
         <h2 id="analytics-table-heading" className="sr-only">
           Competency Analytics Table
         </h2>
         <CompetencyAnalyticsTable competencies={data.competencies} />
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }

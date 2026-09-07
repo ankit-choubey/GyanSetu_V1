@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { motion } from "framer-motion";
 import { useDashboard } from "@/components/ui/dashboard/DashboardContext";
 import {
   getCompetencyState,
@@ -114,10 +115,32 @@ export default function DashboardPage() {
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 400, damping: 30 },
+    },
+  };
+
   return (
-    <div className="space-y-8 pb-12">
+    <motion.div 
+      className="space-y-8 pb-12 w-full"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Demo Mode Notification Bar */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-slate-900">
@@ -139,11 +162,11 @@ export default function DashboardPage() {
           <ClipboardCheck className="w-3.5 h-3.5" />
           <span>Start Assessment</span>
         </button>
-      </div>
+      </motion.div>
 
       {/* ROW 1: 4 KPI STAT CARDS */}
-      <section aria-label="Key Performance Indicators">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.section variants={itemVariants} aria-label="Key Performance Indicators">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Mastery */}
           <MetricCard
             label="Mastery"
@@ -190,15 +213,17 @@ export default function DashboardPage() {
             sublabel="Assessed to date"
           />
         </div>
-      </section>
+      </motion.section>
 
       {/* If entirely unassessed, render the dedicated EmptyState CTA */}
       {isAllUnassessed ? (
-        <EmptyState onStartDiagnostic={handleOpenDiagnosticModal} />
+        <motion.div variants={itemVariants}>
+          <EmptyState onStartDiagnostic={handleOpenDiagnosticModal} />
+        </motion.div>
       ) : null}
 
       {/* ROW 2: COMPETENCY RADAR (COL 7) + ACTIVE GAP (COL 5) */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <motion.section variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         <div className="lg:col-span-7 flex flex-col">
           <CompetencyRadar
             data={radarData}
@@ -214,11 +239,11 @@ export default function DashboardPage() {
             className="h-full"
           />
         </div>
-      </section>
+      </motion.section>
 
       {/* ROW 3: RECOMMENDED ACTION (only if next_best_action exists) */}
       {data.next_best_action && (
-        <section aria-labelledby="recommended-action-heading">
+        <motion.section variants={itemVariants} aria-labelledby="recommended-action-heading">
           <h2 id="recommended-action-heading" className="sr-only">
             Recommended Action
           </h2>
@@ -226,11 +251,11 @@ export default function DashboardPage() {
             nba={data.next_best_action}
             onStartAction={handleOpenDiagnosticModal}
           />
-        </section>
+        </motion.section>
       )}
 
       {/* ROW 4: COMPETENCY BREAKDOWN TABLE */}
-      <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+      <motion.section variants={itemVariants} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
           <div>
             <h3 className="font-heading text-xl sm:text-2xl tracking-normal text-slate-900">
@@ -342,7 +367,7 @@ export default function DashboardPage() {
             </tbody>
           </table>
         </div>
-      </section>
+      </motion.section>
 
       {/* START ASSESSMENT MODAL */}
       {activeDiagnosticModal && (
@@ -470,6 +495,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

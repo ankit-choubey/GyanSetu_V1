@@ -72,7 +72,7 @@ export const StatusDistributionDonut = React.memo(
 
         {/* Donut Chart with Centered Metric */}
         <div className="w-full h-[220px] relative flex items-center justify-center">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" debounce={50}>
             <PieChart>
               <Tooltip
                 content={({ active, payload }) => {

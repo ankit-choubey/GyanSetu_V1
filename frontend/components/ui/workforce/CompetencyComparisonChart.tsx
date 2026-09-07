@@ -67,7 +67,7 @@ export const CompetencyComparisonChart = React.memo(
         </div>
 
         <div className="w-full h-[260px] relative">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" debounce={50}>
             <BarChart
               layout="vertical"
               data={data}

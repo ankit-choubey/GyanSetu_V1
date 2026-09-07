@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 
 interface DashboardContextType {
-  persona: "jso" | "new";
-  setPersona: (persona: "jso" | "new") => void;
+  persona: "jso" | "new" | "admin";
+  setPersona: (persona: "jso" | "new" | "admin") => void;
   userName: string;
   roleName: string;
   setUserInfo: (name: string, role: string) => void;
@@ -23,16 +23,19 @@ const DashboardContext = createContext<DashboardContextType>({
 });
 
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
-  const [persona, setPersonaState] = useState<"jso" | "new">("jso");
+  const [persona, setPersonaState] = useState<"jso" | "new" | "admin">("jso");
   const [userName, setUserName] = useState<string>("Ramesh Kumar");
   const [roleName, setRoleName] = useState<string>("Statistical Officer");
   const [isDiagnosticModalOpen, setIsDiagnosticModalOpen] = useState(false);
 
-  const setPersona = (newPersona: "jso" | "new") => {
+  const setPersona = (newPersona: "jso" | "new" | "admin") => {
     setPersonaState(newPersona);
     if (newPersona === "new") {
       setUserName("Priya Verma");
       setRoleName("Junior Statistical Officer");
+    } else if (newPersona === "admin") {
+      setUserName("System Admin");
+      setRoleName("Platform Administrator");
     } else {
       setUserName("Ramesh Kumar");
       setRoleName("Statistical Officer");
