@@ -9,6 +9,14 @@ from .intervention import Intervention
 from .intervention_outcome import InterventionOutcome
 from .misconception import Misconception
 from .monitoring_event import MonitoringEvent
+from .practical import (
+    AttemptStatus,
+    EvaluatorType,
+    PracticalAttempt,
+    PracticalDifficulty,
+    PracticalScenarioType,
+    PracticalTask,
+)
 from .recommendation import RecommendationRecord
 from .user import User
 
@@ -34,4 +42,11 @@ __all__ = [
     "DiagnosticItem",
     "Misconception",
     "MonitoringEvent",
+    "PracticalTask",
+    "PracticalAttempt",
+    "PracticalScenarioType",
+    "PracticalDifficulty",
+    "AttemptStatus",
+    "EvaluatorType",
 ]
+

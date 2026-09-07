@@ -15,6 +15,7 @@ from app.routers.evidence import router as evidence_router
 from app.routers.intervention import router as intervention_router
 from app.routers.misconception import router as misconception_router
 from app.routers.monitoring import router as monitoring_router
+from app.routers.practical import router as practical_router
 from app.routers.users import router as users_router
 
 
@@ -83,9 +84,11 @@ def on_startup() -> None:
 
     try:
         from app.seed_data.intervention_catalog_loader import seed_intervention_catalog
+        from app.seed_data.practical_scenario_loader import seed_practical_tasks
         db = SessionLocal()
         try:
             seed_intervention_catalog(db)
+            seed_practical_tasks(db)
         finally:
             db.close()
     except Exception:
@@ -113,6 +116,7 @@ app.include_router(admin_router, prefix="/api")
 app.include_router(monitoring_router, prefix="/api")
 app.include_router(intervention_router, prefix="/api")
 app.include_router(ecosystem_router, prefix="/api")
+app.include_router(practical_router, prefix="/api")
 
 
 @app.get("/health")
