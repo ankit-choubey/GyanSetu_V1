@@ -272,6 +272,44 @@ def test_admin_model_selection_gate_endpoint(admin_user):
         app.dependency_overrides.pop(admin_router.get_current_admin, None)
 
 
+def test_admin_endpoints_unauthenticated_rejected():
+    """Verify that unauthenticated requests to admin validation endpoints are rejected."""
+    with TestClient(app) as client:
+        # Without any authorization credentials, HTTPBearer returns 401 or 403
+        r1 = client.get("/api/admin/validation/scientific-audit")
+        assert r1.status_code in (401, 403), f"Expected 401/403, got {r1.status_code}"
+
+        r2 = client.get("/api/admin/validation/model-selection-gate")
+        assert r2.status_code in (401, 403), f"Expected 401/403, got {r2.status_code}"
+
+
+def test_admin_endpoints_learner_forbidden():
+    """Verify that authenticated non-admin learners cannot access admin validation endpoints."""
+    # Mock user whose role is not admin
+    learner_user = User(
+        id=902,
+        email="field_investigator@mospi.gov.in",
+        full_name="MoSPI Field Investigator",
+        password_hash="test_hashed_pwd",
+        role_id=1,  # Non-admin role
+        is_active=True,
+    )
+    # When get_current_user returns a non-admin learner, get_current_admin should raise 403
+    from app.dependencies import get_current_user
+    app.dependency_overrides[get_current_user] = lambda: learner_user
+    try:
+        with TestClient(app) as client:
+            r1 = client.get("/api/admin/validation/scientific-audit", headers={"Authorization": "Bearer fake-token"})
+            assert r1.status_code == 403
+            assert "Administrator access required" in r1.json()["detail"]
+
+            r2 = client.get("/api/admin/validation/model-selection-gate", headers={"Authorization": "Bearer fake-token"})
+            assert r2.status_code == 403
+            assert "Administrator access required" in r2.json()["detail"]
+    finally:
+        app.dependency_overrides.pop(get_current_user, None)
+
+
 def test_live_database_health_metrics():
     """Verify live database graph and boundedness metrics via service."""
     db = SessionLocal()

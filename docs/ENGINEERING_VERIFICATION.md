@@ -536,7 +536,7 @@ Evaluated on held-out test split of 40 learners (3,047 interaction instances):
 |---|---|---|---|---|
 | **Full Model** | Scenario: 0.35, Practical: 0.30, Knowledge: 0.20, History: 0.10, Signal: 0.05 | 0.4207 | 0.0000 | Authoritative baseline for multi-modal evidence fusion. |
 | **No Practical Evidence** | Practical: 0.00 (reweighted) | 0.4209 | +0.0002 | Minor degradation when scenario evidence is present. |
-| **No Scenario Evidence** | Scenario: 0.00 (reweighted) | **0.7430** | **+0.3223** | **Critical degradation**: Proves scenario evidence is the single most vital competency signal. |
+| **No Scenario Evidence** | Scenario: 0.00 (reweighted) | **0.7430** | **+0.3223** | **Strong sensitivity**: The model showed strong sensitivity to scenario evidence under this evaluation setup ($\Delta\text{RMSE} = +0.3223$). |
 | **No Training History** | Training History: 0.00 (reweighted) | 0.4207 | +0.0000 | Course completions without assessment carry near-zero predictive weight. |
 | **Equal Weights Ablation** | All active modalities: 0.20 | 0.4221 | +0.0014 | Naive equal weighting underperforms domain-calibrated weighting. |
 
@@ -648,25 +648,30 @@ Evaluated on 18,000 longitudinal observations spanning Day 1 to Day 90:
 
 ---
 
-## 9. Full Repository Test Summary (Phases 1–6)
+## 9. Full Repository Test Summary & Accounting (Phases 1–6)
 
-| Test Layer | Test Location / Command | Tests Count | Result | Status |
+| Category / Layer | Location / Target | Count | Result | Status |
 |---|---|---|---|---|
-| **Phase 1 Assessment & Foundation** | `backend/tests/test_phase1_integration.py` | 10 | 10 Passed | 🟢 GREEN |
-| **Phase 2 Competency & Adaptive Diagnostic** | `backend/tests/test_phase2_scenarios.py` | 7 | 7 Passed | 🟢 GREEN |
-| **Phase 3 Recommendation Intelligence** | `backend/tests/test_phase3_scenarios.py` | 8 | 8 Passed | 🟢 GREEN |
-| **Phase 4 Ecosystem Adapters** | `backend/tests/test_phase4_scenarios.py` | 10 | 10 Passed | 🟢 GREEN |
-| **Phase 5 Practical Verification** | `backend/tests/test_phase5_scenarios.py` | 15 | 15 Passed | 🟢 GREEN |
-| **Phase 6 Scientific Validation & Audit** | `backend/tests/test_phase6_validation.py` | 15 | 15 Passed | 🟢 GREEN |
-| **ML/AI Pipeline Stages (1–10)** | `ml_pipeline/run_all_tests.py` | 70 | 70 Passed | 🟢 GREEN |
+| **Phase 1 Assessment & Foundation Tests** | `backend/tests/test_phase1_integration.py` | 10 | 10 Passed | 🟢 GREEN |
+| **Phase 2 Competency & Adaptive Diagnostic Tests** | `backend/tests/test_phase2_scenarios.py` | 7 | 7 Passed | 🟢 GREEN |
+| **Phase 3 Recommendation Intelligence Tests** | `backend/tests/test_phase3_scenarios.py` | 8 | 8 Passed | 🟢 GREEN |
+| **Phase 4 Ecosystem Adapters Tests** | `backend/tests/test_phase4_scenarios.py` | 10 | 10 Passed | 🟢 GREEN |
+| **Phase 5 Practical Verification Tests** | `backend/tests/test_phase5_scenarios.py` | 15 | 15 Passed | 🟢 GREEN |
+| **Phase 6 Scientific Validation & Audit Tests** | `backend/tests/test_phase6_validation.py` | 17 | 17 Passed | 🟢 GREEN |
 | **All Other Backend Unit & Model Tests** | `backend/tests/` | 116 | 116 Passed | 🟢 GREEN |
-| **Phase 1 E2E Verification Script** | `scripts/verify_phase1_end_to_end.py` | 9 steps | 9 Passed | 🟢 GREEN |
-| **Phase 2 E2E Verification Script** | `scripts/verify_phase2_end_to_end.py` | 9 steps | 9 Passed | 🟢 GREEN |
-| **Phase 3 E2E Verification Script** | `scripts/verify_phase3_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
-| **Phase 4 E2E Verification Script** | `scripts/verify_phase4_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
-| **Phase 5 E2E Verification Script** | `scripts/verify_phase5_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
-| **Phase 6 E2E Verification Script** | `scripts/verify_phase6_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
-| **TOTAL REPOSITORY INTEGRITY** | **Across All Layers & Subsystems** | **277** | **277** | **🟢 100% PASS** |
+| **Backend Automated Test Cases (Subtotal)** | `backend/tests/` (`pytest backend/tests/`) | **183** | **183 Passed** | 🟢 GREEN |
+| **Root Integration & Classifier Tests** | `tests/` (`pytest tests/`) | **26** | **26 Passed** | 🟢 GREEN |
+| **ML/AI Pipeline Stages (1–10) Unit Tests** | `ml_pipeline/` (`run_all_tests.py`) | **70** | **70 Passed** | 🟢 GREEN |
+| **TOTAL AUTOMATED TEST CASES ACROSS SUITES** | **All Pytest + Pipeline Test Suites** | **279** | **279 Passed** | 🟢 100% PASS |
+| **Phase 1 E2E Operational Verification Steps** | `scripts/verify_phase1_end_to_end.py` | 9 steps | 9 Passed | 🟢 GREEN |
+| **Phase 2 E2E Operational Verification Steps** | `scripts/verify_phase2_end_to_end.py` | 9 steps | 9 Passed | 🟢 GREEN |
+| **Phase 3 E2E Operational Verification Steps** | `scripts/verify_phase3_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
+| **Phase 4 E2E Operational Verification Steps** | `scripts/verify_phase4_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
+| **Phase 5 E2E Operational Verification Steps** | `scripts/verify_phase5_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
+| **Phase 6 E2E Operational Verification Steps** | `scripts/verify_phase6_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
+| **TOTAL E2E VERIFICATION STEPS (PHASES 1–6)** | **Across All 6 E2E Scripts** | **58 steps** | **58 Passed** | 🟢 100% PASS |
+| **Scientific Validation Modules** | `models/scientific_validation.py` | 12 modules | 12 Evaluated | 🟢 VERIFIED |
+
 
 
 

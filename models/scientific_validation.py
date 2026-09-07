@@ -195,7 +195,11 @@ def compute_expected_calibration_error(y_true: list[int], y_prob: list[float], n
     return round(float(ece), 4), reliability_bins
 
 
-def evaluate_competency_estimators(df: pd.DataFrame, test_learners: set[int]) -> dict[str, Any]:
+def evaluate_competency_estimators(
+    df: pd.DataFrame,
+    test_learners: set[int],
+    train_learners: set[int] | None = None,
+) -> dict[str, Any]:
     """Evaluates Baseline vs BKT vs IRT-2PL on disjoint held-out test learners."""
     test_df = df[df["learner_id"].isin(test_learners)].copy()
     test_df["timestamp"] = pd.to_datetime(test_df["timestamp"])
@@ -277,13 +281,44 @@ def evaluate_competency_estimators(df: pd.DataFrame, test_learners: set[int]) ->
     }
 
     # Calibration Scaling Comparison for Deterministic Baseline (Platt vs Isotonic)
-    y_arr = np.array(ground_truth)
-    p_arr = np.array(det_preds)
+    y_test_arr = np.array(ground_truth)
+    p_test_arr = np.array(det_preds)
 
-    # Split test set in half for fitting calibration scaling vs testing calibration
-    cal_split = len(y_arr) // 2
-    y_cal_fit, y_cal_eval = y_arr[:cal_split], y_arr[cal_split:]
-    p_cal_fit, p_cal_eval = p_arr[:cal_split], p_arr[cal_split:]
+    if train_learners:
+        # Strictly Out-of-Sample Calibration: Fit Platt/Isotonic models on TRAIN split only
+        train_df = df[df["learner_id"].isin(train_learners)].sort_values(["learner_id", "timestamp"])
+        y_train: list[int] = []
+        p_train: list[float] = []
+
+        for _, group in train_df.groupby("learner_id"):
+            interactions = group.to_dict("records")
+            hist: list[dict[str, Any]] = []
+            for item in interactions:
+                actual = int(item["correct"])
+                y_train.append(actual)
+                if not hist:
+                    p = 0.50
+                else:
+                    r = deterministic.estimate(hist)
+                    p = r.mastery if r.mastery is not None else 0.50
+                p_train.append(float(np.clip(p, 0.01, 0.99)))
+                hist.append({
+                    "score": float(actual),
+                    "evidence_type": "KNOWLEDGE_ASSESSMENT",
+                    "observed_at": item["timestamp"],
+                })
+
+        y_cal_fit = np.array(y_train)
+        p_cal_fit = np.array(p_train)
+        y_cal_eval = y_test_arr
+        p_cal_eval = p_test_arr
+        fitting_strategy = "FITTED_ON_TRAIN_EVALUATED_ON_HELD_OUT_TEST"
+    else:
+        # Fallback split
+        cal_split = len(y_test_arr) // 2
+        y_cal_fit, y_cal_eval = y_test_arr[:cal_split], y_test_arr[cal_split:]
+        p_cal_fit, p_cal_eval = p_test_arr[:cal_split], p_test_arr[cal_split:]
+        fitting_strategy = "SPLIT_HALF_EVALUATION"
 
     # Platt Scaling (Logistic Regression on log-odds)
     log_odds_fit = np.log(p_cal_fit / (1.0 - p_cal_fit)).reshape(-1, 1)
@@ -303,12 +338,18 @@ def evaluate_competency_estimators(df: pd.DataFrame, test_learners: set[int]) ->
     iso_ece, _ = compute_expected_calibration_error(y_cal_eval.tolist(), p_iso.tolist())
 
     results["calibration_comparison"] = {
+        "calibration_measurement_type": "OUT_OF_SAMPLE_DESCRIPTIVE_ECE",
+        "fitting_strategy": fitting_strategy,
+        "fit_sample_count": len(y_cal_fit),
         "eval_sample_count": len(y_cal_eval),
         "uncalibrated_ece": uncal_ece,
         "platt_scaling_ece": platt_ece,
         "isotonic_regression_ece": iso_ece,
         "best_method": "Platt Scaling" if platt_ece <= iso_ece else "Isotonic Regression",
-        "production_recommendation": "Retain uncalibrated deterministic scoring as baseline; Platt scaling documented as EXPERIMENTAL candidate.",
+        "production_recommendation": (
+            "Retain uncalibrated deterministic scoring as production baseline; Platt scaling documented as EXPERIMENTAL candidate. "
+            "Linear scoring is more transparent to learners than non-linear log-odds shifts."
+        ),
     }
 
     return results
@@ -473,11 +514,14 @@ def evaluate_recency_decay_models(temporal_df: pd.DataFrame) -> dict[str, Any]:
         res["delta_rmse_vs_production"] = round(res["rmse"] - prod_rmse, 4)
 
     return {
+        "evaluation_type": "SIMULATION_CONSISTENCY_CHECK",
+        "ground_truth_generator": "synthetic_data/generate_temporal_trajectories.py (Ebbinghaus exponential decay, rate=0.018)",
         "decay_model_benchmarks": results,
         "sample_size": len(decay_eval_df),
         "scientific_interpretation": (
-            "Linear decay (0.01/day) closely aligns with the simulated trajectory decay (RMSE 0.0416). "
-            "No decay fails to capture forgetting (RMSE 0.1134). Exponential half-life performs comparably (RMSE 0.0438)."
+            "Simulation consistency check demonstrates linear decay (0.01/day) closely approximates the synthetic generator's "
+            "exponential curve (rate=0.018) with RMSE 0.0086 vs 0.0134 for zero decay. This confirms model-fitting consistency "
+            "within the simulation harness, not independent empirical proof of workforce memory retention."
         ),
         "production_status": "Retain Linear Decay (0.01/day) as verified engineering heuristic; mark full scientific validation as DEFERRED pending real multi-year MoSPI longitudinal data.",
     }
@@ -487,13 +531,20 @@ def evaluate_recency_decay_models(temporal_df: pd.DataFrame) -> dict[str, Any]:
 # 5. MASTERY THRESHOLD SENSITIVITY ANALYSIS
 # ==============================================================================
 
-def evaluate_mastery_thresholds(df: pd.DataFrame) -> dict[str, Any]:
+def evaluate_mastery_thresholds(df: pd.DataFrame, train_learners: set[int] | None = None) -> dict[str, Any]:
     """Analyzes precision, recall, and specificity across candidate mastery thresholds [0.50, 0.80]."""
-    # Evaluate whether scoring >= threshold predicts sustained mastery in the next 3 attempts
+    # If train_learners is provided, inspect on train split to prevent held-out test data leakage
+    if train_learners:
+        eval_df = df[df["learner_id"].isin(train_learners)].copy()
+        split_used = "TRAIN_SPLIT_ONLY (ZERO TEST SET LEAKAGE)"
+    else:
+        eval_df = df.copy()
+        split_used = "FULL_DATASET"
+
     thresholds = [0.50, 0.60, 0.70, 0.75, 0.80]
     threshold_results: dict[str, Any] = {}
 
-    df_sorted = df.sort_values(["learner_id", "timestamp"]).copy()
+    df_sorted = eval_df.sort_values(["learner_id", "timestamp"]).copy()
 
     for tau in thresholds:
         tp, fp, tn, fn = 0, 0, 0, 0
@@ -533,9 +584,17 @@ def evaluate_mastery_thresholds(df: pd.DataFrame) -> dict[str, Any]:
     return {
         "threshold_evaluations": threshold_results,
         "recommended_threshold": 0.70,
+        "threshold_status": "ENGINEERING OPERATING HEURISTIC",
+        "is_empirically_optimized": False,
+        "split_evaluated": split_used,
+        "limitation_note": (
+            "Threshold 0.70 is an established civil service policy benchmark (70% standard) rather than an empirically optimized cutoff. "
+            "In synthetic interaction traces with binary outcomes, classification metrics remain constant across the [0.50, 0.80] range "
+            "because single-item responses take values in {0, 1}. Real-world psychometric cutoff validation against workforce performance is DEFERRED."
+        ),
         "justification": (
-            "Threshold 0.70 provides optimal balance between precision (0.81) and recall (0.83) with highest F1 score. "
-            "Higher threshold 0.80 excessively penalizes developing learners (recall drops to 0.62), while 0.50 introduces high false positive rates."
+            "Threshold 0.70 is retained as the standard MoSPI civil service mastery cutoff (70% passing requirement) "
+            "balancing skill verification against remediation load."
         ),
     }
 
@@ -595,25 +654,33 @@ def evaluate_diagnostic_efficiency(df: pd.DataFrame) -> dict[str, Any]:
         random_errors.append(abs(true_mastery - est_random))
         random_coverages.append(len({f"subskill_{abs(hash(str(r.get('item_id', 0)))) % 4}" for r in rand_records}) / 4.0)
 
+    mean_adapt_q = round(float(np.mean(adaptive_questions)), 2)
+    mean_rand_q = round(float(np.mean(random_questions)), 2)
+    gain_pct = round(float((mean_rand_q - mean_adapt_q) / mean_rand_q * 100), 2)
+
     return {
+        "evaluation_type": "SIMULATION_RESULT",
+        "simulation_conditions": (
+            "Early stopping rule: conf >= 0.60 (reached at N=3 questions under linear confidence accumulation) "
+            "vs static benchmark fixed at N=6 questions."
+        ),
         "adaptive_strategy": {
-            "mean_questions_required": round(float(np.mean(adaptive_questions)), 2),
+            "mean_questions_required": mean_adapt_q,
             "mean_estimation_error": round(float(np.mean(adaptive_errors)), 4),
             "mean_subskill_coverage": round(float(np.mean(adaptive_coverages)), 4),
             "repeated_question_rate": 0.0,
         },
         "random_static_strategy": {
-            "mean_questions_required": round(float(np.mean(random_questions)), 2),
+            "mean_questions_required": mean_rand_q,
             "mean_estimation_error": round(float(np.mean(random_errors)), 4),
             "mean_subskill_coverage": round(float(np.mean(random_coverages)), 4),
             "repeated_question_rate": 0.08,
         },
-        "efficiency_gain_percent": round(
-            float((np.mean(random_questions) - np.mean(adaptive_questions)) / np.mean(random_questions) * 100), 2
-        ),
+        "efficiency_gain_percent": gain_pct,
         "scientific_interpretation": (
-            "Adaptive selection reaches reliable confidence stopping in 3.4 questions on average vs fixed 6.0 questions, "
-            "yielding a 43.3% test-length reduction while targeting unverified subskills with zero repeated questions."
+            f"Under the evaluated simulation configuration (early stopping at conf >= 0.60), adaptive selection terminates in "
+            f"{mean_adapt_q} questions vs fixed {mean_rand_q} questions (a {gain_pct}% reduction). This is an observed simulation result "
+            f"under fixed stopping rules, not a universal guarantee for arbitrary stopping criteria."
         ),
         "production_status": "PROMOTED & VERIFIED in Phase 2 Diagnostic Engine.",
     }
@@ -658,9 +725,11 @@ def evaluate_recommendation_policies(outcomes_df: pd.DataFrame) -> dict[str, Any
     mean_rand = float(np.mean(random_gains)) if random_gains else 0.038
 
     return {
+        "evaluation_type": "OBSERVED_OUTCOME_ASSOCIATION (NON-CAUSAL)",
         "policy_comparison": {
             "deterministic_heuristic_baseline": {
                 "mean_observed_competency_gain": round(mean_base, 4),
+                "matched_instances": len(baseline_gains),
                 "acceptance_rate": 0.88,
                 "cold_start_resilience": "HIGH (Rule-based, no sample requirement)",
                 "rejection_transparency": "EXPLICIT (Inspectable factor list & rejection reasons)",
@@ -668,6 +737,7 @@ def evaluate_recommendation_policies(outcomes_df: pd.DataFrame) -> dict[str, Any
             },
             "contextual_bandit_linucb": {
                 "mean_observed_competency_gain": round(mean_bandit, 4),
+                "matched_instances": len(bandit_gains),
                 "acceptance_rate": 0.81,
                 "cold_start_resilience": "MEDIUM (Requires exploration phase)",
                 "rejection_transparency": "OPAQUE (Matrix parameter exploration)",
@@ -675,6 +745,7 @@ def evaluate_recommendation_policies(outcomes_df: pd.DataFrame) -> dict[str, Any
             },
             "random_policy": {
                 "mean_observed_competency_gain": round(mean_rand, 4),
+                "matched_instances": len(random_gains),
                 "acceptance_rate": 0.35,
                 "cold_start_resilience": "LOW",
                 "rejection_transparency": "NONE",
@@ -682,9 +753,11 @@ def evaluate_recommendation_policies(outcomes_df: pd.DataFrame) -> dict[str, Any
             },
         },
         "scientific_interpretation": (
-            "The deterministic multi-factor heuristic yields higher observed competency gains (0.0684 vs 0.0548) "
-            "with full auditability. Contextual bandits do not provide sufficient statistical superiority on held-out "
-            "data to warrant replacing the deterministic ranker."
+            "Phase 3 reported mean improvement of 0.0548 for LinUCB across all 807 rows of intervention_outcomes.csv. "
+            "In Phase 6, evaluation was performed on a held-out test split of 40 learners where matched instances yielded "
+            "mean improvement 0.0646 (N=38) vs 0.0638 for the heuristic baseline (N=48) and 0.0545 for random matching (N=161). "
+            "The observed delta (+0.0008) is not statistically significant. Because the heuristic ranker provides deterministic explainability, "
+            "explicit rejection auditing, and zero cold-start failure modes, it is retained as PRODUCTION BASELINE."
         ),
     }
 
@@ -760,12 +833,15 @@ def audit_practical_evaluators() -> dict[str, Any]:
             "beyond_tolerance_passed": res_beyond.passed,
         },
         "llm_evaluator_audit": {
+            "live_llm_execution_status": "LLM LIVE EVALUATION NOT VERIFIED (DETERMINISTIC FALLBACK AUDITED)",
+            "tested_path": "Simulated API credential absence / outage handling",
             "outage_behavior": llm_res.status,
             "fallback_evaluator_type": llm_res.evaluator_type,
             "degradation_handled_safely": llm_res.status in ("EVALUATED", "REVIEW_REQUIRED"),
         },
         "production_status": "DeterministicEvaluator retained as PRODUCTION BASELINE; LLMEvaluator retained as EVALUATED CANDIDATE.",
     }
+
 
 
 # ==============================================================================
@@ -936,7 +1012,7 @@ def run_scientific_validation_suite() -> dict[str, Any]:
 
     # 2. Competency Estimator Validation
     print("\n[Step 2] Evaluating Competency Estimators on Held-Out Test Learners...")
-    estimator_eval = evaluate_competency_estimators(inter_df, test_learners)
+    estimator_eval = evaluate_competency_estimators(inter_df, test_learners, train_learners)
     for model_name in ["deterministic_baseline", "bkt", "irt_2pl"]:
         m = estimator_eval[model_name]
         print(f"  * [{model_name.upper()}] RMSE: {m['rmse']} | AUC-ROC: {m['auc_roc']} | Brier: {m['brier_score']} | ECE: {m['expected_calibration_error']}")
@@ -955,7 +1031,7 @@ def run_scientific_validation_suite() -> dict[str, Any]:
 
     # 5. Mastery Threshold Sensitivity
     print("\n[Step 5] Analyzing Mastery Cutoff Threshold Sensitivity...")
-    threshold_eval = evaluate_mastery_thresholds(inter_df)
+    threshold_eval = evaluate_mastery_thresholds(inter_df, train_learners)
     for t_key, m in threshold_eval["threshold_evaluations"].items():
         print(f"  * Cutoff {m['threshold']}: Precision={m['precision']:.2f}, Recall={m['recall_sensitivity']:.2f}, F1={m['f1_score']:.2f}")
 
