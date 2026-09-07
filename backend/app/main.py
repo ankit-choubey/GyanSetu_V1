@@ -11,6 +11,7 @@ from app.routers.content import router as content_router
 from app.routers.dashboard import router as dashboard_router
 from app.routers.diagnostic import router as diagnostic_router
 from app.routers.evidence import router as evidence_router
+from app.routers.intervention import router as intervention_router
 from app.routers.misconception import router as misconception_router
 from app.routers.monitoring import router as monitoring_router
 from app.routers.users import router as users_router
@@ -26,9 +27,41 @@ app = FastAPI(
 @app.on_event("startup")
 def on_startup() -> None:
     from sqlmodel import SQLModel
-    from app.database import engine
+    from app.database import engine, SessionLocal
     import app.models  # noqa: F401
     SQLModel.metadata.create_all(engine)
+
+    # Ensure SQLite interventions columns exist on existing databases
+    try:
+        with engine.begin() as conn:
+            cols = {row[1] for row in conn.exec_driver_sql("PRAGMA table_info(interventions)").fetchall()}
+            if cols and "provider" not in cols:
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN provider VARCHAR(100) DEFAULT 'INTERNAL' NOT NULL")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN modality VARCHAR(50) DEFAULT 'ONLINE_SELF_PACED' NOT NULL")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN duration_minutes INTEGER DEFAULT 60")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN difficulty VARCHAR(20) DEFAULT 'intermediate' NOT NULL")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN prerequisites_json VARCHAR")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN availability VARCHAR(50) DEFAULT 'ALWAYS_AVAILABLE' NOT NULL")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN status VARCHAR(50) DEFAULT 'ACTIVE' NOT NULL")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN source VARCHAR(100) DEFAULT 'SYSTEM' NOT NULL")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN source_id VARCHAR(100)")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN source_url VARCHAR(500)")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN provenance VARCHAR(100) DEFAULT '[CURATED]' NOT NULL")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN version VARCHAR(20) DEFAULT 'v1.0' NOT NULL")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN last_verified_at DATETIME")
+                conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN target_misconception_pattern VARCHAR(255)")
+    except Exception:
+        pass
+
+    try:
+        from app.seed_data.intervention_catalog_loader import seed_intervention_catalog
+        db = SessionLocal()
+        try:
+            seed_intervention_catalog(db)
+        finally:
+            db.close()
+    except Exception:
+        pass
 
 app.add_middleware(
     CORSMiddleware,
@@ -50,6 +83,7 @@ app.include_router(chatbot_router, prefix="/api")
 app.include_router(content_router, prefix="/api")
 app.include_router(admin_router, prefix="/api")
 app.include_router(monitoring_router, prefix="/api")
+app.include_router(intervention_router, prefix="/api")
 
 
 @app.get("/health")

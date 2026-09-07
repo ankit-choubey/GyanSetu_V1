@@ -134,6 +134,9 @@ def run_verification() -> bool:
     print(f"\n[STEP 8: BACKEND DATABASE IMPORT]")
     db = SessionLocal()
     try:
+        if db.query(Competency).count() == 0:
+            from app.seed_data.runner import seed_full_taxonomy
+            seed_full_taxonomy(seed_password=os.getenv("SEED_PASSWORD", "gyansetu-local-dev-password"))
         inserted = load_question_bank(db, [canonical_item.to_backend_dict()])
         db.commit()
         print(f"  Database Ingestion Status: Successfully inserted {inserted} item(s) (idempotent)")

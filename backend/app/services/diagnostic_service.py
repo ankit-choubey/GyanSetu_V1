@@ -332,7 +332,16 @@ class DiagnosticService:
             ).order_by(AssessmentAttempt.id.desc())
         ).scalars().first()
 
-        if not attempt or attempt.completed_at is not None:
+        existing_resp = None
+        if attempt:
+            existing_resp = db.execute(
+                select(AssessmentResponse).where(
+                    AssessmentResponse.attempt_id == attempt.id,
+                    AssessmentResponse.assessment_item_id == source_item.id,
+                )
+            ).scalar_one_or_none()
+
+        if not attempt or attempt.completed_at is not None or existing_resp is not None:
             attempt = AssessmentAttempt(
                 user_id=user_id,
                 competency_id=session.competency_id,

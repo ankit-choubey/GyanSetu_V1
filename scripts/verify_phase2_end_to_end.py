@@ -112,6 +112,19 @@ def run_phase2_verification() -> bool:
 
         print(f"[+] Target Competency: ID={target_comp.id}, Name='{target_comp.name}'")
 
+        # Reset previous test evidence/state for sandbox learner to verify fresh unassessed flow
+        from app.models.diagnostic import DiagnosticItem, DiagnosticSession
+        for ev in db.execute(select(Evidence).where(Evidence.user_id == learner.id, Evidence.competency_id == target_comp.id)).scalars().all():
+            db.delete(ev)
+        for ds in db.execute(select(DiagnosticSession).where(DiagnosticSession.user_id == learner.id, DiagnosticSession.competency_id == target_comp.id)).scalars().all():
+            for di in ds.items:
+                db.delete(di)
+            db.delete(ds)
+        prior_st = db.execute(select(CompetencyState).where(CompetencyState.user_id == learner.id, CompetencyState.competency_id == target_comp.id)).scalar_one_or_none()
+        if prior_st:
+            db.delete(prior_st)
+        db.commit()
+
         # Step 2: Check Initial Competency State
         print("\n[Step 2] Querying Initial Competency State from System of Record...")
         st = db.execute(

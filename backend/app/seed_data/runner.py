@@ -237,5 +237,8 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                             priority=1,
                         )
                     )
+
+            from app.seed_data.intervention_catalog_loader import seed_intervention_catalog
+            seed_intervention_catalog(db)
     finally:
         db.close()

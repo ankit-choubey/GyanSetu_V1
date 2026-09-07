@@ -6,8 +6,10 @@ from .competency_state import CompetencyState
 from .diagnostic import DiagnosticItem, DiagnosticSession
 from .evidence import Evidence, EvidenceType
 from .intervention import Intervention
+from .intervention_outcome import InterventionOutcome
 from .misconception import Misconception
 from .monitoring_event import MonitoringEvent
+from .recommendation import RecommendationRecord
 from .user import User
 
 __all__ = [
@@ -24,6 +26,8 @@ __all__ = [
     "AssessmentResponse",
     "AssessmentSignal",
     "Intervention",
+    "InterventionOutcome",
+    "RecommendationRecord",
     "CompetencyState",
     "CompetencyHistory",
     "DiagnosticSession",
