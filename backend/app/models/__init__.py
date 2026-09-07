@@ -9,6 +9,13 @@ from .intervention import Intervention
 from .intervention_outcome import InterventionOutcome
 from .misconception import Misconception
 from .monitoring_event import MonitoringEvent
+from .governance import (
+    CompetencyGovernance,
+    ModelRegistryRecord,
+    ModelStatus,
+    ReviewStatus,
+    WorkforceAuditLog,
+)
 from .practical import (
     AttemptStatus,
     EvaluatorType,
@@ -48,5 +55,11 @@ __all__ = [
     "PracticalDifficulty",
     "AttemptStatus",
     "EvaluatorType",
+    "CompetencyGovernance",
+    "ReviewStatus",
+    "ModelRegistryRecord",
+    "ModelStatus",
+    "WorkforceAuditLog",
 ]
+
 

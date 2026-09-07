@@ -37,8 +37,43 @@ def upgrade() -> None:
         batch_op.create_index("ix_interventions_source_id", ["source_id"], unique=False)
         batch_op.create_index("ix_interventions_target_misconception_pattern", ["target_misconception_pattern"], unique=False)
 
+    op.create_table(
+        "intervention_outcomes",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("intervention_id", sa.Integer(), nullable=False),
+        sa.Column("recommendation_id", sa.String(length=64), nullable=True),
+        sa.Column("status", sa.String(length=50), server_default="COMPLETED", nullable=False),
+        sa.Column("completion_score", sa.Float(), nullable=True),
+        sa.Column("has_post_assessment_evidence", sa.Boolean(), server_default="0", nullable=False),
+        sa.Column("evidence_id", sa.Integer(), nullable=True),
+        sa.Column("pre_competency_mastery", sa.Float(), nullable=True),
+        sa.Column("post_competency_mastery", sa.Float(), nullable=True),
+        sa.Column("idempotency_key", sa.String(length=128), nullable=True),
+        sa.Column("notes", sa.String(length=500), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.ForeignKeyConstraint(["evidence_id"], ["evidence.id"]),
+        sa.ForeignKeyConstraint(["intervention_id"], ["interventions.id"]),
+        sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index("ix_intervention_outcomes_evidence_id", "intervention_outcomes", ["evidence_id"], unique=False)
+    op.create_index("ix_intervention_outcomes_idempotency_key", "intervention_outcomes", ["idempotency_key"], unique=True)
+    op.create_index("ix_intervention_outcomes_intervention_id", "intervention_outcomes", ["intervention_id"], unique=False)
+    op.create_index("ix_intervention_outcomes_recommendation_id", "intervention_outcomes", ["recommendation_id"], unique=False)
+    op.create_index("ix_intervention_outcomes_status", "intervention_outcomes", ["status"], unique=False)
+    op.create_index("ix_intervention_outcomes_user_id", "intervention_outcomes", ["user_id"], unique=False)
+
 
 def downgrade() -> None:
+    op.drop_index("ix_intervention_outcomes_user_id", table_name="intervention_outcomes")
+    op.drop_index("ix_intervention_outcomes_status", table_name="intervention_outcomes")
+    op.drop_index("ix_intervention_outcomes_recommendation_id", table_name="intervention_outcomes")
+    op.drop_index("ix_intervention_outcomes_intervention_id", table_name="intervention_outcomes")
+    op.drop_index("ix_intervention_outcomes_idempotency_key", table_name="intervention_outcomes")
+    op.drop_index("ix_intervention_outcomes_evidence_id", table_name="intervention_outcomes")
+    op.drop_table("intervention_outcomes")
+
     with op.batch_alter_table("interventions") as batch_op:
         batch_op.drop_index("ix_interventions_target_misconception_pattern")
         batch_op.drop_index("ix_interventions_source_id")
@@ -58,3 +93,4 @@ def downgrade() -> None:
         batch_op.drop_column("duration_minutes")
         batch_op.drop_column("modality")
         batch_op.drop_column("provider")
+

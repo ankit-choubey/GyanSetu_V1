@@ -17,6 +17,7 @@ from app.routers.misconception import router as misconception_router
 from app.routers.monitoring import router as monitoring_router
 from app.routers.practical import router as practical_router
 from app.routers.users import router as users_router
+from app.routers.workforce import router as workforce_router
 
 
 app = FastAPI(
@@ -34,61 +35,19 @@ def on_startup() -> None:
     import app.models  # noqa: F401
     SQLModel.metadata.create_all(engine)
 
-    # Ensure SQLite interventions columns exist on existing databases
-    try:
-        with engine.begin() as conn:
-            cols = {row[1] for row in conn.exec_driver_sql("PRAGMA table_info(interventions)").fetchall()}
-            if cols:
-                if "provider" not in cols:
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN provider VARCHAR(100) DEFAULT 'INTERNAL' NOT NULL")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN modality VARCHAR(50) DEFAULT 'ONLINE_SELF_PACED' NOT NULL")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN duration_minutes INTEGER DEFAULT 60")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN difficulty VARCHAR(20) DEFAULT 'intermediate' NOT NULL")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN prerequisites_json VARCHAR")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN availability VARCHAR(50) DEFAULT 'ALWAYS_AVAILABLE' NOT NULL")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN status VARCHAR(50) DEFAULT 'ACTIVE' NOT NULL")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN source VARCHAR(100) DEFAULT 'SYSTEM' NOT NULL")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN source_id VARCHAR(100)")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN source_url VARCHAR(500)")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN provenance VARCHAR(100) DEFAULT '[CURATED]' NOT NULL")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN version VARCHAR(20) DEFAULT 'v1.0' NOT NULL")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN last_verified_at DATETIME")
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN target_misconception_pattern VARCHAR(255)")
-                if "integration_mode" not in cols:
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN integration_mode VARCHAR(20) DEFAULT 'REPLAY' NOT NULL")
-                if "external_metadata_json" not in cols:
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN external_metadata_json VARCHAR")
-                if "mapping_status" not in cols:
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN mapping_status VARCHAR(50) DEFAULT 'CURATED' NOT NULL")
-                if "mapping_confidence" not in cols:
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN mapping_confidence FLOAT DEFAULT 1.0 NOT NULL")
-                if "last_synced_at" not in cols:
-                    conn.exec_driver_sql("ALTER TABLE interventions ADD COLUMN last_synced_at DATETIME")
+    # Schema is managed canonically via Alembic migrations.
+    # Startup performs zero runtime schema mutations.
 
-            outcome_cols = {row[1] for row in conn.exec_driver_sql("PRAGMA table_info(intervention_outcomes)").fetchall()}
-            if outcome_cols:
-                if "provider" not in outcome_cols:
-                    conn.exec_driver_sql("ALTER TABLE intervention_outcomes ADD COLUMN provider VARCHAR(100)")
-                if "provider_resource_id" not in outcome_cols:
-                    conn.exec_driver_sql("ALTER TABLE intervention_outcomes ADD COLUMN provider_resource_id VARCHAR(100)")
-                if "provider_activity_id" not in outcome_cols:
-                    conn.exec_driver_sql("ALTER TABLE intervention_outcomes ADD COLUMN provider_activity_id VARCHAR(128)")
-                if "integration_mode" not in outcome_cols:
-                    conn.exec_driver_sql("ALTER TABLE intervention_outcomes ADD COLUMN integration_mode VARCHAR(20)")
-                if "started_at" not in outcome_cols:
-                    conn.exec_driver_sql("ALTER TABLE intervention_outcomes ADD COLUMN started_at DATETIME")
-                if "completed_at" not in outcome_cols:
-                    conn.exec_driver_sql("ALTER TABLE intervention_outcomes ADD COLUMN completed_at DATETIME")
-    except Exception:
-        pass
 
     try:
         from app.seed_data.intervention_catalog_loader import seed_intervention_catalog
         from app.seed_data.practical_scenario_loader import seed_practical_tasks
+        from app.services.governance_service import GovernanceService
         db = SessionLocal()
         try:
             seed_intervention_catalog(db)
             seed_practical_tasks(db)
+            GovernanceService.initialize_governance_data(db)
         finally:
             db.close()
     except Exception:
@@ -117,6 +76,7 @@ app.include_router(monitoring_router, prefix="/api")
 app.include_router(intervention_router, prefix="/api")
 app.include_router(ecosystem_router, prefix="/api")
 app.include_router(practical_router, prefix="/api")
+app.include_router(workforce_router, prefix="/api")
 
 
 @app.get("/health")

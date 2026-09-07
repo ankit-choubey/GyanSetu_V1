@@ -639,16 +639,7 @@ Evaluated on 18,000 longitudinal observations spanning Day 1 to Day 90:
  STEP 10: MODEL SELECTION GATE AUDIT & BACKEND ADMINISTRATIVE API VERIFICATION
   * GET /api/admin/validation/scientific-audit -> HTTP 200 (Live DB clean & bounded)
   * GET /api/admin/validation/model-selection-gate -> HTTP 200 (7 gates retrieved)
-[PASS] Step 10: Model selection gates and live administrative endpoints verified.
-
-===========================================================================
-      ALL 10 REAL-TIME PHASE 6 SCIENTIFIC AUDIT STEPS PASSED SUCCESSFULLY! 
-===========================================================================
-```
-
----
-
-## 9. Full Repository Test Summary & Accounting (Phases 1–6)
+[PASS] Step 10: Model selection gates and live administrative## 9. Full Repository Test Summary & Accounting (Phases 1–7)
 
 | Category / Layer | Location / Target | Count | Result | Status |
 |---|---|---|---|---|
@@ -658,20 +649,177 @@ Evaluated on 18,000 longitudinal observations spanning Day 1 to Day 90:
 | **Phase 4 Ecosystem Adapters Tests** | `backend/tests/test_phase4_scenarios.py` | 10 | 10 Passed | 🟢 GREEN |
 | **Phase 5 Practical Verification Tests** | `backend/tests/test_phase5_scenarios.py` | 15 | 15 Passed | 🟢 GREEN |
 | **Phase 6 Scientific Validation & Audit Tests** | `backend/tests/test_phase6_validation.py` | 17 | 17 Passed | 🟢 GREEN |
+| **Phase 7 Workforce Intelligence & Governance Tests** | `backend/tests/test_phase7_workforce.py` | 16 | 16 Passed | 🟢 GREEN |
 | **All Other Backend Unit & Model Tests** | `backend/tests/` | 116 | 116 Passed | 🟢 GREEN |
-| **Backend Automated Test Cases (Subtotal)** | `backend/tests/` (`pytest backend/tests/`) | **183** | **183 Passed** | 🟢 GREEN |
+| **Backend Automated Test Cases (Subtotal)** | `backend/tests/` (`pytest backend/tests/`) | **199** | **199 Passed** | 🟢 GREEN |
 | **Root Integration & Classifier Tests** | `tests/` (`pytest tests/`) | **26** | **26 Passed** | 🟢 GREEN |
 | **ML/AI Pipeline Stages (1–10) Unit Tests** | `ml_pipeline/` (`run_all_tests.py`) | **70** | **70 Passed** | 🟢 GREEN |
-| **TOTAL AUTOMATED TEST CASES ACROSS SUITES** | **All Pytest + Pipeline Test Suites** | **279** | **279 Passed** | 🟢 100% PASS |
+| **TOTAL AUTOMATED TEST CASES ACROSS SUITES** | **All Pytest + Pipeline Test Suites** | **295** | **295 Passed** | 🟢 100% PASS |
 | **Phase 1 E2E Operational Verification Steps** | `scripts/verify_phase1_end_to_end.py` | 9 steps | 9 Passed | 🟢 GREEN |
 | **Phase 2 E2E Operational Verification Steps** | `scripts/verify_phase2_end_to_end.py` | 9 steps | 9 Passed | 🟢 GREEN |
 | **Phase 3 E2E Operational Verification Steps** | `scripts/verify_phase3_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
 | **Phase 4 E2E Operational Verification Steps** | `scripts/verify_phase4_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
 | **Phase 5 E2E Operational Verification Steps** | `scripts/verify_phase5_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
 | **Phase 6 E2E Operational Verification Steps** | `scripts/verify_phase6_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
-| **TOTAL E2E VERIFICATION STEPS (PHASES 1–6)** | **Across All 6 E2E Scripts** | **58 steps** | **58 Passed** | 🟢 100% PASS |
+| **Phase 7 E2E Operational Verification Steps** | `scripts/verify_phase7_end_to_end.py` | 10 steps | 10 Passed | 🟢 GREEN |
+| **TOTAL E2E VERIFICATION STEPS (PHASES 1–7)** | **Across All 7 E2E Scripts** | **68 steps** | **68 Passed** | 🟢 100% PASS |
 | **Scientific Validation Modules** | `models/scientific_validation.py` | 12 modules | 12 Evaluated | 🟢 VERIFIED |
 
+---
 
+## 10. Phase 7 — Workforce Intelligence, Fairness, Governance & Longitudinal Validation
 
+### 10.1 Operational Objective & Strict Boundary Guardrails
+Phase 7 delivers enterprise-grade workforce intelligence, competency governance, four-fifths cohort fairness auditing, and longitudinal capability monitoring for the Ministry of Statistics and Programme Implementation (MoSPI) Data Informatics & Innovation Division (DIID).
 
+Strict architectural and ethical guardrails are enforced across all services:
+1. **Decision Support Only**: GyanSetu workforce intelligence strictly provides aggregated advisory insights. Automated administrative decisions regarding hiring, firing, promotion, demotion, salary determination, or punitive disciplinary action are **strictly prohibited**.
+2. **Small-Cell Privacy Suppression**: Aggregated capability reporting strictly suppresses any reporting cell where the cohort size is below the statistical privacy threshold ($N < \text{minimum\_group\_size}$, default 5). Zero learner IDs or user identifiable records are exposed in workforce responses.
+3. **Non-Sensitive Operational Cohort Fairness**: In accordance with civil service privacy policies, protected demographic attributes (caste, religion, gender, ethnicity) are strictly not collected. Fairness auditing evaluates operational cohorts (professional civil service roles) using the Four-Fifths Rule ($0.80$ disparity benchmark), safely emitting `FAIRNESS_ANALYSIS_LIMITED_BY_AVAILABLE_DATA` and never making ungrounded claims of confirmed bias.
+4. **Competency Graph Lifecycle Governance**: Explicit review lifecycle states (`VERIFIED`, `CURATED`, `PROVISIONAL`, `UNDER_REVIEW`) govern curriculum mappings. Competencies marked `UNDER_REVIEW` (e.g. newly proposed Competency #40) are flagged and excluded from authoritative scoring until expert panel sign-off.
+5. **Model Registry with Scientific Status**: Production baselines (`PRODUCTION BASELINE`), research exploration candidates (`RESEARCH`), and engineering heuristics (`ENGINEERING HEURISTIC`) are formally registered with transparent evaluation benchmarks and explicit documented limitations.
+6. **Immutable Audit Trail & Strict RBAC**: Every administrative query is logged in `workforce_audit_logs`. Unauthenticated requests receive HTTP 401 Unauthorized; authenticated learners receive HTTP 403 Forbidden.
+
+### 10.2 Phase 7 API Endpoints
+
+| Endpoint | Method | Role | Description |
+|---|---|---|---|
+| `/api/workforce/overview` | `GET` | Admin | High-level capability health overview with small-cell suppression. |
+| `/api/workforce/competencies` | `GET` | Admin | Aggregated competency mastery, confidence, and coverage by role/domain. |
+| `/api/workforce/gaps` | `GET` | Admin | Confidence-aware gap triage (`ACTIONABLE` vs `NEEDS_MORE_EVIDENCE`). |
+| `/api/workforce/trends` | `GET` | Admin | Longitudinal trajectory monitoring (`IMPROVING`, `STABLE`, `DECLINING`). |
+| `/api/workforce/retention` | `GET` | Admin | Distinguishes empirical `OBSERVED_RETENTION` from `MODELLED_RETENTION`. |
+| `/api/workforce/interventions` | `GET` | Admin | Non-causal observed competency changes following intervention completion. |
+| `/api/workforce/emerging-skills` | `GET` | Admin | Conservative capability candidate radar with explicit time window & provenance. |
+| `/api/workforce/fairness` | `GET` | Admin | Four-Fifths parity audit across authorized operational cohorts. |
+| `/api/workforce/data-quality` | `GET` | Admin | Health diagnostics (stale evidence >180d, conflicting states, mapping review). |
+| `/api/workforce/insights` | `GET` | Admin | Traceable administrative decision-support recommendations. |
+| `/api/workforce/governance/competency/{id}` | `GET/POST` | Admin | Inspect and transition competency graph review lifecycle status. |
+| `/api/workforce/governance/models` | `GET` | Admin | Registry of analytical models and production baseline statuses. |
+| `/api/workforce/audit-logs` | `GET` | Admin | Retrieve immutable administrative workforce query audit records. |
+
+### 10.3 Phase 7 Test Verification Coverage (15 Scenarios + Audit Trail)
+
+All 15 required Phase 7 scenarios (A through O) are verified in `backend/tests/test_phase7_workforce.py`:
+
+| Scenario ID | Test Name | Invariant Verified | Status |
+|---|---|---|---|
+| **Scenario A** | `test_scenario_a_admin_overview_authorized_and_anonymized` | Admin 200 OK, aggregated metrics, zero learner IDs exposed anywhere. | 🟢 PASSED |
+| **Scenario B** | `test_scenario_b_learner_overview_forbidden` | Learner rejected with HTTP 403 Forbidden on workforce overview. | 🟢 PASSED |
+| **Scenario C** | `test_scenario_c_small_cohort_suppression` | Small cohorts ($N < 50$) marked `SUPPRESSED`, zero learner IDs exposed. | 🟢 PASSED |
+| **Scenario D** | `test_scenario_d_low_confidence_gap_triage` | Low-confidence capability gaps classified as `NEEDS_MORE_EVIDENCE`. | 🟢 PASSED |
+| **Scenario E** | `test_scenario_e_high_confidence_gap_triage` | High-confidence, actionable gaps classified as `ACTIONABLE`. | 🟢 PASSED |
+| **Scenario F** | `test_scenario_f_stale_evidence_detection` | Evidence older than 180 days surfaces `DATA_QUALITY_WARNING` (`STALE_EVIDENCE`). | 🟢 PASSED |
+| **Scenario G** | `test_scenario_g_conflicting_evidence_detection` | Conflicting multi-modal evidence surfaces HIGH severity `DATA_QUALITY_WARNING`. | 🟢 PASSED |
+| **Scenario H** | `test_scenario_h_fairness_safe_demographic_handling` | Missing demographic data safely returns `FAIRNESS_ANALYSIS_LIMITED_BY_AVAILABLE_DATA`. | 🟢 PASSED |
+| **Scenario I** | `test_scenario_i_operational_cohort_parity_audit` | Four-fifths rule evaluated across roles without asserting "bias confirmed". | 🟢 PASSED |
+| **Scenario J** | `test_scenario_j_intervention_outcome_associations` | Intervention outcomes reported with non-causal association wording & disclaimer. | 🟢 PASSED |
+| **Scenario K** | `test_scenario_k_longitudinal_trend_monitoring` | Competency trajectories tracked (`IMPROVING`, `STABLE`, `DECLINING`, `INSUFFICIENT_HISTORY`). | 🟢 PASSED |
+| **Scenario L** | `test_scenario_l_emerging_skills_radar` | Surfaces candidate signals (`EMERGING_SIGNAL`) with provenance & disclaimers. | 🟢 PASSED |
+| **Scenario M** | `test_scenario_m_learner_cross_query_endpoints_rejected` | Learner rejected with HTTP 403 on all workforce administrative endpoints. | 🟢 PASSED |
+| **Scenario N** | `test_scenario_n_competency_governance_under_review` | Competency #40 has `UNDER_REVIEW` review status; admin can transition status. | 🟢 PASSED |
+| **Scenario O** | `test_scenario_o_model_registry_statuses` | Registry reflects production baselines vs research/experimental candidates. | 🟢 PASSED |
+| **Audit Logs** | `test_audit_logs_recording_and_retrieval` | Administrative access produces immutable entries in `workforce_audit_logs`. | 🟢 PASSED |
+
+### 10.4 Live Real-Time Execution Log (`verify_phase7_end_to_end.py`)
+
+```text
+===========================================================================
+ GYANSETU V1 — PHASE 7 WORKFORCE INTELLIGENCE & GOVERNANCE E2E VERIFICATION
+===========================================================================
+
+ STEP 1: INITIALIZE GOVERNANCE DATA & MODEL REGISTRY
+[*] Active registered models: 7
+    - Production Baselines: 3
+    - Research Candidates:  3
+    - Heuristics:           1
+[+] STEP 1 PASSED: Model Registry initialized with strict scientific status demarcation.
+
+ STEP 2: WORKFORCE CAPABILITY OVERVIEW & GUARDRAIL VERIFICATION
+[*] Total learners in pool:        223
+[*] Total competency states:       214
+[*] Average workforce mastery:     0.656
+[*] Average evidence confidence:   0.246
+[*] Average subskill coverage:     0.125
+[*] Workforce assessed ratio:      0.748
+[*] Guardrail policy: DECISION SUPPORT ONLY: GyanSetu workforce intelligence provides aggregated advisory insights.
+[+] STEP 2 PASSED: Workforce overview aggregated and guardrails strictly enforced.
+
+ STEP 3: SMALL-CELL PRIVACY SUPPRESSION (N < THRESHOLD)
+[*] Threshold N=5:  Suppressed 35 competencies
+[*] Threshold N=50: Suppressed 39 competencies
+[*] Sample suppressed record: Data Quality -> Population size (21) is below minimum privacy threshold (N < 50)
+[+] STEP 3 PASSED: Small-cell privacy suppression strictly enforced.
+
+ STEP 4: CONFIDENCE-AWARE ORGANIZATIONAL GAP TRIAGE
+[*] Total capability gaps identified: 3
+[*] Actionable gaps count:            1
+[*] Needs-more-evidence count:        2
+    - Comp #1 (Sampling Design): severity=0.31, confidence=0.39 -> ACTIONABLE [HIGH]
+    - Comp #2 (Data Quality): severity=0.06, confidence=0.24 -> NEEDS_MORE_EVIDENCE [MEDIUM]
+    - Comp #4 (Statistical Modelling): severity=0.12, confidence=0.33 -> NEEDS_MORE_EVIDENCE [MEDIUM]
+[+] STEP 4 PASSED: Organizational gap triage is confidence-aware and actionable.
+
+ STEP 5: LONGITUDINAL COMPETENCY TRAJECTORY MONITORING
+[*] Total trajectories analyzed: 144
+[*] Trajectory distribution: {'IMPROVING': 0, 'STABLE': 2, 'DECLINING': 1, 'INSUFFICIENT_HISTORY': 141}
+    - Comp #1 (Sampling Design): INSUFFICIENT_HISTORY (count=52, velocity=-0.02)
+    - Comp #2 (Data Quality): INSUFFICIENT_HISTORY (count=21, velocity=-0.5)
+    - Comp #3 (Survey Methodology): INSUFFICIENT_HISTORY (count=46, velocity=0.0)
+[+] STEP 5 PASSED: Longitudinal trajectory monitoring operational and bounded.
+
+ STEP 6: RETENTION MONITORING (OBSERVED VS MODELLED DISTINCTION)
+[*] Monitored cohorts:          4
+[*] Observed retention cohorts: 2
+[*] Modelled retention cohorts: 2
+[*] Cohorts at retention risk:  0
+    - Comp #1 (Sampling Design): OBSERVED_RETENTION, days=0.2, status=HEALTHY_RETENTION
+    - Comp #2 (Data Quality): OBSERVED_RETENTION, days=0.2, status=HEALTHY_RETENTION
+    - Comp #3 (Survey Methodology): MODELLED_RETENTION, days=0.2, status=HEALTHY_RETENTION
+[+] STEP 6 PASSED: Explicit distinction between observed and modelled retention.
+
+ STEP 7: INTERVENTION OUTCOME ASSOCIATIONS (NON-CAUSAL EVALUATION)
+[*] Evaluated intervention providers: ['INTERNAL', 'VIRTUAL_LAB']
+[*] Causality disclaimer: Intervention performance metrics report observed competency changes following intervention completion.
+    - Provider INTERNAL: started=34, completed=34, mean_change=0.2692
+    - Provider VIRTUAL_LAB: started=10, completed=10, mean_change=0.2700
+[+] STEP 7 PASSED: Intervention outcome associations reported with non-causal integrity.
+
+ STEP 8: OPERATIONAL COHORT FAIRNESS & FOUR-FIFTHS PARITY AUDIT
+[*] Framework:                 OPERATIONAL_COHORT_PARITY_AUDIT
+[*] Sensitive attribute state: FAIRNESS_ANALYSIS_LIMITED_BY_AVAILABLE_DATA
+[*] Overall classification:    NO_MATERIAL_DIFFERENCE_DETECTED
+[*] Administrative decision:   ACCEPTABLE
+[*] Evaluated cohorts:         1
+[+] STEP 8 PASSED: Fairness audit bounded to non-sensitive operational cohorts.
+
+ STEP 9: DATA QUALITY & EVIDENCE HEALTH DIAGNOSTICS
+[*] Data Health Score: 40.0% (ATTENTION_REQUIRED)
+[*] Active Warnings:   4
+    - [MEDIUM] STALE_EVIDENCE: 5 evidence records were observed more than 180 days ago without recent verification.
+    - [HIGH] CONFLICTING_EVIDENCE: 16 competency states exhibit conflicting evidence.
+    - [LOW] INSUFFICIENT_EVIDENCE: 157 states have ASSESSED status with low confidence (< 0.35).
+    - [MEDIUM] UNVERIFIED_COMPETENCY_MAPPING: 1 competencies marked UNDER_REVIEW.
+[+] STEP 9 PASSED: Data quality diagnostics identify evidence freshness and integrity.
+
+ STEP 10: ADMINISTRATIVE ACCESS AUDIT TRAIL & RBAC AUTHORIZATION
+[*] Recorded WorkforceAuditLog entries: 5
+[*] Latest audit log: endpoint=/api/workforce/fairness, role=ADMINISTRATOR, decision=AUTHORIZED
+[*] Testing learner access across all workforce endpoints (expecting 403 Forbidden):
+    - /api/workforce/overview: 403 Forbidden [VERIFIED]
+    - /api/workforce/competencies: 403 Forbidden [VERIFIED]
+    - /api/workforce/gaps: 403 Forbidden [VERIFIED]
+    - /api/workforce/trends: 403 Forbidden [VERIFIED]
+    - /api/workforce/retention: 403 Forbidden [VERIFIED]
+    - /api/workforce/interventions: 403 Forbidden [VERIFIED]
+    - /api/workforce/emerging-skills: 403 Forbidden [VERIFIED]
+    - /api/workforce/fairness: 403 Forbidden [VERIFIED]
+    - /api/workforce/data-quality: 403 Forbidden [VERIFIED]
+    - /api/workforce/insights: 403 Forbidden [VERIFIED]
+    - /api/workforce/audit-logs: 403 Forbidden [VERIFIED]
+[+] STEP 10 PASSED: RBAC and audit logging fully verified.
+
+===========================================================================
+ ALL 10 PHASE 7 END-TO-END VERIFICATION STEPS PASSED SUCCESSFULLY!
+===========================================================================
+```
