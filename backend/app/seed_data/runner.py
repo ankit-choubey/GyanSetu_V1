@@ -14,8 +14,9 @@ from app.models.evidence import Evidence, EvidenceType
 from app.models.intervention import Intervention
 from app.models.user import User
 from app.seed_data.competency_taxonomy import COMPETENCIES, DOMAIN_BY_COMPETENCY, ROLES
-from app.seed_data.question_bank_loader import load_question_bank
+from app.seed_data.question_bank_loader import load_canonical_question_bank, load_question_bank
 from app.utils.security import hash_password
+
 
 
 def seed_full_taxonomy(seed_password: str | None = None) -> None:
@@ -105,8 +106,10 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                 )
                 db.add(learner)
                 db.flush()
-            elif learner.role_id != statistical_officer.id:
-                learner.role_id = statistical_officer.id
+            else:
+                learner.password_hash = hash_password(seed_password)
+                if learner.role_id != statistical_officer.id:
+                    learner.role_id = statistical_officer.id
 
             admin_role = db.execute(select(Role).where(Role.name == "Administrator")).scalar_one_or_none()
             if admin_role is None:
@@ -124,6 +127,8 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                         is_active=True,
                     )
                 )
+            else:
+                admin_user.password_hash = hash_password(seed_password)
 
             sandbox_user = db.execute(
                 select(User).where(User.email == "sandbox.analyst@example.com")
@@ -138,6 +143,9 @@ def seed_full_taxonomy(seed_password: str | None = None) -> None:
                 )
                 db.add(sandbox_user)
                 db.flush()
+            else:
+                sandbox_user.password_hash = hash_password(seed_password)
+
 
             for competency in competency_map.values():
                 state = db.execute(

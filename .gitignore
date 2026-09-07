@@ -10,11 +10,20 @@ backend/.venv/
 
 # Environment secrets
 .env
+**/.env
+**/.env.*
+!**/.env.example
 
-# Database
+# Database & Vectors
 *.db
 *.sqlite
 *.sqlite3
+ml_pipeline/vector_store/chroma_db/
 
 # IDE
 .vscode/
+
+/brain
+
+ankit_checks_progress.md
+

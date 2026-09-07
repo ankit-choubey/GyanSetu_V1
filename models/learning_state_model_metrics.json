@@ -1,0 +1,102 @@
+{
+  "model": "RandomForestClassifier",
+  "task": "learning_state_classification",
+  "features": [
+    "accuracy",
+    "average_response_time_seconds",
+    "hints_used",
+    "completion_rate",
+    "engagement_score",
+    "mastery_change",
+    "session_quality_score"
+  ],
+  "classes": [
+    "mastered",
+    "improving",
+    "needs_practice",
+    "struggling"
+  ],
+  "rows": 1952,
+  "learners": 200,
+  "training_rows": 1561,
+  "testing_rows": 391,
+  "accuracy": 0.941176,
+  "macro_f1": 0.940064,
+  "weighted_f1": 0.940952,
+  "classification_report": {
+    "mastered": {
+      "precision": 0.9508196721311475,
+      "recall": 0.9830508474576272,
+      "f1-score": 0.9666666666666667,
+      "support": 118.0
+    },
+    "improving": {
+      "precision": 0.968421052631579,
+      "recall": 0.8846153846153846,
+      "f1-score": 0.9246231155778895,
+      "support": 104.0
+    },
+    "needs_practice": {
+      "precision": 0.9038461538461539,
+      "recall": 0.9494949494949495,
+      "f1-score": 0.9261083743842364,
+      "support": 99.0
+    },
+    "struggling": {
+      "precision": 0.9428571428571428,
+      "recall": 0.9428571428571428,
+      "f1-score": 0.9428571428571428,
+      "support": 70.0
+    },
+    "accuracy": 0.9411764705882353,
+    "macro avg": {
+      "precision": 0.9414860053665057,
+      "recall": 0.940004581106276,
+      "f1-score": 0.9400638248714839,
+      "support": 391.0
+    },
+    "weighted avg": {
+      "precision": 0.94218230183102,
+      "recall": 0.9411764705882353,
+      "f1-score": 0.9409519175212444,
+      "support": 391.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      116,
+      2,
+      0,
+      0
+    ],
+    [
+      6,
+      92,
+      6,
+      0
+    ],
+    [
+      0,
+      1,
+      94,
+      4
+    ],
+    [
+      0,
+      0,
+      4,
+      66
+    ]
+  ],
+  "feature_importance": {
+    "session_quality_score": 0.392293,
+    "engagement_score": 0.200158,
+    "accuracy": 0.151205,
+    "completion_rate": 0.106015,
+    "average_response_time_seconds": 0.098981,
+    "mastery_change": 0.030418,
+    "hints_used": 0.02093
+  },
+  "random_state": 42,
+  "data_source": "[SANDBOX DATA]"
+}

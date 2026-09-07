@@ -1,0 +1,4319 @@
+{
+  "model": "2PL IRT",
+  "estimation_method": "Joint Maximum Likelihood Estimation",
+  "optimizer": "L-BFGS-B",
+  "analytical_gradient": true,
+  "converged": true,
+  "optimizer_message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+  "iterations": 57,
+  "function_evaluations": 60,
+  "gradient_evaluations": 60,
+  "negative_log_likelihood": 48971.911012987526,
+  "n_learners": 500,
+  "n_items": 200,
+  "data_source": "[SANDBOX DATA]",
+  "items": [
+    {
+      "item_id": "item_0001",
+      "calibrated_difficulty_b": 1.4848031840778433,
+      "calibrated_discrimination_a": 1.0464481218855712,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.3965,
+      "reference_discrimination_a": 1.0728,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0002",
+      "calibrated_difficulty_b": 0.505031478309394,
+      "calibrated_discrimination_a": 1.7128083206030305,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.5998,
+      "reference_discrimination_a": 1.7253,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0003",
+      "calibrated_difficulty_b": 1.7046074014456594,
+      "calibrated_discrimination_a": 1.0249210364209436,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.924,
+      "reference_discrimination_a": 0.875,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0004",
+      "calibrated_difficulty_b": 0.7529865591810447,
+      "calibrated_discrimination_a": 1.3152034000288344,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.8426,
+      "reference_discrimination_a": 1.3318,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0005",
+      "calibrated_difficulty_b": -1.0523532931304378,
+      "calibrated_discrimination_a": 1.6513635649853027,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.0755,
+      "reference_discrimination_a": 1.6447,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0006",
+      "calibrated_difficulty_b": -0.9858829277003016,
+      "calibrated_discrimination_a": 1.721301732333592,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.8688,
+      "reference_discrimination_a": 1.9196,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0007",
+      "calibrated_difficulty_b": 0.033459573461281325,
+      "calibrated_discrimination_a": 1.2486321114830246,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.0045,
+      "reference_discrimination_a": 1.0244,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0008",
+      "calibrated_difficulty_b": -0.27533886926082085,
+      "calibrated_discrimination_a": 2.21029680744882,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.2208,
+      "reference_discrimination_a": 1.9918,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0009",
+      "calibrated_difficulty_b": 1.419827055021425,
+      "calibrated_discrimination_a": 2.091303181013126,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.6623,
+      "reference_discrimination_a": 1.8962,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0010",
+      "calibrated_difficulty_b": -0.8915896775013911,
+      "calibrated_discrimination_a": 1.8220231849396034,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.8718,
+      "reference_discrimination_a": 1.6871,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0011",
+      "calibrated_difficulty_b": 0.38751458988005366,
+      "calibrated_discrimination_a": 1.5089643767134169,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3906,
+      "reference_discrimination_a": 1.7446,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0012",
+      "calibrated_difficulty_b": -0.13676930865500506,
+      "calibrated_discrimination_a": 1.5316648338922696,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.0886,
+      "reference_discrimination_a": 1.5583,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0013",
+      "calibrated_difficulty_b": -2.196091170128071,
+      "calibrated_discrimination_a": 0.8435788651189609,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -2.5371,
+      "reference_discrimination_a": 0.6188,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0014",
+      "calibrated_difficulty_b": 0.8344602354875013,
+      "calibrated_discrimination_a": 1.4838075239506363,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.8255,
+      "reference_discrimination_a": 1.3232,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0015",
+      "calibrated_difficulty_b": -0.4539520149288573,
+      "calibrated_discrimination_a": 0.9167715947153419,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.5202,
+      "reference_discrimination_a": 0.6668,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0016",
+      "calibrated_difficulty_b": -0.8041390365330431,
+      "calibrated_discrimination_a": 0.5049990024576784,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6674,
+      "reference_discrimination_a": 0.5716,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0017",
+      "calibrated_difficulty_b": 0.09266939191580789,
+      "calibrated_discrimination_a": 1.0914026650049207,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1687,
+      "reference_discrimination_a": 1.1857,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0018",
+      "calibrated_difficulty_b": -0.580830142290936,
+      "calibrated_discrimination_a": 1.351011797123738,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.5169,
+      "reference_discrimination_a": 1.2731,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0019",
+      "calibrated_difficulty_b": 0.15424231090614987,
+      "calibrated_discrimination_a": 1.3136993734724658,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2593,
+      "reference_discrimination_a": 1.1439,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0020",
+      "calibrated_difficulty_b": 0.1508193607127944,
+      "calibrated_discrimination_a": 1.2518158999249398,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3084,
+      "reference_discrimination_a": 1.1249,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0021",
+      "calibrated_difficulty_b": -1.7388417769384812,
+      "calibrated_discrimination_a": 1.8486037644185849,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.5649,
+      "reference_discrimination_a": 1.962,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0022",
+      "calibrated_difficulty_b": -0.42894938128965826,
+      "calibrated_discrimination_a": 1.2631107754254562,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3547,
+      "reference_discrimination_a": 1.261,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0023",
+      "calibrated_difficulty_b": -0.9421261857466019,
+      "calibrated_discrimination_a": 1.752845093894379,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.997,
+      "reference_discrimination_a": 1.4535,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0024",
+      "calibrated_difficulty_b": 1.68926624729549,
+      "calibrated_discrimination_a": 1.4126678446587835,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.7589,
+      "reference_discrimination_a": 1.4424,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0025",
+      "calibrated_difficulty_b": -2.173076509681672,
+      "calibrated_discrimination_a": 0.8362828298517241,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.7219,
+      "reference_discrimination_a": 0.9988,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0026",
+      "calibrated_difficulty_b": -0.1977555127420258,
+      "calibrated_discrimination_a": 1.9898117522969483,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.1992,
+      "reference_discrimination_a": 1.7203,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0027",
+      "calibrated_difficulty_b": 0.8257615499908122,
+      "calibrated_discrimination_a": 1.4253321307215683,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.8737,
+      "reference_discrimination_a": 1.4476,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0028",
+      "calibrated_difficulty_b": 1.9425285629494322,
+      "calibrated_discrimination_a": 1.2251071206961253,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 2.4262,
+      "reference_discrimination_a": 0.9402,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0029",
+      "calibrated_difficulty_b": -1.7439918269475458,
+      "calibrated_discrimination_a": 1.256543782282652,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.7154,
+      "reference_discrimination_a": 1.3145,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0030",
+      "calibrated_difficulty_b": -1.0004129830087025,
+      "calibrated_discrimination_a": 0.853969753882342,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.1196,
+      "reference_discrimination_a": 0.7867,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0031",
+      "calibrated_difficulty_b": -0.47068339947487453,
+      "calibrated_discrimination_a": 2.1524884635672983,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3293,
+      "reference_discrimination_a": 1.7987,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0032",
+      "calibrated_difficulty_b": 1.0977131733089367,
+      "calibrated_discrimination_a": 1.0241732646258999,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.1038,
+      "reference_discrimination_a": 1.052,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0033",
+      "calibrated_difficulty_b": -0.11988839207632995,
+      "calibrated_discrimination_a": 1.8778216096886398,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.013,
+      "reference_discrimination_a": 1.9606,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0034",
+      "calibrated_difficulty_b": 0.08437870689037806,
+      "calibrated_discrimination_a": 1.8668988962779915,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1663,
+      "reference_discrimination_a": 1.8865,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0035",
+      "calibrated_difficulty_b": -1.8642152814058364,
+      "calibrated_discrimination_a": 1.7922928973015073,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.8171,
+      "reference_discrimination_a": 1.5906,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0036",
+      "calibrated_difficulty_b": -0.024810632204502372,
+      "calibrated_discrimination_a": 1.3772892435346227,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1149,
+      "reference_discrimination_a": 1.7335,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0037",
+      "calibrated_difficulty_b": 0.3988717059824661,
+      "calibrated_discrimination_a": 0.5535891779964351,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3981,
+      "reference_discrimination_a": 0.6201,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0038",
+      "calibrated_difficulty_b": -0.3339925713810626,
+      "calibrated_discrimination_a": 1.5239123450895429,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.4086,
+      "reference_discrimination_a": 1.4039,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0039",
+      "calibrated_difficulty_b": 0.22719915387470233,
+      "calibrated_discrimination_a": 1.0505923761819014,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3705,
+      "reference_discrimination_a": 1.0273,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0040",
+      "calibrated_difficulty_b": -1.5641971486419484,
+      "calibrated_discrimination_a": 1.962808924162817,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.5616,
+      "reference_discrimination_a": 1.7016,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0041",
+      "calibrated_difficulty_b": 0.8509309431253006,
+      "calibrated_discrimination_a": 1.5490502905565608,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.754,
+      "reference_discrimination_a": 1.672,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0042",
+      "calibrated_difficulty_b": 0.3288972215806963,
+      "calibrated_discrimination_a": 1.2520279398197594,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2921,
+      "reference_discrimination_a": 1.0743,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0043",
+      "calibrated_difficulty_b": 1.064119680631285,
+      "calibrated_discrimination_a": 1.8388970785659713,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.2261,
+      "reference_discrimination_a": 1.5186,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0044",
+      "calibrated_difficulty_b": 0.23395025740243763,
+      "calibrated_discrimination_a": 1.6812571602445328,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2695,
+      "reference_discrimination_a": 1.6446,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0045",
+      "calibrated_difficulty_b": 0.12688055828630537,
+      "calibrated_discrimination_a": 0.9180941201051421,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3419,
+      "reference_discrimination_a": 1.0971,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0046",
+      "calibrated_difficulty_b": 0.9103939520413212,
+      "calibrated_discrimination_a": 0.6220305469533656,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.8071,
+      "reference_discrimination_a": 0.6702,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0047",
+      "calibrated_difficulty_b": 0.07428131460402142,
+      "calibrated_discrimination_a": 1.0933598261324309,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1433,
+      "reference_discrimination_a": 1.0805,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0048",
+      "calibrated_difficulty_b": -0.28195303873977495,
+      "calibrated_discrimination_a": 1.095323234532046,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.0172,
+      "reference_discrimination_a": 0.8904,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0049",
+      "calibrated_difficulty_b": -0.8807962552046289,
+      "calibrated_discrimination_a": 2.1018417703739973,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.812,
+      "reference_discrimination_a": 1.7792,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0050",
+      "calibrated_difficulty_b": 0.6736548108367546,
+      "calibrated_discrimination_a": 1.1978067589349721,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.8712,
+      "reference_discrimination_a": 1.1677,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0051",
+      "calibrated_difficulty_b": -1.927009062440872,
+      "calibrated_discrimination_a": 1.041290606584548,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.6302,
+      "reference_discrimination_a": 1.0211,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0052",
+      "calibrated_difficulty_b": 1.8380343972483317,
+      "calibrated_discrimination_a": 2.1039347325621955,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 2.0916,
+      "reference_discrimination_a": 1.837,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0053",
+      "calibrated_difficulty_b": 1.026109610410233,
+      "calibrated_discrimination_a": 2.0032755887035267,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.1451,
+      "reference_discrimination_a": 1.891,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0054",
+      "calibrated_difficulty_b": -0.7439276726340802,
+      "calibrated_discrimination_a": 2.0731590530867114,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.813,
+      "reference_discrimination_a": 1.2631,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0055",
+      "calibrated_difficulty_b": 0.3557809023697757,
+      "calibrated_discrimination_a": 0.5741558873091144,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1468,
+      "reference_discrimination_a": 0.7083,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0056",
+      "calibrated_difficulty_b": 0.1838134803977229,
+      "calibrated_discrimination_a": 2.105099542970607,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2283,
+      "reference_discrimination_a": 1.7055,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0057",
+      "calibrated_difficulty_b": 0.7886632464749797,
+      "calibrated_discrimination_a": 0.625023081244385,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.7916,
+      "reference_discrimination_a": 0.6293,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0058",
+      "calibrated_difficulty_b": -0.37430072813924076,
+      "calibrated_discrimination_a": 1.642488291516122,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.2683,
+      "reference_discrimination_a": 1.6537,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0059",
+      "calibrated_difficulty_b": 0.06207297153444612,
+      "calibrated_discrimination_a": 0.9687946979052325,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2932,
+      "reference_discrimination_a": 1.0168,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0060",
+      "calibrated_difficulty_b": -1.4468031698146242,
+      "calibrated_discrimination_a": 1.7316429828371531,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.2946,
+      "reference_discrimination_a": 1.9494,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0061",
+      "calibrated_difficulty_b": -0.9054431603406924,
+      "calibrated_discrimination_a": 0.552172396689151,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.7612,
+      "reference_discrimination_a": 0.5831,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0062",
+      "calibrated_difficulty_b": -1.2237891510256347,
+      "calibrated_discrimination_a": 0.6240164473786796,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.0467,
+      "reference_discrimination_a": 0.747,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0063",
+      "calibrated_difficulty_b": 0.660719804933894,
+      "calibrated_discrimination_a": 1.058371964027609,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.7919,
+      "reference_discrimination_a": 1.019,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0064",
+      "calibrated_difficulty_b": -0.1359778545480076,
+      "calibrated_discrimination_a": 1.370952945558409,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.0997,
+      "reference_discrimination_a": 1.4526,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0065",
+      "calibrated_difficulty_b": 0.08492696006427453,
+      "calibrated_discrimination_a": 1.0684528160227638,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1155,
+      "reference_discrimination_a": 0.9542,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0066",
+      "calibrated_difficulty_b": 0.7860248278031715,
+      "calibrated_discrimination_a": 0.7416379770784867,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.9747,
+      "reference_discrimination_a": 0.753,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0067",
+      "calibrated_difficulty_b": 1.4018611931187523,
+      "calibrated_discrimination_a": 1.1858196817800126,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.3466,
+      "reference_discrimination_a": 1.4077,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0068",
+      "calibrated_difficulty_b": 0.4869892531878765,
+      "calibrated_discrimination_a": 1.7910491774273574,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.5734,
+      "reference_discrimination_a": 1.7379,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0069",
+      "calibrated_difficulty_b": 0.5970596733166484,
+      "calibrated_discrimination_a": 1.4666681120673772,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.785,
+      "reference_discrimination_a": 1.4767,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0070",
+      "calibrated_difficulty_b": -0.11145206764302315,
+      "calibrated_discrimination_a": 1.3889505303589826,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.009,
+      "reference_discrimination_a": 1.4585,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0071",
+      "calibrated_difficulty_b": 1.6443903662480397,
+      "calibrated_discrimination_a": 0.8464153159556976,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.5151,
+      "reference_discrimination_a": 0.9345,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0072",
+      "calibrated_difficulty_b": 0.2816975184588013,
+      "calibrated_discrimination_a": 1.911465700689392,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.4517,
+      "reference_discrimination_a": 1.707,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0073",
+      "calibrated_difficulty_b": -1.5475240156654009,
+      "calibrated_discrimination_a": 0.5329670353989507,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.3472,
+      "reference_discrimination_a": 0.6095,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0074",
+      "calibrated_difficulty_b": -1.5094751396286894,
+      "calibrated_discrimination_a": 1.0860417323406855,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.2909,
+      "reference_discrimination_a": 1.2264,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0075",
+      "calibrated_difficulty_b": 1.2422229420671635,
+      "calibrated_discrimination_a": 0.9658640167645278,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.4094,
+      "reference_discrimination_a": 0.9689,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0076",
+      "calibrated_difficulty_b": -0.45243002358240325,
+      "calibrated_discrimination_a": 1.9536388993290914,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.5067,
+      "reference_discrimination_a": 1.7912,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0077",
+      "calibrated_difficulty_b": -0.269181216437359,
+      "calibrated_discrimination_a": 0.9494504148233427,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.0785,
+      "reference_discrimination_a": 0.9787,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0078",
+      "calibrated_difficulty_b": -1.4082492393183685,
+      "calibrated_discrimination_a": 0.8154490431162462,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.9745,
+      "reference_discrimination_a": 0.8719,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0079",
+      "calibrated_difficulty_b": 0.3142415350881164,
+      "calibrated_discrimination_a": 1.0882861430749853,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2633,
+      "reference_discrimination_a": 1.0762,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0080",
+      "calibrated_difficulty_b": -0.8811281834452394,
+      "calibrated_discrimination_a": 1.718411088302468,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.868,
+      "reference_discrimination_a": 1.798,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0081",
+      "calibrated_difficulty_b": -1.2949230189653458,
+      "calibrated_discrimination_a": 1.498026273454004,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.3564,
+      "reference_discrimination_a": 1.3665,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0082",
+      "calibrated_difficulty_b": 0.03679103537600325,
+      "calibrated_discrimination_a": 1.1257059160296525,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.0504,
+      "reference_discrimination_a": 1.2474,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0083",
+      "calibrated_difficulty_b": 0.21833773055084582,
+      "calibrated_discrimination_a": 0.9854152658658413,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2804,
+      "reference_discrimination_a": 0.9628,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0084",
+      "calibrated_difficulty_b": -0.24854306750533264,
+      "calibrated_discrimination_a": 0.7927670498198975,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.2658,
+      "reference_discrimination_a": 0.8227,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0085",
+      "calibrated_difficulty_b": 1.787484935097215,
+      "calibrated_discrimination_a": 1.185650840394796,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.8971,
+      "reference_discrimination_a": 1.2423,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0086",
+      "calibrated_difficulty_b": 0.354733789522091,
+      "calibrated_discrimination_a": 1.2045789028437897,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.4119,
+      "reference_discrimination_a": 1.2059,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0087",
+      "calibrated_difficulty_b": 0.5064229846124305,
+      "calibrated_discrimination_a": 1.1071084531834137,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.7139,
+      "reference_discrimination_a": 1.1464,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0088",
+      "calibrated_difficulty_b": 0.04240922522042704,
+      "calibrated_discrimination_a": 1.229167834250215,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1497,
+      "reference_discrimination_a": 1.1009,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0089",
+      "calibrated_difficulty_b": -1.9064658065072089,
+      "calibrated_discrimination_a": 1.0073214681957119,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.4758,
+      "reference_discrimination_a": 1.3298,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0090",
+      "calibrated_difficulty_b": 0.2029847098307421,
+      "calibrated_discrimination_a": 1.6011143616157943,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3512,
+      "reference_discrimination_a": 1.6466,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0091",
+      "calibrated_difficulty_b": -0.8606459069224105,
+      "calibrated_discrimination_a": 2.3583249762216885,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.8874,
+      "reference_discrimination_a": 1.9626,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0092",
+      "calibrated_difficulty_b": -1.254857410478024,
+      "calibrated_discrimination_a": 0.8523452854622509,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.0517,
+      "reference_discrimination_a": 1.0086,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0093",
+      "calibrated_difficulty_b": -0.5684815471898556,
+      "calibrated_discrimination_a": 1.2961843873090642,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.5443,
+      "reference_discrimination_a": 1.2501,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0094",
+      "calibrated_difficulty_b": 0.4432329541550501,
+      "calibrated_discrimination_a": 1.1317816884723797,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3763,
+      "reference_discrimination_a": 1.1855,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0095",
+      "calibrated_difficulty_b": 0.08684155190878166,
+      "calibrated_discrimination_a": 1.0386587620239898,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2316,
+      "reference_discrimination_a": 0.9919,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0096",
+      "calibrated_difficulty_b": 0.5254172141144877,
+      "calibrated_discrimination_a": 1.6788392318182772,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.5859,
+      "reference_discrimination_a": 1.9859,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0097",
+      "calibrated_difficulty_b": 0.99418678129565,
+      "calibrated_discrimination_a": 1.0944064569567105,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.2043,
+      "reference_discrimination_a": 1.0046,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0098",
+      "calibrated_difficulty_b": -1.9585742446077248,
+      "calibrated_discrimination_a": 1.5427697992199678,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.8641,
+      "reference_discrimination_a": 1.5631,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0099",
+      "calibrated_difficulty_b": 0.5196768751260255,
+      "calibrated_discrimination_a": 1.2205846768217963,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.7065,
+      "reference_discrimination_a": 1.0525,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0100",
+      "calibrated_difficulty_b": -1.3260027431491008,
+      "calibrated_discrimination_a": 1.4132308963881808,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.3238,
+      "reference_discrimination_a": 1.588,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0101",
+      "calibrated_difficulty_b": 1.0498619467591506,
+      "calibrated_discrimination_a": 1.7853072206270493,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.1217,
+      "reference_discrimination_a": 1.6744,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0102",
+      "calibrated_difficulty_b": 0.16344308355072243,
+      "calibrated_discrimination_a": 1.6468447049927755,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1727,
+      "reference_discrimination_a": 1.5821,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0103",
+      "calibrated_difficulty_b": 1.226117550539112,
+      "calibrated_discrimination_a": 1.7944973523941872,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.2932,
+      "reference_discrimination_a": 1.4435,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0104",
+      "calibrated_difficulty_b": 0.4293571753296089,
+      "calibrated_discrimination_a": 0.8588880810977009,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3201,
+      "reference_discrimination_a": 0.7217,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0105",
+      "calibrated_difficulty_b": -0.4195356547130414,
+      "calibrated_discrimination_a": 1.848577268657776,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3767,
+      "reference_discrimination_a": 1.9223,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0106",
+      "calibrated_difficulty_b": -0.8149432014885922,
+      "calibrated_discrimination_a": 1.2132723215639436,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6832,
+      "reference_discrimination_a": 1.5358,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0107",
+      "calibrated_difficulty_b": -0.8680393155619506,
+      "calibrated_discrimination_a": 2.300163178492152,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.7439,
+      "reference_discrimination_a": 1.8808,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0108",
+      "calibrated_difficulty_b": -0.024576851852479025,
+      "calibrated_discrimination_a": 1.5608992851745842,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.0637,
+      "reference_discrimination_a": 1.4933,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0109",
+      "calibrated_difficulty_b": 0.8857348910010423,
+      "calibrated_discrimination_a": 0.8021188108071342,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.075,
+      "reference_discrimination_a": 0.7598,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0110",
+      "calibrated_difficulty_b": 1.6111897234316341,
+      "calibrated_discrimination_a": 1.1261152460714676,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.672,
+      "reference_discrimination_a": 1.0314,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0111",
+      "calibrated_difficulty_b": 0.7985767026941888,
+      "calibrated_discrimination_a": 1.4254280395526764,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.8505,
+      "reference_discrimination_a": 1.465,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0112",
+      "calibrated_difficulty_b": -1.1958993493865349,
+      "calibrated_discrimination_a": 0.5750404928488719,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.984,
+      "reference_discrimination_a": 0.7884,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0113",
+      "calibrated_difficulty_b": 0.9437660636438024,
+      "calibrated_discrimination_a": 0.8779276698123987,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.1551,
+      "reference_discrimination_a": 0.8373,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0114",
+      "calibrated_difficulty_b": -1.7740985245572223,
+      "calibrated_discrimination_a": 0.9095300856163878,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.7022,
+      "reference_discrimination_a": 0.9335,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0115",
+      "calibrated_difficulty_b": 0.3386129721042336,
+      "calibrated_discrimination_a": 1.0619855108762493,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.6975,
+      "reference_discrimination_a": 0.9756,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0116",
+      "calibrated_difficulty_b": 0.6895961807865493,
+      "calibrated_discrimination_a": 0.6373439262007208,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.4885,
+      "reference_discrimination_a": 0.6828,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0117",
+      "calibrated_difficulty_b": 0.6053025768747371,
+      "calibrated_discrimination_a": 2.3168349026514274,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.7365,
+      "reference_discrimination_a": 1.9702,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0118",
+      "calibrated_difficulty_b": 0.5603942345038899,
+      "calibrated_discrimination_a": 0.7779726108972166,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.562,
+      "reference_discrimination_a": 0.9314,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0119",
+      "calibrated_difficulty_b": -0.6888437844421411,
+      "calibrated_discrimination_a": 1.1447406026813232,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.8021,
+      "reference_discrimination_a": 1.1636,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0120",
+      "calibrated_difficulty_b": 1.0892887140650445,
+      "calibrated_discrimination_a": 0.7092137324309081,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.9881,
+      "reference_discrimination_a": 0.8031,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0121",
+      "calibrated_difficulty_b": -1.5693869748598148,
+      "calibrated_discrimination_a": 1.74205820828533,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.6191,
+      "reference_discrimination_a": 1.5443,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0122",
+      "calibrated_difficulty_b": -1.305785682717059,
+      "calibrated_discrimination_a": 1.3269340786546036,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.3382,
+      "reference_discrimination_a": 1.3802,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0123",
+      "calibrated_difficulty_b": -0.01686283646288806,
+      "calibrated_discrimination_a": 1.33748087941848,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2498,
+      "reference_discrimination_a": 1.2966,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0124",
+      "calibrated_difficulty_b": 0.2640038744660997,
+      "calibrated_discrimination_a": 1.167775440103406,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.4146,
+      "reference_discrimination_a": 1.12,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0125",
+      "calibrated_difficulty_b": 1.3228177833085508,
+      "calibrated_discrimination_a": 1.228073296018343,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.2412,
+      "reference_discrimination_a": 1.6561,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0126",
+      "calibrated_difficulty_b": 1.1644917679080127,
+      "calibrated_discrimination_a": 2.1129109817648395,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.2423,
+      "reference_discrimination_a": 1.9025,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0127",
+      "calibrated_difficulty_b": 1.5855947765823852,
+      "calibrated_discrimination_a": 0.6723415112368365,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.1724,
+      "reference_discrimination_a": 0.7992,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0128",
+      "calibrated_difficulty_b": 0.12370783816521504,
+      "calibrated_discrimination_a": 1.5610354880034443,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.2736,
+      "reference_discrimination_a": 1.4688,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0129",
+      "calibrated_difficulty_b": 1.357371852518453,
+      "calibrated_discrimination_a": 1.467865850541645,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.4144,
+      "reference_discrimination_a": 1.5847,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0130",
+      "calibrated_difficulty_b": -0.20943467847447708,
+      "calibrated_discrimination_a": 1.0872477520426966,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1468,
+      "reference_discrimination_a": 1.2431,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0131",
+      "calibrated_difficulty_b": 1.051835076517078,
+      "calibrated_discrimination_a": 2.0121083197213423,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.1321,
+      "reference_discrimination_a": 1.9078,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0132",
+      "calibrated_difficulty_b": -0.690306397770141,
+      "calibrated_discrimination_a": 0.9374958933500017,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.7934,
+      "reference_discrimination_a": 0.7892,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0133",
+      "calibrated_difficulty_b": -0.4955448306191718,
+      "calibrated_discrimination_a": 1.2368806312438325,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.5117,
+      "reference_discrimination_a": 1.1884,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0134",
+      "calibrated_difficulty_b": 1.1392914379799353,
+      "calibrated_discrimination_a": 1.6224338472533197,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.1541,
+      "reference_discrimination_a": 1.6049,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0135",
+      "calibrated_difficulty_b": -0.1336939843625757,
+      "calibrated_discrimination_a": 1.4206202692935777,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.0287,
+      "reference_discrimination_a": 1.6359,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0136",
+      "calibrated_difficulty_b": -0.7365077465538933,
+      "calibrated_discrimination_a": 1.7352617707632638,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6292,
+      "reference_discrimination_a": 1.5039,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0137",
+      "calibrated_difficulty_b": -0.49245376293774323,
+      "calibrated_discrimination_a": 0.7705614204704209,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.5847,
+      "reference_discrimination_a": 0.9854,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0138",
+      "calibrated_difficulty_b": -1.0141247518286765,
+      "calibrated_discrimination_a": 0.9233038830501217,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.2261,
+      "reference_discrimination_a": 0.8533,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0139",
+      "calibrated_difficulty_b": 0.7069889180631296,
+      "calibrated_discrimination_a": 0.5465782835154743,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.8581,
+      "reference_discrimination_a": 0.5172,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0140",
+      "calibrated_difficulty_b": -1.065612667447583,
+      "calibrated_discrimination_a": 0.6267042355677078,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.9448,
+      "reference_discrimination_a": 0.5932,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0141",
+      "calibrated_difficulty_b": 0.15673798556787882,
+      "calibrated_discrimination_a": 1.0917100328419762,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.0412,
+      "reference_discrimination_a": 1.1081,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0142",
+      "calibrated_difficulty_b": -0.45804369187868454,
+      "calibrated_discrimination_a": 1.9694197111884653,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3674,
+      "reference_discrimination_a": 1.5553,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0143",
+      "calibrated_difficulty_b": -1.141713300739421,
+      "calibrated_discrimination_a": 1.5616224478848748,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.9124,
+      "reference_discrimination_a": 1.8742,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0144",
+      "calibrated_difficulty_b": -0.9371858545358092,
+      "calibrated_discrimination_a": 0.9651678983751989,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.7423,
+      "reference_discrimination_a": 0.8287,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0145",
+      "calibrated_difficulty_b": 0.33067089342297723,
+      "calibrated_discrimination_a": 1.4044639971437012,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.3105,
+      "reference_discrimination_a": 1.6216,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0146",
+      "calibrated_difficulty_b": -0.19149997019380402,
+      "calibrated_discrimination_a": 1.2676606006168143,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.1082,
+      "reference_discrimination_a": 1.3239,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0147",
+      "calibrated_difficulty_b": -0.7284517225100844,
+      "calibrated_discrimination_a": 1.654806544602393,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6419,
+      "reference_discrimination_a": 1.4961,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0148",
+      "calibrated_difficulty_b": -0.2760199266065204,
+      "calibrated_discrimination_a": 1.57779889462723,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3084,
+      "reference_discrimination_a": 1.6321,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0149",
+      "calibrated_difficulty_b": 0.05880246385152872,
+      "calibrated_discrimination_a": 0.5312070405792944,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1173,
+      "reference_discrimination_a": 0.6172,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0150",
+      "calibrated_difficulty_b": -0.1120949624784482,
+      "calibrated_discrimination_a": 1.1844194716968552,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.022,
+      "reference_discrimination_a": 1.3215,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0151",
+      "calibrated_difficulty_b": -0.6023415148535812,
+      "calibrated_discrimination_a": 0.7297863290121817,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6147,
+      "reference_discrimination_a": 0.7248,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0152",
+      "calibrated_difficulty_b": -1.337701563741483,
+      "calibrated_discrimination_a": 0.6763427996572086,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.2124,
+      "reference_discrimination_a": 0.6744,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0153",
+      "calibrated_difficulty_b": 0.007242623641020205,
+      "calibrated_discrimination_a": 0.6680584597006184,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.093,
+      "reference_discrimination_a": 0.6364,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0154",
+      "calibrated_difficulty_b": -0.049076356135081566,
+      "calibrated_discrimination_a": 1.3349999928554106,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.0418,
+      "reference_discrimination_a": 1.1801,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0155",
+      "calibrated_difficulty_b": -0.5102203639038518,
+      "calibrated_discrimination_a": 0.5456912886462407,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3343,
+      "reference_discrimination_a": 0.5866,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0156",
+      "calibrated_difficulty_b": -0.9946010289906132,
+      "calibrated_discrimination_a": 1.6896851885233755,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.9725,
+      "reference_discrimination_a": 1.5849,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0157",
+      "calibrated_difficulty_b": 0.08169115440725568,
+      "calibrated_discrimination_a": 1.4871928386763138,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1407,
+      "reference_discrimination_a": 1.6187,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0158",
+      "calibrated_difficulty_b": -0.6385934901731863,
+      "calibrated_discrimination_a": 1.0995038442889333,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6767,
+      "reference_discrimination_a": 1.0168,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0159",
+      "calibrated_difficulty_b": -1.88383600095378,
+      "calibrated_discrimination_a": 1.3882941598440748,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.5463,
+      "reference_discrimination_a": 1.6487,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0160",
+      "calibrated_difficulty_b": -0.7847855317138144,
+      "calibrated_discrimination_a": 1.6984033460008443,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6724,
+      "reference_discrimination_a": 1.8602,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0161",
+      "calibrated_difficulty_b": 0.178032815348633,
+      "calibrated_discrimination_a": 1.4214177248578463,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1946,
+      "reference_discrimination_a": 1.4927,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0162",
+      "calibrated_difficulty_b": -1.1000492852881645,
+      "calibrated_discrimination_a": 1.0066565165344612,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.192,
+      "reference_discrimination_a": 1.0217,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0163",
+      "calibrated_difficulty_b": 0.4802732713968825,
+      "calibrated_discrimination_a": 1.3897362617287874,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.5029,
+      "reference_discrimination_a": 1.2933,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0164",
+      "calibrated_difficulty_b": -1.2965151333899274,
+      "calibrated_discrimination_a": 0.5160902366082674,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.1669,
+      "reference_discrimination_a": 0.5052,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0165",
+      "calibrated_difficulty_b": 0.024255967608201468,
+      "calibrated_discrimination_a": 1.7641411561601752,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1629,
+      "reference_discrimination_a": 1.5102,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0166",
+      "calibrated_difficulty_b": -0.5831153210446159,
+      "calibrated_discrimination_a": 2.289359223552832,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6625,
+      "reference_discrimination_a": 1.735,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0167",
+      "calibrated_difficulty_b": -0.7085649891630288,
+      "calibrated_discrimination_a": 0.9642030604374059,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.5922,
+      "reference_discrimination_a": 0.9135,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0168",
+      "calibrated_difficulty_b": 0.5024554992136627,
+      "calibrated_discrimination_a": 1.787031696034088,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.5654,
+      "reference_discrimination_a": 1.8256,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0169",
+      "calibrated_difficulty_b": 0.7163302265165726,
+      "calibrated_discrimination_a": 0.5807796576526947,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.6904,
+      "reference_discrimination_a": 0.573,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0170",
+      "calibrated_difficulty_b": -1.4909251442465954,
+      "calibrated_discrimination_a": 0.8696892812178906,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.5338,
+      "reference_discrimination_a": 0.8515,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0171",
+      "calibrated_difficulty_b": 1.9370246845735024,
+      "calibrated_discrimination_a": 0.9349043749903889,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 2.0178,
+      "reference_discrimination_a": 0.9339,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0172",
+      "calibrated_difficulty_b": 0.6545500636063383,
+      "calibrated_discrimination_a": 1.0264089670163674,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.513,
+      "reference_discrimination_a": 0.9784,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0173",
+      "calibrated_difficulty_b": -0.3560652913603887,
+      "calibrated_discrimination_a": 0.8538837747933937,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3969,
+      "reference_discrimination_a": 0.981,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0174",
+      "calibrated_difficulty_b": -0.6161709619191403,
+      "calibrated_discrimination_a": 1.702243014857051,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.6841,
+      "reference_discrimination_a": 1.4903,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0175",
+      "calibrated_difficulty_b": 2.1282889470896467,
+      "calibrated_discrimination_a": 0.6116418456534402,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.8879,
+      "reference_discrimination_a": 0.5914,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0176",
+      "calibrated_difficulty_b": -0.29775894106267964,
+      "calibrated_discrimination_a": 1.0066974014110075,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.2711,
+      "reference_discrimination_a": 1.1408,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0177",
+      "calibrated_difficulty_b": 1.2309171027809618,
+      "calibrated_discrimination_a": 1.7156281162744527,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.3723,
+      "reference_discrimination_a": 1.9124,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0178",
+      "calibrated_difficulty_b": -0.16322924186842508,
+      "calibrated_discrimination_a": 0.9932451321326152,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.1687,
+      "reference_discrimination_a": 0.9781,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0179",
+      "calibrated_difficulty_b": 0.5801248645460466,
+      "calibrated_discrimination_a": 1.1706857445128442,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.829,
+      "reference_discrimination_a": 1.0647,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0180",
+      "calibrated_difficulty_b": -1.2395281796661062,
+      "calibrated_discrimination_a": 1.7153932375598893,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.169,
+      "reference_discrimination_a": 1.774,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0181",
+      "calibrated_difficulty_b": 1.377680528370102,
+      "calibrated_discrimination_a": 2.0715474399484175,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.6259,
+      "reference_discrimination_a": 1.7087,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0182",
+      "calibrated_difficulty_b": -0.005614524854284082,
+      "calibrated_discrimination_a": 2.0951100764741573,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1135,
+      "reference_discrimination_a": 1.9517,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0183",
+      "calibrated_difficulty_b": -1.5937596930901035,
+      "calibrated_discrimination_a": 0.8269366123503048,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.4405,
+      "reference_discrimination_a": 0.8643,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0184",
+      "calibrated_difficulty_b": 0.3375888695109601,
+      "calibrated_discrimination_a": 1.8249320080169142,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.4759,
+      "reference_discrimination_a": 1.8833,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0185",
+      "calibrated_difficulty_b": 0.5414878006957351,
+      "calibrated_discrimination_a": 0.8809577097080514,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.7503,
+      "reference_discrimination_a": 0.9027,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0186",
+      "calibrated_difficulty_b": -2.4645798182441543,
+      "calibrated_discrimination_a": 1.773719331744285,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -2.2449,
+      "reference_discrimination_a": 1.8104,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0187",
+      "calibrated_difficulty_b": 0.0622339925717925,
+      "calibrated_discrimination_a": 1.9474114861463758,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.1939,
+      "reference_discrimination_a": 1.5865,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0188",
+      "calibrated_difficulty_b": -1.081662428057372,
+      "calibrated_discrimination_a": 2.179458041630932,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -1.1163,
+      "reference_discrimination_a": 1.8042,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0189",
+      "calibrated_difficulty_b": 1.1328644842186149,
+      "calibrated_discrimination_a": 0.9797144551508588,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.5899,
+      "reference_discrimination_a": 0.8068,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0190",
+      "calibrated_difficulty_b": -0.6153579906438214,
+      "calibrated_discrimination_a": 1.3844622788858971,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.439,
+      "reference_discrimination_a": 1.6633,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0191",
+      "calibrated_difficulty_b": -0.8747611402337153,
+      "calibrated_discrimination_a": 1.0859254990150247,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.8396,
+      "reference_discrimination_a": 1.0389,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0192",
+      "calibrated_difficulty_b": -0.26660068196652653,
+      "calibrated_discrimination_a": 1.2699787506048492,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3266,
+      "reference_discrimination_a": 1.2459,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0193",
+      "calibrated_difficulty_b": -0.3863948720032301,
+      "calibrated_discrimination_a": 1.9063676420071454,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.3785,
+      "reference_discrimination_a": 1.8715,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0194",
+      "calibrated_difficulty_b": -0.49851088602405275,
+      "calibrated_discrimination_a": 1.468799286209359,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.5599,
+      "reference_discrimination_a": 1.3438,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0195",
+      "calibrated_difficulty_b": 1.9351014604125893,
+      "calibrated_discrimination_a": 0.7808532013361258,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.7722,
+      "reference_discrimination_a": 0.8912,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0196",
+      "calibrated_difficulty_b": -0.9280278054588957,
+      "calibrated_discrimination_a": 1.2016510535082356,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.8898,
+      "reference_discrimination_a": 1.1264,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0197",
+      "calibrated_difficulty_b": 1.146602183995367,
+      "calibrated_discrimination_a": 1.1480379797354652,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 1.1422,
+      "reference_discrimination_a": 1.0698,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0198",
+      "calibrated_difficulty_b": 0.28395021295388934,
+      "calibrated_discrimination_a": 1.5336420851544894,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": 0.427,
+      "reference_discrimination_a": 1.4819,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0199",
+      "calibrated_difficulty_b": -0.0936136312540413,
+      "calibrated_discrimination_a": 1.813583972409423,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -0.0194,
+      "reference_discrimination_a": 1.7324,
+      "competency": "Population and housing census methodology"
+    },
+    {
+      "item_id": "item_0200",
+      "calibrated_difficulty_b": -2.044383917994274,
+      "calibrated_discrimination_a": 1.5549096326129361,
+      "data_source": "[SANDBOX DATA]",
+      "reference_difficulty_b": -2.0286,
+      "reference_discrimination_a": 1.6925,
+      "competency": "Population and housing census methodology"
+    }
+  ],
+  "learners": [
+    {
+      "learner_id": "learner_0001",
+      "theta": 0.26096280181603987,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0002",
+      "theta": -0.6753241697897152,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0003",
+      "theta": 1.2530897563504693,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0004",
+      "theta": -0.13686247463736814,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0005",
+      "theta": -1.02340577143275,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0006",
+      "theta": 0.393813979972883,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0007",
+      "theta": -1.015474708521227,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0008",
+      "theta": 1.6965269385707462,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0009",
+      "theta": -0.519515746768296,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0010",
+      "theta": 1.475755916099642,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0011",
+      "theta": 1.4690711226457176,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0012",
+      "theta": 2.090628516439412,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0013",
+      "theta": 2.2546571555027564,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0014",
+      "theta": -0.5855545764471373,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0015",
+      "theta": 1.420537080345544,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0016",
+      "theta": 1.4925244365559083,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0017",
+      "theta": 0.21325619670827076,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0018",
+      "theta": -0.6057921154921352,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0019",
+      "theta": -0.8321105841942376,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0020",
+      "theta": -0.9235310732934434,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0021",
+      "theta": 0.46656702925583676,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0022",
+      "theta": -0.5961889616056706,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0023",
+      "theta": 0.606990465392047,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0024",
+      "theta": -1.91483882371376,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0025",
+      "theta": -1.048303141814199,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0026",
+      "theta": 0.26608285662765296,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0027",
+      "theta": -0.47773267047211504,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0028",
+      "theta": 0.9160950221184103,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0029",
+      "theta": 0.388529873640993,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0030",
+      "theta": 1.165980552402969,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0031",
+      "theta": -0.6270406484960788,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0032",
+      "theta": -0.08116060869307706,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0033",
+      "theta": 1.2967527122301228,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0034",
+      "theta": -0.43429459966915873,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0035",
+      "theta": -1.692673227929992,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0036",
+      "theta": 0.7916328712940257,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0037",
+      "theta": -1.3068895923047366,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0038",
+      "theta": 0.5157501597161396,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0039",
+      "theta": -1.1141286257500815,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0040",
+      "theta": -1.187331769779518,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0041",
+      "theta": -1.8159582895193749,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0042",
+      "theta": 0.9287263029393809,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0043",
+      "theta": 0.021015043054009027,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0044",
+      "theta": -1.0136810530793525,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0045",
+      "theta": 0.19739916600107038,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0046",
+      "theta": 0.8939889584567011,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0047",
+      "theta": 0.7806204521469327,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0048",
+      "theta": -0.3831949931960131,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0049",
+      "theta": -1.4586451242274454,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0050",
+      "theta": 0.27083476429964304,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0051",
+      "theta": -0.4469194263379546,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0052",
+      "theta": -0.2464154782393119,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0053",
+      "theta": 0.17512169707849584,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0054",
+      "theta": -0.7168175796395058,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0055",
+      "theta": -0.17654788618054376,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0056",
+      "theta": -1.0812431976121444,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0057",
+      "theta": -0.6583942840403961,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0058",
+      "theta": -0.5260266103345415,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0059",
+      "theta": -1.9965436073445497,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0060",
+      "theta": -1.4096176272382728,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0061",
+      "theta": -0.6077816393640345,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0062",
+      "theta": 1.4725026937940677,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0063",
+      "theta": -0.12442007590506388,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0064",
+      "theta": 0.7146640059715255,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0065",
+      "theta": -1.560894481347097,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0066",
+      "theta": -0.588526832000098,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0067",
+      "theta": 1.1898456240702935,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0068",
+      "theta": -0.518796940281923,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0069",
+      "theta": 0.7900058808163053,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0070",
+      "theta": -1.0616843422748234,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0071",
+      "theta": -0.41100782072553166,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0072",
+      "theta": -0.8124915358230805,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0073",
+      "theta": -0.09704249314643287,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0074",
+      "theta": 0.5352287963950363,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0075",
+      "theta": -0.05389092000095052,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0076",
+      "theta": -0.11464463267419453,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0077",
+      "theta": -2.093205349313996,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0078",
+      "theta": -0.3892803961066138,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0079",
+      "theta": 0.2584556749053542,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0080",
+      "theta": -0.8846053945571923,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0081",
+      "theta": 0.1607480451987164,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0082",
+      "theta": -1.938678215500293,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0083",
+      "theta": -0.020290439035674974,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0084",
+      "theta": -0.9280507127686933,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0085",
+      "theta": 0.3419843514836984,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0086",
+      "theta": -0.45050536701451455,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0087",
+      "theta": 0.782474197525374,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0088",
+      "theta": 0.25092227104686676,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0089",
+      "theta": -0.4990489654928309,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0090",
+      "theta": 0.4376128243457788,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0091",
+      "theta": -1.6355692327489528,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0092",
+      "theta": -0.6161881965126123,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0093",
+      "theta": 0.33970001701976354,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0094",
+      "theta": -1.4144847728474261,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0095",
+      "theta": -1.1740550888588723,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0096",
+      "theta": -1.0019360458352033,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0097",
+      "theta": -0.2747667185550437,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0098",
+      "theta": 2.303917082018069,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0099",
+      "theta": 0.7376642689815506,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0100",
+      "theta": -1.5407867769527475,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0101",
+      "theta": -1.0921746470887914,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0102",
+      "theta": 0.5542104304613878,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0103",
+      "theta": 0.2765642765438865,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0104",
+      "theta": -0.2854480208660828,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0105",
+      "theta": -0.11995355732527316,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0106",
+      "theta": 0.36817426445503687,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0107",
+      "theta": 0.8610879982413858,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0108",
+      "theta": -0.23513417678342285,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0109",
+      "theta": 1.479101456575964,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0110",
+      "theta": 1.4487501185377754,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0111",
+      "theta": -0.7250483266323935,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0112",
+      "theta": 0.8373793229895259,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0113",
+      "theta": -0.5066948200903356,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0114",
+      "theta": -0.44072598744634467,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0115",
+      "theta": 0.7805098261153319,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0116",
+      "theta": 0.6646649200767819,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0117",
+      "theta": -3.41584244404999,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0118",
+      "theta": -0.12508574005016362,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0119",
+      "theta": 0.5401217601586782,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0120",
+      "theta": -1.9113386561263828,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0121",
+      "theta": 0.8332362722116763,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0122",
+      "theta": 0.20811845105662483,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0123",
+      "theta": 0.8275644767159386,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0124",
+      "theta": -1.1880839062764692,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0125",
+      "theta": 0.7198976442369865,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0126",
+      "theta": 0.24248301744632356,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0127",
+      "theta": -0.3639274113860098,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0128",
+      "theta": -1.7160887588445624,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0129",
+      "theta": -0.1380470319192671,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0130",
+      "theta": 1.193319561408594,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0131",
+      "theta": -0.2930095072488654,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0132",
+      "theta": 0.4408543031756124,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0133",
+      "theta": -2.199585908618358,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0134",
+      "theta": 0.6358734060228474,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0135",
+      "theta": -0.6606347517870709,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0136",
+      "theta": -0.3532395426337629,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0137",
+      "theta": -1.0587362761321315,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0138",
+      "theta": 1.6147133757272947,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0139",
+      "theta": -0.6510156405278349,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0140",
+      "theta": -0.22503592189374363,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0141",
+      "theta": 0.38367030771659555,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0142",
+      "theta": -0.3015470997174095,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0143",
+      "theta": -0.49741798666328785,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0144",
+      "theta": 0.5212652558146442,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0145",
+      "theta": -1.6721533452882476,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0146",
+      "theta": 0.30979671442941936,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0147",
+      "theta": 2.164926186796895,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0148",
+      "theta": 0.25602217711195147,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0149",
+      "theta": -1.0097957907898587,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0150",
+      "theta": -0.6366668860221039,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0151",
+      "theta": -1.6582766978974597,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0152",
+      "theta": -0.038246171174200455,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0153",
+      "theta": 1.6586491034741568,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0154",
+      "theta": -0.9873246324375093,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0155",
+      "theta": -0.07128605748471094,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0156",
+      "theta": -0.5127121907494114,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0157",
+      "theta": 3.9998560666923404,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0158",
+      "theta": 1.6278661398698238,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0159",
+      "theta": 0.7408937774103398,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0160",
+      "theta": 1.4364101953471726,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0161",
+      "theta": -0.18923327523591882,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0162",
+      "theta": -1.139425428691243,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0163",
+      "theta": 0.9975520918437514,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0164",
+      "theta": 0.21503114095985146,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0165",
+      "theta": -0.9340064861562142,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0166",
+      "theta": -0.6180162774958442,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0167",
+      "theta": 0.03346826391615672,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0168",
+      "theta": -1.714954806815085,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0169",
+      "theta": 0.09023651313575053,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0170",
+      "theta": -0.26768501442604586,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0171",
+      "theta": -0.2695063251140783,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0172",
+      "theta": -1.6353918691381584,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0173",
+      "theta": 0.08286920642139531,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0174",
+      "theta": -0.9387327166839641,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0175",
+      "theta": -0.6141753956327031,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0176",
+      "theta": 0.25542042286721456,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0177",
+      "theta": -0.6330709050919885,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0178",
+      "theta": -0.11471837549733631,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0179",
+      "theta": -0.8538584070510736,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0180",
+      "theta": -0.29234215282178355,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0181",
+      "theta": -0.21732296402303494,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0182",
+      "theta": 0.052352230060005174,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0183",
+      "theta": -0.7913362675286816,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0184",
+      "theta": -1.0603804830578845,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0185",
+      "theta": -1.2428609338883034,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0186",
+      "theta": -0.6677062729504097,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0187",
+      "theta": 0.7184557626890857,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0188",
+      "theta": 2.726743975064834,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0189",
+      "theta": -0.5466288591879777,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0190",
+      "theta": 0.9873481442601595,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0191",
+      "theta": 1.0794769079465802,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0192",
+      "theta": -1.7665593399381276,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0193",
+      "theta": -0.014123582821134456,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0194",
+      "theta": 1.3838333243558356,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0195",
+      "theta": -1.5785495517687536,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0196",
+      "theta": 0.7806142175124823,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0197",
+      "theta": -1.1397092485588758,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0198",
+      "theta": 1.2277289832961753,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0199",
+      "theta": 0.12542043234555367,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0200",
+      "theta": 1.0291128845893718,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0201",
+      "theta": 1.4221877099512787,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0202",
+      "theta": 0.760949098687727,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0203",
+      "theta": -0.3404127917396161,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0204",
+      "theta": -0.12886417951627338,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0205",
+      "theta": 1.1261617652696903,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0206",
+      "theta": 0.5262697428087227,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0207",
+      "theta": -1.893977657403162,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0208",
+      "theta": 0.023730799963124743,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0209",
+      "theta": -0.45724117152067745,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0210",
+      "theta": -2.8672849112813905,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0211",
+      "theta": 0.5914325840413807,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0212",
+      "theta": -0.016685724147258562,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0213",
+      "theta": -0.05546286195630933,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0214",
+      "theta": 0.5631396277024807,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0215",
+      "theta": -2.552476220525336,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0216",
+      "theta": -2.197210106802863,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0217",
+      "theta": 0.4940831864671198,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0218",
+      "theta": -0.1404721841503222,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0219",
+      "theta": 0.6622404211533487,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0220",
+      "theta": -0.2636626248944688,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0221",
+      "theta": -0.8032362533213523,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0222",
+      "theta": 0.29143239957983985,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0223",
+      "theta": 0.11126307068378394,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0224",
+      "theta": 0.16304462292906008,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0225",
+      "theta": 0.47550697098817535,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0226",
+      "theta": 0.542454839928329,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0227",
+      "theta": -0.2560837848026846,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0228",
+      "theta": -0.6181357687900537,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0229",
+      "theta": 0.17104754603023425,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0230",
+      "theta": -0.7527864099701264,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0231",
+      "theta": -0.3298398026787736,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0232",
+      "theta": 1.7830828192383965,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0233",
+      "theta": -0.6341703733246946,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0234",
+      "theta": -0.7080785252440236,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0235",
+      "theta": 0.15944283758746505,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0236",
+      "theta": 0.32339943919273967,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0237",
+      "theta": 1.0698189016836102,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0238",
+      "theta": 1.4712767015688282,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0239",
+      "theta": -0.30781082318870406,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0240",
+      "theta": 1.2876312740049094,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0241",
+      "theta": 0.9446198844380607,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0242",
+      "theta": -1.9886493608036,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0243",
+      "theta": 0.13311788694019705,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0244",
+      "theta": 1.0023813564255994,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0245",
+      "theta": 0.39120398788661126,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0246",
+      "theta": -0.11008255065793414,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0247",
+      "theta": -0.7099229253595615,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0248",
+      "theta": 0.4322860561693526,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0249",
+      "theta": -0.5402148621692959,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0250",
+      "theta": 0.19492657241457031,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0251",
+      "theta": -0.02156023471859799,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0252",
+      "theta": -1.6220511221736695,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0253",
+      "theta": 0.4628027998578707,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0254",
+      "theta": 1.0739490044845696,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0255",
+      "theta": -0.4336390009157243,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0256",
+      "theta": 2.2715122602977496,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0257",
+      "theta": -0.8264516770749685,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0258",
+      "theta": 0.9821807275725959,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0259",
+      "theta": -0.5955302665146017,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0260",
+      "theta": 1.3371911590125931,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0261",
+      "theta": 1.47496028155932,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0262",
+      "theta": 0.10492032557600452,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0263",
+      "theta": -1.402797439316756,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0264",
+      "theta": -0.40053196561252735,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0265",
+      "theta": 1.195946161542415,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0266",
+      "theta": 0.36003964767850277,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0267",
+      "theta": -0.17274753892026684,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0268",
+      "theta": 0.8357739800275514,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0269",
+      "theta": 0.32648628460694284,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0270",
+      "theta": -0.05683989295841759,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0271",
+      "theta": -0.5233951110759847,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0272",
+      "theta": 1.8358001094662975,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0273",
+      "theta": -0.7958822403954277,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0274",
+      "theta": 0.9939275292949766,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0275",
+      "theta": -0.03613407583635899,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0276",
+      "theta": -0.37535252079452536,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0277",
+      "theta": -0.11323312636071553,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0278",
+      "theta": -0.8597738877634127,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0279",
+      "theta": 1.0682169733866393,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0280",
+      "theta": 0.4541005786111691,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0281",
+      "theta": 1.2165927494041646,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0282",
+      "theta": -0.5169460477798644,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0283",
+      "theta": -0.04539201807734322,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0284",
+      "theta": -1.3402745597644885,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0285",
+      "theta": 0.144035556918047,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0286",
+      "theta": -0.0527611532633646,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0287",
+      "theta": 0.9718793702653127,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0288",
+      "theta": 0.6661006046919157,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0289",
+      "theta": -1.9736367854478272,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0290",
+      "theta": -0.0059287097072724245,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0291",
+      "theta": 1.621451918751045,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0292",
+      "theta": -1.8018876214310808,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0293",
+      "theta": -2.3549382654553743,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0294",
+      "theta": 0.0636536311475856,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0295",
+      "theta": -0.7481336344625089,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0296",
+      "theta": 0.04127365695318307,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0297",
+      "theta": -0.2682618793773526,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0298",
+      "theta": 0.1407846905613539,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0299",
+      "theta": -0.03707538398897541,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0300",
+      "theta": -2.060419523474114,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0301",
+      "theta": 0.055363897738313614,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0302",
+      "theta": 1.1865699207559393,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0303",
+      "theta": 0.6398784570079945,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0304",
+      "theta": 1.3932937207226246,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0305",
+      "theta": 1.6009600631310552,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0306",
+      "theta": -1.6244872864705489,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0307",
+      "theta": 1.1095016907698385,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0308",
+      "theta": 1.0421879299715404,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0309",
+      "theta": -0.011320130924885704,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0310",
+      "theta": 0.3498935848812439,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0311",
+      "theta": 0.23094298939221053,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0312",
+      "theta": -1.5250845412950944,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0313",
+      "theta": -0.882651741625484,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0314",
+      "theta": 1.7305183160812008,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0315",
+      "theta": -0.32573346655113666,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0316",
+      "theta": 1.5207267953300194,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0317",
+      "theta": 0.7807702503932974,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0318",
+      "theta": -1.934039317675648,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0319",
+      "theta": 0.8189184932497973,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0320",
+      "theta": -0.7057703346271033,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0321",
+      "theta": -1.1700125840195796,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0322",
+      "theta": 0.38011742248024905,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0323",
+      "theta": 1.756875354327004,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0324",
+      "theta": -1.235450627116764,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0325",
+      "theta": -0.5970526475618069,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0326",
+      "theta": -0.9202598050505261,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0327",
+      "theta": -0.6914587110124925,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0328",
+      "theta": 0.33929369060434295,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0329",
+      "theta": -0.7701752307881656,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0330",
+      "theta": -0.11448932556230186,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0331",
+      "theta": 0.288135495359091,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0332",
+      "theta": -0.5763117886693313,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0333",
+      "theta": 1.1430429039917045,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0334",
+      "theta": -0.4112062900672879,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0335",
+      "theta": -1.5990167797152894,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0336",
+      "theta": -0.02606637897160559,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0337",
+      "theta": 0.4635676297540272,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0338",
+      "theta": 1.008211843177062,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0339",
+      "theta": 1.5087209840626745,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0340",
+      "theta": 1.9283543084211632,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0341",
+      "theta": 0.24567360869243907,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0342",
+      "theta": -0.2314229551395454,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0343",
+      "theta": 0.8010891115529228,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0344",
+      "theta": -1.4501517207721661,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0345",
+      "theta": -0.7110818845790223,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0346",
+      "theta": 2.030247843528733,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0347",
+      "theta": 0.5972295327211433,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0348",
+      "theta": 0.6974064882344584,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0349",
+      "theta": 0.9570843796378536,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0350",
+      "theta": 2.109106727917261,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0351",
+      "theta": -0.6295398393811119,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0352",
+      "theta": -0.9652569496608205,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0353",
+      "theta": -0.3372421039364,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0354",
+      "theta": 0.6913275873297824,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0355",
+      "theta": -0.8606819546696926,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0356",
+      "theta": 1.0331777829360005,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0357",
+      "theta": -0.6222859755825253,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0358",
+      "theta": -0.6806603519439108,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0359",
+      "theta": -1.021345073439566,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0360",
+      "theta": -1.180554832794027,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0361",
+      "theta": 1.312595658031532,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0362",
+      "theta": 1.3031844035768338,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0363",
+      "theta": 0.3984627565541231,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0364",
+      "theta": -0.12489241483381346,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0365",
+      "theta": -0.19796520480791147,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0366",
+      "theta": -0.5740517473554366,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0367",
+      "theta": 3.1520298381407725,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0368",
+      "theta": -0.6514583938183633,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0369",
+      "theta": -0.6275802540672478,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0370",
+      "theta": 1.1549398590469424,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0371",
+      "theta": 0.6193893827000628,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0372",
+      "theta": 0.2594659013375809,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0373",
+      "theta": 0.6620378599269694,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0374",
+      "theta": -1.4883859526792864,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0375",
+      "theta": -0.7888829731272451,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0376",
+      "theta": 0.7103924348174417,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0377",
+      "theta": -0.6491120177203445,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0378",
+      "theta": -0.5749323727545922,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0379",
+      "theta": 0.05097152797296101,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0380",
+      "theta": -0.7735045606236426,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0381",
+      "theta": 0.6993825685093815,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0382",
+      "theta": 1.060202997955047,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0383",
+      "theta": 0.996935195050671,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0384",
+      "theta": -1.538008350503382,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0385",
+      "theta": 0.17028422476421737,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0386",
+      "theta": -0.14764845393583734,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0387",
+      "theta": 0.7961034630044971,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0388",
+      "theta": -2.0100338462687706,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0389",
+      "theta": -1.0858254483937757,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0390",
+      "theta": 0.4683860112678172,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0391",
+      "theta": -0.0898546495429559,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0392",
+      "theta": -0.025475592257861456,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0393",
+      "theta": 2.169203504998825,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0394",
+      "theta": 0.6492593690671249,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0395",
+      "theta": 0.27175127630239365,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0396",
+      "theta": -0.632523312422406,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0397",
+      "theta": -0.5658714056468608,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0398",
+      "theta": -0.22181908759835067,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0399",
+      "theta": -0.5601983103374191,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0400",
+      "theta": -0.30237341582898963,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0401",
+      "theta": 1.2352263680438729,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0402",
+      "theta": 0.3048486759080511,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0403",
+      "theta": -0.5657262879701471,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0404",
+      "theta": -0.6882548975489139,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0405",
+      "theta": 0.14430398592090748,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0406",
+      "theta": 0.319051783102797,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0407",
+      "theta": 0.4116999911326974,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0408",
+      "theta": -1.1468716902135192,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0409",
+      "theta": 0.7594756157287819,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0410",
+      "theta": 1.416091399855267,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0411",
+      "theta": 0.32397881803023176,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0412",
+      "theta": -0.5761541384791156,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0413",
+      "theta": 0.5881601212718289,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0414",
+      "theta": 1.4542408616348796,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0415",
+      "theta": -0.135311298644572,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0416",
+      "theta": 0.12234396468407185,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0417",
+      "theta": 0.48141677292322954,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0418",
+      "theta": -0.12661743534075764,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0419",
+      "theta": -0.848832654361539,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0420",
+      "theta": 1.276901845281287,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0421",
+      "theta": -1.6238568261559798,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0422",
+      "theta": 0.40496997572657395,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0423",
+      "theta": 0.3815244776704458,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0424",
+      "theta": -0.21539264827632915,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0425",
+      "theta": 0.5013400718797182,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0426",
+      "theta": -0.2179016715920819,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0427",
+      "theta": 0.6340560611879152,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0428",
+      "theta": 0.18629980268534532,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0429",
+      "theta": -0.6204103080064304,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0430",
+      "theta": -0.7863697064565841,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0431",
+      "theta": -0.8361962374871278,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0432",
+      "theta": -0.8027069312064378,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0433",
+      "theta": 0.730015400159865,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0434",
+      "theta": 0.08441229706434933,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0435",
+      "theta": 0.6109032307131331,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0436",
+      "theta": -1.6680521312153163,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0437",
+      "theta": 1.0327165900338484,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0438",
+      "theta": 0.7771117304026657,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0439",
+      "theta": 0.5124889067212162,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0440",
+      "theta": -0.3172599799994519,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0441",
+      "theta": -0.6121897041745393,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0442",
+      "theta": -0.9990565585369686,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0443",
+      "theta": -1.6209964907773793,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0444",
+      "theta": 0.982682759640221,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0445",
+      "theta": 1.7743723107071911,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0446",
+      "theta": 0.5119960434160616,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0447",
+      "theta": -0.7679085261576173,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0448",
+      "theta": 0.746281988878621,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0449",
+      "theta": 0.19929605994283645,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0450",
+      "theta": 1.0461017949395792,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0451",
+      "theta": 1.591059715525608,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0452",
+      "theta": -1.1416471920263631,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0453",
+      "theta": 0.09753153927153359,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0454",
+      "theta": 1.6812650608425976,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0455",
+      "theta": 0.086647822479176,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0456",
+      "theta": -1.4651979963852015,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0457",
+      "theta": -0.6846300156525277,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0458",
+      "theta": -1.472346217995916,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0459",
+      "theta": -0.5961356942421443,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0460",
+      "theta": 1.4708662528389298,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0461",
+      "theta": 0.22599454971545424,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0462",
+      "theta": 0.48085646475650384,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0463",
+      "theta": 0.8957682676843666,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0464",
+      "theta": 1.3596020707343888,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0465",
+      "theta": -0.5370789249045335,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0466",
+      "theta": -0.9182859911976515,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0467",
+      "theta": 0.09620782251935601,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0468",
+      "theta": -1.1319239421347411,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0469",
+      "theta": -0.3583310352267914,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0470",
+      "theta": -0.9635232208082686,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0471",
+      "theta": -0.45035725502735885,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0472",
+      "theta": -0.6176031615162271,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0473",
+      "theta": 1.322595272513786,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0474",
+      "theta": 0.21760561635901088,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0475",
+      "theta": 0.9747619014469852,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0476",
+      "theta": -0.8100571704963396,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0477",
+      "theta": -1.0144044939505996,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0478",
+      "theta": -0.4949954912983621,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0479",
+      "theta": 1.2269363986136215,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0480",
+      "theta": -1.0236874915457121,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0481",
+      "theta": 1.7630928209893417,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0482",
+      "theta": 2.353545726046681,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0483",
+      "theta": 0.7476139550983594,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0484",
+      "theta": 0.22450279165613174,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0485",
+      "theta": -0.5272071689972571,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0486",
+      "theta": -0.8163710103548315,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0487",
+      "theta": 1.7936305937797354,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0488",
+      "theta": -0.527412260857115,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0489",
+      "theta": -1.2712515799778783,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0490",
+      "theta": 0.4776143294752214,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0491",
+      "theta": 0.029907560188792502,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0492",
+      "theta": 0.23262905946295664,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0493",
+      "theta": -0.08106820941968672,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0494",
+      "theta": 0.3257123862735749,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0495",
+      "theta": -0.21966551886954547,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0496",
+      "theta": 0.8526337381035984,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0497",
+      "theta": 0.2952493299477499,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0498",
+      "theta": 1.0472508656408273,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0499",
+      "theta": 0.6414719677701538,
+      "data_source": "[SANDBOX DATA]"
+    },
+    {
+      "learner_id": "learner_0500",
+      "theta": -0.18375531899960798,
+      "data_source": "[SANDBOX DATA]"
+    }
+  ]
+}
