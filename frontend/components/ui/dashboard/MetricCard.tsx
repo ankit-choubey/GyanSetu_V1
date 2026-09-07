@@ -16,7 +16,7 @@ export interface MetricCardProps {
   className?: string;
 }
 
-export function MetricCard({
+export const MetricCard = React.memo(function MetricCard({
   label,
   value,
   displayValue,
@@ -160,4 +160,6 @@ export function MetricCard({
       </div>
     </div>
   );
-}
+});
+
+MetricCard.displayName = "MetricCard";

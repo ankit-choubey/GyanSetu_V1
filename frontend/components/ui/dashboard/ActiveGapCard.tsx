@@ -11,7 +11,7 @@ interface ActiveGapCardProps {
   onTakeAction?: () => void;
 }
 
-export function ActiveGapCard({
+export const ActiveGapCard = React.memo(function ActiveGapCard({
   gap,
   className,
   onTakeAction,
@@ -108,4 +108,6 @@ export function ActiveGapCard({
       </div>
     </div>
   );
-}
+});
+
+ActiveGapCard.displayName = "ActiveGapCard";

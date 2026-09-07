@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 
 interface DashboardContextType {
   persona: "jso" | "new";
@@ -20,15 +20,18 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const [persona, setPersona] = useState<"jso" | "new">("jso");
   const [isDiagnosticModalOpen, setIsDiagnosticModalOpen] = useState(false);
 
+  const contextValue = useMemo(
+    () => ({
+      persona,
+      setPersona,
+      isDiagnosticModalOpen,
+      setIsDiagnosticModalOpen,
+    }),
+    [persona, isDiagnosticModalOpen]
+  );
+
   return (
-    <DashboardContext.Provider
-      value={{
-        persona,
-        setPersona,
-        isDiagnosticModalOpen,
-        setIsDiagnosticModalOpen,
-      }}
-    >
+    <DashboardContext.Provider value={contextValue}>
       {children}
     </DashboardContext.Provider>
   );

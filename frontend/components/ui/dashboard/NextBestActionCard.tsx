@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -24,92 +24,95 @@ interface NextBestActionCardProps {
   className?: string;
 }
 
-export function NextBestActionCard({ nba, className }: NextBestActionCardProps) {
+export const NextBestActionCard = React.memo(function NextBestActionCard({ nba, className }: NextBestActionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isFlagged, setIsFlagged] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  // The 12 Explainability Fields mapped to structured pairs
+  // The 12 Explainability Fields mapped to structured pairs (memoized to prevent per-render garbage collection)
   const explainabilityFields: Array<{
     id: string;
     number: string;
     label: string;
     value: string;
     icon?: React.ReactNode;
-  }> = [
-    {
-      id: "action",
-      number: "01",
-      label: "Selected Action",
-      value: nba.selected_action,
-    },
-    {
-      id: "justification",
-      number: "02",
-      label: "Causal Justification",
-      value: nba.justification,
-    },
-    {
-      id: "role_relevance",
-      number: "03",
-      label: "Role Relevance (SSS/JSO)",
-      value: nba.role_relevance,
-    },
-    {
-      id: "competency_alignment",
-      number: "04",
-      label: "Competency Alignment",
-      value: nba.competency_alignment,
-    },
-    {
-      id: "subskill_coverage",
-      number: "05",
-      label: "Subskill Coverage",
-      value: nba.subskill_coverage,
-    },
-    {
-      id: "prerequisites",
-      number: "06",
-      label: "Prerequisites Verified",
-      value: nba.prerequisites,
-    },
-    {
-      id: "gap_severity",
-      number: "07",
-      label: "Gap Severity",
-      value: `${nba.gap_severity} Priority Deficit`,
-    },
-    {
-      id: "evidence_confidence",
-      number: "08",
-      label: "Evidence Confidence",
-      value: `${nba.evidence_confidence} Calibration (Fused from multi-modal assessment)`,
-    },
-    {
-      id: "learner_state",
-      number: "09",
-      label: "Learner Workload & State",
-      value: nba.learner_state,
-    },
-    {
-      id: "modality",
-      number: "10",
-      label: "Delivery Modality",
-      value: nba.modality,
-    },
-    {
-      id: "availability",
-      number: "11",
-      label: "Resource Availability",
-      value: nba.availability,
-    },
-    {
-      id: "expected_outcome",
-      number: "12",
-      label: "Measurable Expected Gain",
-      value: nba.expected_outcome,
-    },
-  ];
+  }> = useMemo(
+    () => [
+      {
+        id: "action",
+        number: "01",
+        label: "Selected Action",
+        value: nba.selected_action,
+      },
+      {
+        id: "justification",
+        number: "02",
+        label: "Causal Justification",
+        value: nba.justification,
+      },
+      {
+        id: "role_relevance",
+        number: "03",
+        label: "Role Relevance (SSS/JSO)",
+        value: nba.role_relevance,
+      },
+      {
+        id: "competency_alignment",
+        number: "04",
+        label: "Competency Alignment",
+        value: nba.competency_alignment,
+      },
+      {
+        id: "subskill_coverage",
+        number: "05",
+        label: "Subskill Coverage",
+        value: nba.subskill_coverage,
+      },
+      {
+        id: "prerequisites",
+        number: "06",
+        label: "Prerequisites Verified",
+        value: nba.prerequisites,
+      },
+      {
+        id: "gap_severity",
+        number: "07",
+        label: "Gap Severity",
+        value: `${nba.gap_severity} Priority Deficit`,
+      },
+      {
+        id: "evidence_confidence",
+        number: "08",
+        label: "Evidence Confidence",
+        value: `${nba.evidence_confidence} Calibration (Fused from multi-modal assessment)`,
+      },
+      {
+        id: "learner_state",
+        number: "09",
+        label: "Learner Workload & State",
+        value: nba.learner_state,
+      },
+      {
+        id: "modality",
+        number: "10",
+        label: "Delivery Modality",
+        value: nba.modality,
+      },
+      {
+        id: "availability",
+        number: "11",
+        label: "Resource Availability",
+        value: nba.availability,
+      },
+      {
+        id: "expected_outcome",
+        number: "12",
+        label: "Measurable Expected Gain",
+        value: nba.expected_outcome,
+      },
+    ],
+    [nba]
+  );
 
   return (
     <div
@@ -269,4 +272,6 @@ export function NextBestActionCard({ nba, className }: NextBestActionCardProps) 
       </div>
     </div>
   );
-}
+});
+
+NextBestActionCard.displayName = "NextBestActionCard";

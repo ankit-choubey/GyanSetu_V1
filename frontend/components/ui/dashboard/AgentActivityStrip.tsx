@@ -10,7 +10,7 @@ interface AgentActivityStripProps {
   className?: string;
 }
 
-export function AgentActivityStrip({
+export const AgentActivityStrip = React.memo(function AgentActivityStrip({
   activities,
   className,
 }: AgentActivityStripProps) {
@@ -101,4 +101,6 @@ export function AgentActivityStrip({
       </div>
     </div>
   );
-}
+});
+
+AgentActivityStrip.displayName = "AgentActivityStrip";

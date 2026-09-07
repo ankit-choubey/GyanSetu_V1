@@ -21,7 +21,7 @@ interface CompetencyRadarProps {
   isAllUnassessed?: boolean;
 }
 
-export function CompetencyRadar({
+export const CompetencyRadar = React.memo(function CompetencyRadar({
   data,
   className,
   isAllUnassessed = false,
@@ -78,11 +78,12 @@ export function CompetencyRadar({
       {/* Recharts Polar Chart Container */}
       <motion.div
         className="w-full h-[320px] relative"
+        style={{ willChange: "transform, opacity", transformOrigin: "center center" }}
         initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" debounce={50}>
           <RadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
             <PolarGrid stroke="#E2E8F0" strokeDasharray="3 3" />
             <PolarAngleAxis
@@ -186,4 +187,6 @@ export function CompetencyRadar({
       </div>
     </div>
   );
-}
+});
+
+CompetencyRadar.displayName = "CompetencyRadar";

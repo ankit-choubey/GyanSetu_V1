@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useDashboard } from "@/components/ui/dashboard/DashboardContext";
-import { getCompetencyState } from "@/lib/api/competency";
+import { getCompetencyState, getCompetencyStateSync } from "@/lib/api/competency";
 import { CompetencyState, CompetencyMetric } from "@/lib/api/types";
 import { MetricCard } from "@/components/ui/dashboard/MetricCard";
 import { CompetencyRadar } from "@/components/ui/dashboard/CompetencyRadar";
@@ -27,15 +27,42 @@ import { cn } from "@/lib/cn";
 
 export default function DashboardPage() {
   const { persona } = useDashboard();
-  const [data, setData] = useState<CompetencyState | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Synchronous initialization with sandbox data for instant zero-latency render
+  const [data, setData] = useState<CompetencyState>(() => getCompetencyStateSync(persona));
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeDiagnosticModal, setActiveDiagnosticModal] = useState(false);
   const [selectedCompetency, setSelectedCompetency] = useState<CompetencyMetric | null>(null);
 
-  // Fetch state on persona change
+  const handleOpenDiagnosticModal = useCallback(() => {
+    setActiveDiagnosticModal(true);
+  }, []);
+
+  const handleCloseDiagnosticModal = useCallback(() => {
+    setActiveDiagnosticModal(false);
+  }, []);
+
+  const handleSelectCompetency = useCallback((c: CompetencyMetric) => {
+    setSelectedCompetency(c);
+  }, []);
+
+  const handleCloseCompetencyModal = useCallback(() => {
+    setSelectedCompetency(null);
+  }, []);
+
+  // Synchronize state on persona change
   useEffect(() => {
     let isSubscribed = true;
+    const isMock = process.env.NEXT_PUBLIC_USE_MOCK !== "false";
+
+    // Immediate instant sync in mock mode (no skeleton flash or network wait)
+    if (isMock) {
+      setData(getCompetencyStateSync(persona));
+      setIsLoading(false);
+      return;
+    }
+
+    // Live backend mode with graceful background update
     setIsLoading(true);
     setError(null);
 
@@ -107,7 +134,7 @@ export default function DashboardPage() {
 
         <button
           type="button"
-          onClick={() => setActiveDiagnosticModal(true)}
+          onClick={handleOpenDiagnosticModal}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition whitespace-nowrap"
         >
           <RefreshCw className="w-3.5 h-3.5" />
@@ -186,7 +213,7 @@ export default function DashboardPage() {
       {/* If entirely unassessed, render the dedicated EmptyState CTA */}
       {isAllUnassessed ? (
         <EmptyState
-          onStartDiagnostic={() => setActiveDiagnosticModal(true)}
+          onStartDiagnostic={handleOpenDiagnosticModal}
         />
       ) : null}
 
@@ -203,7 +230,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-5 flex flex-col">
           <ActiveGapCard
             gap={data.active_gap}
-            onTakeAction={() => setActiveDiagnosticModal(true)}
+            onTakeAction={handleOpenDiagnosticModal}
             className="h-full"
           />
         </div>
@@ -260,7 +287,7 @@ export default function DashboardPage() {
                 return (
                   <tr
                     key={c.id}
-                    onClick={() => setSelectedCompetency(c)}
+                    onClick={() => handleSelectCompetency(c)}
                     className="hover:bg-slate-50/70 cursor-pointer transition"
                   >
                     <td className="py-3 px-4">
@@ -368,7 +395,7 @@ export default function DashboardPage() {
           <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl p-6 relative">
             <button
               type="button"
-              onClick={() => setActiveDiagnosticModal(false)}
+              onClick={handleCloseDiagnosticModal}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1"
             >
               <X className="w-5 h-5" />
@@ -414,7 +441,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-end gap-3">
               <button
                 type="button"
-                onClick={() => setActiveDiagnosticModal(false)}
+                onClick={handleCloseDiagnosticModal}
                 className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition"
               >
                 Close Simulation
@@ -423,7 +450,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={() => {
                   alert("Phase 2 Diagnostic will update belief state and re-morph the radar chart!");
-                  setActiveDiagnosticModal(false);
+                  handleCloseDiagnosticModal();
                 }}
                 className="px-4 py-2 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow-sm"
               >
@@ -440,7 +467,7 @@ export default function DashboardPage() {
           <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl p-6 relative">
             <button
               type="button"
-              onClick={() => setSelectedCompetency(null)}
+              onClick={handleCloseCompetencyModal}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1"
             >
               <X className="w-5 h-5" />
@@ -496,7 +523,7 @@ export default function DashboardPage() {
             <div className="mt-6 flex justify-end">
               <button
                 type="button"
-                onClick={() => setSelectedCompetency(null)}
+                onClick={handleCloseCompetencyModal}
                 className="px-4 py-2 text-xs font-medium bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
               >
                 Dismiss
