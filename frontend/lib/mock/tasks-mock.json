@@ -1,0 +1,42 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Sampling Variance & Neyman Allocation Exercise",
+      "description": "Calculate stratum weights, allocate sample units under Neyman criterion, and estimate finite population correction factors across 4 NSS regional survey datasets.",
+      "type": "PRACTICE",
+      "competency_name": "Sampling Design",
+      "priority": 1,
+      "status": "active",
+      "progress_pct": 65,
+      "due_date": "2026-09-18"
+    },
+    {
+      "id": 2,
+      "title": "Household Survey Outlier Scrutiny Drill",
+      "description": "Detect data entry discrepancies, apply logic check constraints, and perform median absolute deviation filtering on consumer expenditure microdata.",
+      "type": "PRACTICE",
+      "competency_name": "Data Quality",
+      "priority": 2,
+      "status": "active",
+      "progress_pct": 30,
+      "due_date": "2026-09-22"
+    },
+    {
+      "id": 3,
+      "title": "Pandas Data Cleaning & Aggregation Workflow",
+      "description": "Complete self-paced foundational Python notebook on restructuring tabular census indicators and generating cross-tabulation summaries.",
+      "type": "TRAINING",
+      "competency_name": "Python for Analytics",
+      "priority": 3,
+      "status": "completed",
+      "progress_pct": 100,
+      "due_date": "2026-09-05"
+    }
+  ],
+  "summary": {
+    "active": 2,
+    "completed": 1,
+    "total": 3
+  }
+}

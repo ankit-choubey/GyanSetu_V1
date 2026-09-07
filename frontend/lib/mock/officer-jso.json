@@ -1,0 +1,47 @@
+{
+  "user_id": 1,
+  "full_name": "Ramesh Kumar",
+  "role_name": "Statistical Officer",
+  "total_competencies": 3,
+  "competencies": [
+    {
+      "competency_id": 1,
+      "competency_name": "Sampling Design",
+      "mastery": 0.42,
+      "confidence": 0.35,
+      "coverage": 0.25,
+      "evidence_count": 2,
+      "status": "ASSESSED"
+    },
+    {
+      "competency_id": 2,
+      "competency_name": "Data Quality",
+      "mastery": 0.78,
+      "confidence": 0.82,
+      "coverage": 0.65,
+      "evidence_count": 5,
+      "status": "ASSESSED"
+    },
+    {
+      "competency_id": 3,
+      "competency_name": "Python for Analytics",
+      "mastery": null,
+      "confidence": 0.0,
+      "coverage": 0.0,
+      "evidence_count": 0,
+      "status": "UNASSESSED"
+    }
+  ],
+  "next_best_action": {
+    "target_subskill_id": 2,
+    "gap_reason": "low_mastery",
+    "selected_intervention": {
+      "id": 3,
+      "title": "Sampling practice task",
+      "type": "PRACTICE",
+      "reason": "Directly targets the identified subskill gap in variance estimation."
+    },
+    "explanation": "Directly targets the identified subskill gap in variance estimation.",
+    "uncertainty": 0.25
+  }
+}

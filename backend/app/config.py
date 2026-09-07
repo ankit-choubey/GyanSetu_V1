@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     jwt_secret: str = "default-dev-secret-key-at-least-32-chars-long"
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440
-    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001"
 
     model_config = SettingsConfigDict(
         env_file=(".env", "backend/.env"),

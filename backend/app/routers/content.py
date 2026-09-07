@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -312,3 +313,261 @@ def get_content_candidates(
             ))
 
     return results
+
+
+class YouTubeIngestRequest(BaseModel):
+    url: str
+    difficulty: str = "medium"
+    num_questions: int = 5
+
+
+@router.post("/youtube-ingest")
+def ingest_youtube_video(
+    payload: YouTubeIngestRequest,
+    db: Session = Depends(get_db),
+) -> dict:
+    from ml_pipeline.video_processor import process_youtube_url, is_youtube_url, extract_youtube_video_id
+    from ml_pipeline.mcq_generator import generate_mcqs
+    from ml_pipeline.mcq_scorer import classify_cognitive_level
+    from app.models.assessment import AssessmentItem
+    import json, re
+
+    clean_url = payload.url.strip()
+    if not is_youtube_url(clean_url):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid YouTube URL format. Please provide a valid youtube.com or youtu.be link.",
+        )
+
+    video_id = extract_youtube_video_id(clean_url) or "unknown_video"
+
+    try:
+        yt_res = process_youtube_url(clean_url)
+        raw_text = yt_res.get("raw_text", "").strip()
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Failed to extract transcript from YouTube video: {str(exc)}",
+        )
+
+    if not raw_text or len(raw_text) < 30:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Video transcript is empty or could not be transcribed.",
+        )
+
+    context_text = raw_text[:8000]
+    target_topic = f"YouTube Lecture ({video_id})"
+
+    try:
+        mcqs = generate_mcqs(
+            context_text,
+            target_topic,
+            num_questions=max(1, min(payload.num_questions, 10)),
+            difficulty=payload.difficulty,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"AI model failed to generate questions from video transcript: {str(exc)}",
+        )
+
+    formatted_questions = []
+    saved_count = 0
+
+    for idx, q in enumerate(mcqs, 1):
+        raw_opts = q.get("options", [])
+        if not isinstance(raw_opts, list) or len(raw_opts) < 2:
+            continue
+
+        clean_options_list = []
+        structured_opts = []
+        for opt_idx, opt in enumerate(raw_opts):
+            letter = chr(65 + opt_idx)
+            clean_text = re.sub(r"^[A-Da-d][.)]\s*", "", str(opt).strip())
+            clean_options_list.append(clean_text)
+            structured_opts.append({"id": letter, "text": clean_text})
+
+        correct_letter = str(q.get("correct_answer", "A")).strip().upper()[:1]
+        if correct_letter not in ["A", "B", "C", "D"]:
+            correct_letter = "A"
+
+        q_item = {
+            "id": f"yt_{video_id}_{idx}",
+            "text": q.get("question", "").strip(),
+            "options": structured_opts,
+            "correct_answer": correct_letter,
+            "explanation": q.get("explanation", "").strip(),
+            "difficulty": q.get("difficulty", payload.difficulty).lower(),
+            "bloom_level": classify_cognitive_level(q.get("question", "")),
+        }
+        formatted_questions.append(q_item)
+
+        try:
+            db_item = AssessmentItem(
+                user_id=None,
+                competency_id=4,
+                subskill_id=13,
+                question_text=q_item["text"],
+                options_json=json.dumps(clean_options_list),
+                correct_option=correct_letter,
+                difficulty=q_item["difficulty"],
+                source_reference=f"YOUTUBE:{video_id}",
+            )
+            db.add(db_item)
+            saved_count += 1
+        except Exception:
+            pass
+
+    if saved_count > 0:
+        try:
+            db.commit()
+        except Exception:
+            db.rollback()
+
+    return {
+        "status": "success",
+        "session_id": f"yt_sess_{video_id}",
+        "video_id": video_id,
+        "title": f"YouTube Video ({video_id})",
+        "transcript_length": len(raw_text),
+        "questions_count": len(formatted_questions),
+        "questions": formatted_questions,
+    }
+
+
+@router.post("/document-ingest")
+async def ingest_document(
+    file: UploadFile = File(...),
+    num_questions: int = Query(default=4, ge=1, le=10),
+    difficulty: str = Query(default="medium"),
+    db: Session = Depends(get_db),
+) -> dict:
+    import tempfile, hashlib, json, re
+    from ml_pipeline.document_processor import process_document
+    from ml_pipeline.mcq_generator import generate_mcqs
+    from ml_pipeline.mcq_scorer import classify_cognitive_level
+    from app.models.assessment import AssessmentItem
+
+    raw_filename = file.filename or "uploaded_document"
+    ext = Path(raw_filename).suffix.casefold()
+    if ext not in [".pdf", ".pptx", ".txt"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported file format '{ext}'. Please upload a .pdf or .pptx file.",
+        )
+
+    content_bytes = await file.read()
+    if not content_bytes or len(content_bytes) < 10:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded file is empty.",
+        )
+
+    file_hash = hashlib.sha256(content_bytes).hexdigest()[:10]
+
+    # Save to temp file for PyMuPDF (fitz) or python-pptx extraction
+    with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
+        tmp.write(content_bytes)
+        tmp_path = tmp.name
+
+    try:
+        extracted_text = process_document(tmp_path)
+    except Exception as exc:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"PyMuPDF failed to parse document: {str(exc)}",
+        )
+    finally:
+        if os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except Exception:
+                pass
+
+    if not extracted_text or len(extracted_text.strip()) < 30:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Document text could not be extracted or contains insufficient text.",
+        )
+
+    context_text = extracted_text.strip()[:8000]
+    doc_title = Path(raw_filename).stem.replace("_", " ").replace("-", " ").title()
+
+    try:
+        mcqs = generate_mcqs(
+            context_text,
+            competency=doc_title,
+            num_questions=max(1, min(num_questions, 10)),
+            difficulty=difficulty,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"AI model failed to generate questions from document: {str(exc)}",
+        )
+
+    formatted_questions = []
+    saved_count = 0
+
+    for idx, q in enumerate(mcqs, 1):
+        raw_opts = q.get("options", [])
+        if not isinstance(raw_opts, list) or len(raw_opts) < 2:
+            continue
+
+        clean_options_list = []
+        structured_opts = []
+        for opt_idx, opt in enumerate(raw_opts):
+            letter = chr(65 + opt_idx)
+            clean_text = re.sub(r"^[A-Da-d][.)]\s*", "", str(opt).strip())
+            clean_options_list.append(clean_text)
+            structured_opts.append({"id": letter, "text": clean_text})
+
+        correct_letter = str(q.get("correct_answer", "A")).strip().upper()[:1]
+        if correct_letter not in ["A", "B", "C", "D"]:
+            correct_letter = "A"
+
+        q_item = {
+            "id": f"doc_{file_hash}_{idx}",
+            "text": q.get("question", "").strip(),
+            "options": structured_opts,
+            "correct_answer": correct_letter,
+            "explanation": q.get("explanation", "").strip(),
+            "difficulty": q.get("difficulty", difficulty).lower(),
+            "bloom_level": classify_cognitive_level(q.get("question", "")),
+        }
+        formatted_questions.append(q_item)
+
+        try:
+            db_item = AssessmentItem(
+                user_id=None,
+                competency_id=4,
+                subskill_id=13,
+                question_text=q_item["text"],
+                options_json=json.dumps(clean_options_list),
+                correct_option=correct_letter,
+                difficulty=q_item["difficulty"],
+                source_reference=f"DOC:{raw_filename}:{file_hash}",
+            )
+            db.add(db_item)
+            saved_count += 1
+        except Exception:
+            pass
+
+    if saved_count > 0:
+        try:
+            db.commit()
+        except Exception:
+            db.rollback()
+
+    return {
+        "status": "success",
+        "session_id": f"doc_sess_{file_hash}",
+        "filename": raw_filename,
+        "title": doc_title,
+        "text_length": len(extracted_text),
+        "questions_count": len(formatted_questions),
+        "questions": formatted_questions,
+    }

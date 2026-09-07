@@ -10,8 +10,8 @@ load_dotenv(ENV_PATH)
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 GROQ_BASE_URL = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
-GROQ_MODEL_PRIMARY = os.environ.get("GROQ_MODEL_PRIMARY", "llama-3.3-70b-versatile")
-GROQ_MODEL_FAST = os.environ.get("GROQ_MODEL_FAST", "llama-3.1-8b-instant")
+GROQ_MODEL_PRIMARY = os.environ.get("GROQ_MODEL_PRIMARY", "qwen/qwen3.8-27b")
+GROQ_MODEL_FAST = os.environ.get("GROQ_MODEL_FAST", "qwen/qwen3.8-27b")
 
 CHROMA_PERSIST_DIR = os.environ.get("CHROMA_PERSIST_DIR", "./ml_pipeline/vector_store/chroma_db")
 

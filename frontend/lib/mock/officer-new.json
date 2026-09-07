@@ -1,0 +1,36 @@
+{
+  "user_id": 2,
+  "full_name": "Priya Verma",
+  "role_name": "Junior Statistical Officer",
+  "total_competencies": 3,
+  "competencies": [
+    {
+      "competency_id": 1,
+      "competency_name": "Sampling Design",
+      "mastery": null,
+      "confidence": 0.0,
+      "coverage": 0.0,
+      "evidence_count": 0,
+      "status": "UNASSESSED"
+    },
+    {
+      "competency_id": 2,
+      "competency_name": "Data Quality",
+      "mastery": null,
+      "confidence": 0.0,
+      "coverage": 0.0,
+      "evidence_count": 0,
+      "status": "UNASSESSED"
+    },
+    {
+      "competency_id": 3,
+      "competency_name": "Python for Analytics",
+      "mastery": null,
+      "confidence": 0.0,
+      "coverage": 0.0,
+      "evidence_count": 0,
+      "status": "UNASSESSED"
+    }
+  ],
+  "next_best_action": null
+}

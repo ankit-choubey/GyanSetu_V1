@@ -16,7 +16,68 @@ from app.schemas.assessment import AssessmentSubmitRequest, AssessmentSubmitResp
 from app.services.misconception_tracker import track_response
 from app.services.orchestrator import recalculate_competency_state
 
+from pydantic import BaseModel
+
+class AssessmentNextRequest(BaseModel):
+    competency_id: int | None = None
+    subskill_id: int | None = None
+
 router = APIRouter(tags=["assessment"])
+
+
+@router.post("/assessment/next")
+def get_next_assessment_question(
+    payload: AssessmentNextRequest | None = None,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    competency_id = payload.competency_id if payload else None
+    subskill_id = payload.subskill_id if payload else None
+
+    query = select(AssessmentItem).where(AssessmentItem.user_id.is_(None))
+    if subskill_id is not None:
+        query = query.where(AssessmentItem.subskill_id == subskill_id)
+    elif competency_id is not None:
+        query = query.where(AssessmentItem.competency_id == competency_id)
+
+    answered_subquery = (
+        select(AssessmentResponse.assessment_item_id)
+        .join(AssessmentAttempt, AssessmentAttempt.id == AssessmentResponse.attempt_id)
+        .where(AssessmentAttempt.user_id == user.id)
+    )
+    unanswered_item = db.execute(
+        query.where(AssessmentItem.id.notin_(answered_subquery)).order_by(AssessmentItem.id)
+    ).scalars().first()
+
+    item = unanswered_item
+    if not item:
+        fallback_q = select(AssessmentItem).where(AssessmentItem.user_id.is_(None))
+        if competency_id:
+            fallback_q = fallback_q.where(AssessmentItem.competency_id == competency_id)
+        item = db.execute(fallback_q.order_by(AssessmentItem.id)).scalars().first()
+
+    if not item:
+        return {
+            "status": "SUFFICIENT_EVIDENCE",
+            "sufficient_evidence": True,
+            "stop_reason": "No questions available for this module.",
+        }
+
+    try:
+        options = json.loads(item.options_json) if isinstance(item.options_json, str) else item.options_json
+    except Exception:
+        options = ["Option A", "Option B", "Option C", "Option D"]
+
+    return {
+        "status": "QUESTION_PROPOSED",
+        "sufficient_evidence": False,
+        "question_id": item.id,
+        "competency_id": item.competency_id,
+        "subskill_id": item.subskill_id,
+        "question_text": item.question_text,
+        "options": options,
+        "difficulty": item.difficulty or "medium",
+    }
 
 
 @router.post("/assessment/submit", response_model=AssessmentSubmitResponse)

@@ -35,6 +35,14 @@ from app.models.competency_state import CompetencyState
 from app.models.user import User
 from app.routers import admin as admin_router
 from app.services.scientific_validation_service import ScientificValidationService
+import sys
+from pathlib import Path
+_root_dir = str(Path(__file__).resolve().parents[2])
+sys.path = [p for p in sys.path if not p.endswith("/bin")]
+if _root_dir not in sys.path:
+    sys.path.insert(0, _root_dir)
+if "models" in sys.modules and (getattr(sys.modules["models"], "__file__", "") or "").endswith("bin/models.py"):
+    del sys.modules["models"]
 from models.scientific_validation import run_scientific_validation_suite
 
 
