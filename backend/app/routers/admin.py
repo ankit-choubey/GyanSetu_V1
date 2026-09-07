@@ -54,3 +54,23 @@ def competency_analytics(
         )
 
     return AdminAnalyticsResponse(competencies=analytics, total_competencies=len(analytics))
+
+
+@router.get("/admin/validation/scientific-audit")
+def get_scientific_audit(
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Retrieve comprehensive scientific validation audit, provenance catalog, and calibration report."""
+    from app.services.scientific_validation_service import ScientificValidationService
+    return ScientificValidationService.get_full_audit(db=db)
+
+
+@router.get("/admin/validation/model-selection-gate")
+def get_model_selection_gate(
+    admin: User = Depends(get_current_admin),
+) -> list[dict]:
+    """Retrieve formal model selection gates with candidate status, decisions, and justifications."""
+    from app.services.scientific_validation_service import ScientificValidationService
+    return ScientificValidationService.get_model_gates()
+
