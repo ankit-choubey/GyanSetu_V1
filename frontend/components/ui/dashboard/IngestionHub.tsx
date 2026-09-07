@@ -20,8 +20,8 @@ import {
   ClipboardCheck,
   ArrowRight,
   RotateCcw,
-  Sparkles,
-  Info
+  Library,
+  Upload
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -157,7 +157,7 @@ export function IngestionHub() {
 
     setIngestedSummary({
       sourcesCount: stagedSourcesCount,
-      chunks: Math.floor(Math.random() * 15) + 30,
+      chunks: Math.floor(Math.random() * 15) + 32,
       moduleName: activeModule?.name,
     });
     setIngestedSessionId(sessionId);
@@ -180,22 +180,25 @@ export function IngestionHub() {
       : MOCK_MODULES.filter((m) => m.category === activeCategory);
 
   return (
-    <div className="space-y-6 w-full">
-      {/* SECTION 1: 4-COLUMN SYMMETRICAL MULTI-MODAL UPLOAD MATRIX */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+    <div className="space-y-8 w-full">
+      {/* ========================================================================= */}
+      {/* SECTION 1: 4-COLUMN SYMMETRICAL MULTI-MODAL UPLOADER STUDIO */}
+      {/* ========================================================================= */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        {/* Section 1 Header */}
+        <div className="p-6 border-b border-slate-100 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
+            <div className="flex items-center gap-2.5">
+              <span className="w-7 h-7 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                 1
               </span>
-              <h2 className="font-heading text-base font-semibold text-slate-900">
-                Custom Study Materials
+              <h2 className="font-heading text-lg font-bold text-slate-900 tracking-tight">
+                Upload Custom Study Materials
               </h2>
-              <span className="text-[11px] text-slate-400 font-normal">
-                (Upload video, notes, decks, or voice recordings)
-              </span>
             </div>
+            <p className="text-xs text-slate-500 mt-1 pl-9">
+              Stage video lectures, training manuals, presentation slides, or audio recordings for automated knowledge extraction.
+            </p>
           </div>
 
           {(youtubeUrl || Object.keys(files).length > 0) && (
@@ -204,63 +207,76 @@ export function IngestionHub() {
                 setYoutubeUrl("");
                 setFiles({});
               }}
-              className="text-xs text-rose-600 hover:text-rose-700 font-medium inline-flex items-center gap-1 self-start sm:self-auto"
+              className="text-xs text-rose-600 hover:text-rose-700 font-semibold inline-flex items-center gap-1.5 self-start sm:self-auto px-3 py-1.5 rounded-lg bg-rose-50 border border-rose-100 transition"
             >
-              <RotateCcw className="w-3 h-3" />
-              <span>Clear Materials</span>
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Clear Uploaded Materials</span>
             </button>
           )}
         </div>
 
-        {/* 4 EQUAL COLUMNS */}
-        <div className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card 1: YouTube / Video URL */}
+        {/* 4 Equal, Vibrant Dropzone Cards */}
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Card 1: Video / YouTube (Rose Accent) */}
           <div className={cn(
-            "rounded-xl border p-4 flex flex-col justify-between transition-all duration-200 min-h-[160px]",
+            "rounded-2xl border-2 p-5 flex flex-col justify-between transition-all duration-200 min-h-[220px]",
             youtubeUrl.length > 5
-              ? "border-blue-300 bg-blue-50/20 ring-1 ring-blue-500/10"
-              : "border-slate-200 bg-white hover:border-slate-300"
+              ? "border-rose-400 bg-rose-50/30 ring-2 ring-rose-500/10 shadow-xs"
+              : "border-slate-200 bg-gradient-to-b from-rose-50/30 via-white to-white hover:border-rose-300 hover:shadow-xs"
           )}>
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-rose-600 font-medium text-xs">
-                  <Youtube className="w-4 h-4" />
-                  <span className="text-slate-800 font-semibold">Video Lecture</span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shadow-xs">
+                    <Youtube className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Video Lecture</h3>
+                    <span className="text-[11px] text-slate-500 font-medium">YouTube / MP4</span>
+                  </div>
                 </div>
+
                 {youtubeUrl.length > 5 && (
-                  <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                    <Check className="w-2.5 h-2.5" /> Staged
+                  <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-200">
+                    <Check className="w-3 h-3" /> Staged
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-slate-400 mb-3">YouTube URL or video resource link</p>
-              
+
+              <p className="text-xs text-slate-600 mb-3 leading-relaxed">
+                Paste link to an educational lecture or webinar recording
+              </p>
+
               <div className="relative">
                 <input
                   type="url"
                   value={youtubeUrl}
                   onChange={(e) => setYoutubeUrl(e.target.value)}
-                  placeholder="https://youtube.com/..."
-                  className="w-full text-xs py-2 px-3 pr-7 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 bg-slate-50/50"
+                  placeholder="https://youtube.com/watch?v=..."
+                  className="w-full text-xs py-2.5 px-3.5 pr-8 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-400 bg-white shadow-2xs font-medium placeholder:text-slate-400"
                 />
                 {youtubeUrl && (
                   <button
                     onClick={() => setYoutubeUrl("")}
-                    className="absolute right-2 top-2.5 text-slate-400 hover:text-slate-600"
+                    className="absolute right-2.5 top-3 text-slate-400 hover:text-slate-600"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 )}
               </div>
             </div>
 
-            <div className="mt-3 pt-2 border-t border-slate-100 text-[10px] text-slate-400 flex items-center justify-between">
-              <span>Auto-transcribed</span>
-              {youtubeUrl.length > 5 && <span className="text-blue-600 font-medium">Link verified</span>}
+            <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between">
+              <span>Transcribed & Indexed</span>
+              {youtubeUrl.length > 5 ? (
+                <span className="text-emerald-600 font-semibold">Active</span>
+              ) : (
+                <span className="text-slate-400">Optional</span>
+              )}
             </div>
           </div>
 
-          {/* Hidden inputs */}
+          {/* Hidden native inputs */}
           <input
             type="file"
             ref={pdfInputRef}
@@ -283,35 +299,44 @@ export function IngestionHub() {
             onChange={(e) => e.target.files?.[0] && handleFileDrop("audio", e.target.files[0])}
           />
 
-          {/* Card 2: PDF Document */}
+          {/* Card 2: PDF Document (Blue Accent) */}
           <div
             onClick={() => pdfInputRef.current?.click()}
             className={cn(
-              "rounded-xl border p-4 flex flex-col justify-between cursor-pointer transition-all duration-200 min-h-[160px]",
+              "rounded-2xl border-2 p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 min-h-[220px]",
               files.pdf
-                ? "border-blue-300 bg-blue-50/20 ring-1 ring-blue-500/10"
-                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                ? "border-blue-400 bg-blue-50/30 ring-2 ring-blue-500/10 shadow-xs"
+                : "border-slate-200 bg-gradient-to-b from-blue-50/30 via-white to-white hover:border-blue-300 hover:shadow-xs"
             )}
           >
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-blue-600 font-medium text-xs">
-                  <FileText className="w-4 h-4" />
-                  <span className="text-slate-800 font-semibold">PDF Document</span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shadow-xs">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">PDF Document</h3>
+                    <span className="text-[11px] text-slate-500 font-medium">Text & Manuals</span>
+                  </div>
                 </div>
+
                 {files.pdf ? (
-                  <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                    <Check className="w-2.5 h-2.5" /> Staged
+                  <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-200">
+                    <Check className="w-3 h-3" /> Staged
                   </span>
                 ) : (
-                  <span className="text-[10px] text-slate-400">PDF</span>
+                  <span className="text-xs font-medium text-slate-400">PDF</span>
                 )}
               </div>
-              <p className="text-[11px] text-slate-400 mb-2">Lecture notes, manuals, docs</p>
+
+              <p className="text-xs text-slate-600 mb-3 leading-relaxed">
+                Upload survey guides, notes, or official ministry circulars
+              </p>
 
               {files.pdf ? (
-                <div className="bg-white border border-slate-200 rounded-lg p-2 flex items-center justify-between">
-                  <span className="text-xs text-slate-700 font-medium truncate max-w-[140px]">
+                <div className="bg-white border border-blue-200 rounded-xl p-3 flex items-center justify-between shadow-2xs">
+                  <span className="text-xs text-slate-800 font-semibold truncate max-w-[150px]">
                     {files.pdf.name}
                   </span>
                   <button
@@ -319,53 +344,67 @@ export function IngestionHub() {
                       e.stopPropagation();
                       removeFile("pdf");
                     }}
-                    className="text-slate-400 hover:text-rose-600 p-0.5"
+                    className="text-slate-400 hover:text-rose-600 p-1"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <div className="border border-dashed border-slate-200 rounded-lg p-2.5 text-center text-xs text-slate-500 hover:text-slate-700">
-                  Click or drag PDF here
+                <div className="border-2 border-dashed border-slate-300 rounded-xl p-3.5 text-center text-xs font-medium text-slate-600 hover:text-blue-600 hover:border-blue-300 bg-slate-50/60 transition flex items-center justify-center gap-2">
+                  <Upload className="w-4 h-4 text-slate-400" />
+                  <span>Click or drop PDF</span>
                 </div>
               )}
             </div>
 
-            <div className="mt-3 pt-2 border-t border-slate-100 text-[10px] text-slate-400 flex items-center justify-between">
+            <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between">
               <span>Text & OCR Parser</span>
-              {files.pdf && <span className="text-blue-600 font-medium">Ready</span>}
+              {files.pdf ? (
+                <span className="text-emerald-600 font-semibold">Active</span>
+              ) : (
+                <span className="text-slate-400">Optional</span>
+              )}
             </div>
           </div>
 
-          {/* Card 3: PPTX Slides */}
+          {/* Card 3: PPTX Slides (Amber Accent) */}
           <div
             onClick={() => pptxInputRef.current?.click()}
             className={cn(
-              "rounded-xl border p-4 flex flex-col justify-between cursor-pointer transition-all duration-200 min-h-[160px]",
+              "rounded-2xl border-2 p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 min-h-[220px]",
               files.pptx
-                ? "border-blue-300 bg-blue-50/20 ring-1 ring-blue-500/10"
-                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                ? "border-amber-400 bg-amber-50/30 ring-2 ring-amber-500/10 shadow-xs"
+                : "border-slate-200 bg-gradient-to-b from-amber-50/30 via-white to-white hover:border-amber-300 hover:shadow-xs"
             )}
           >
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-amber-600 font-medium text-xs">
-                  <MonitorPlay className="w-4 h-4" />
-                  <span className="text-slate-800 font-semibold">PPTX Slides</span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shadow-xs">
+                    <MonitorPlay className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">PPTX Slides</h3>
+                    <span className="text-[11px] text-slate-500 font-medium">Decks & Pitch</span>
+                  </div>
                 </div>
+
                 {files.pptx ? (
-                  <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                    <Check className="w-2.5 h-2.5" /> Staged
+                  <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-200">
+                    <Check className="w-3 h-3" /> Staged
                   </span>
                 ) : (
-                  <span className="text-[10px] text-slate-400">PPTX</span>
+                  <span className="text-xs font-medium text-slate-400">PPTX</span>
                 )}
               </div>
-              <p className="text-[11px] text-slate-400 mb-2">Presentation slide decks</p>
+
+              <p className="text-xs text-slate-600 mb-3 leading-relaxed">
+                Upload training workshop presentation slides or summaries
+              </p>
 
               {files.pptx ? (
-                <div className="bg-white border border-slate-200 rounded-lg p-2 flex items-center justify-between">
-                  <span className="text-xs text-slate-700 font-medium truncate max-w-[140px]">
+                <div className="bg-white border border-amber-200 rounded-xl p-3 flex items-center justify-between shadow-2xs">
+                  <span className="text-xs text-slate-800 font-semibold truncate max-w-[150px]">
                     {files.pptx.name}
                   </span>
                   <button
@@ -373,53 +412,67 @@ export function IngestionHub() {
                       e.stopPropagation();
                       removeFile("pptx");
                     }}
-                    className="text-slate-400 hover:text-rose-600 p-0.5"
+                    className="text-slate-400 hover:text-rose-600 p-1"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <div className="border border-dashed border-slate-200 rounded-lg p-2.5 text-center text-xs text-slate-500 hover:text-slate-700">
-                  Click or drag PPTX here
+                <div className="border-2 border-dashed border-slate-300 rounded-xl p-3.5 text-center text-xs font-medium text-slate-600 hover:text-amber-600 hover:border-amber-300 bg-slate-50/60 transition flex items-center justify-center gap-2">
+                  <Upload className="w-4 h-4 text-slate-400" />
+                  <span>Click or drop PPTX</span>
                 </div>
               )}
             </div>
 
-            <div className="mt-3 pt-2 border-t border-slate-100 text-[10px] text-slate-400 flex items-center justify-between">
-              <span>Slide Deck Parser</span>
-              {files.pptx && <span className="text-blue-600 font-medium">Ready</span>}
+            <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between">
+              <span>Deck & Outline Parser</span>
+              {files.pptx ? (
+                <span className="text-emerald-600 font-semibold">Active</span>
+              ) : (
+                <span className="text-slate-400">Optional</span>
+              )}
             </div>
           </div>
 
-          {/* Card 4: Audio Lecture */}
+          {/* Card 4: Audio Lecture (Purple Accent) */}
           <div
             onClick={() => audioInputRef.current?.click()}
             className={cn(
-              "rounded-xl border p-4 flex flex-col justify-between cursor-pointer transition-all duration-200 min-h-[160px]",
+              "rounded-2xl border-2 p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 min-h-[220px]",
               files.audio
-                ? "border-blue-300 bg-blue-50/20 ring-1 ring-blue-500/10"
-                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                ? "border-purple-400 bg-purple-50/30 ring-2 ring-purple-500/10 shadow-xs"
+                : "border-slate-200 bg-gradient-to-b from-purple-50/30 via-white to-white hover:border-purple-300 hover:shadow-xs"
             )}
           >
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-purple-600 font-medium text-xs">
-                  <FileAudio className="w-4 h-4" />
-                  <span className="text-slate-800 font-semibold">Audio Lecture</span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shadow-xs">
+                    <FileAudio className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Audio Lecture</h3>
+                    <span className="text-[11px] text-slate-500 font-medium">MP3 / WAV</span>
+                  </div>
                 </div>
+
                 {files.audio ? (
-                  <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                    <Check className="w-2.5 h-2.5" /> Staged
+                  <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-200">
+                    <Check className="w-3 h-3" /> Staged
                   </span>
                 ) : (
-                  <span className="text-[10px] text-slate-400">MP3 / WAV</span>
+                  <span className="text-xs font-medium text-slate-400">Audio</span>
                 )}
               </div>
-              <p className="text-[11px] text-slate-400 mb-2">Dictation & audio recordings</p>
+
+              <p className="text-xs text-slate-600 mb-3 leading-relaxed">
+                Upload voice notes, audio lectures, or panel discussions
+              </p>
 
               {files.audio ? (
-                <div className="bg-white border border-slate-200 rounded-lg p-2 flex items-center justify-between">
-                  <span className="text-xs text-slate-700 font-medium truncate max-w-[140px]">
+                <div className="bg-white border border-purple-200 rounded-xl p-3 flex items-center justify-between shadow-2xs">
+                  <span className="text-xs text-slate-800 font-semibold truncate max-w-[150px]">
                     {files.audio.name}
                   </span>
                   <button
@@ -427,54 +480,62 @@ export function IngestionHub() {
                       e.stopPropagation();
                       removeFile("audio");
                     }}
-                    className="text-slate-400 hover:text-rose-600 p-0.5"
+                    className="text-slate-400 hover:text-rose-600 p-1"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <div className="border border-dashed border-slate-200 rounded-lg p-2.5 text-center text-xs text-slate-500 hover:text-slate-700">
-                  Click or drag Audio here
+                <div className="border-2 border-dashed border-slate-300 rounded-xl p-3.5 text-center text-xs font-medium text-slate-600 hover:text-purple-600 hover:border-purple-300 bg-slate-50/60 transition flex items-center justify-center gap-2">
+                  <Upload className="w-4 h-4 text-slate-400" />
+                  <span>Click or drop Audio</span>
                 </div>
               )}
             </div>
 
-            <div className="mt-3 pt-2 border-t border-slate-100 text-[10px] text-slate-400 flex items-center justify-between">
+            <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between">
               <span>Speech-to-Text Pipeline</span>
-              {files.audio && <span className="text-blue-600 font-medium">Ready</span>}
+              {files.audio ? (
+                <span className="text-emerald-600 font-semibold">Active</span>
+              ) : (
+                <span className="text-slate-400">Optional</span>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* SECTION 2: TARGET CURRICULUM MODULES (FULL-WIDTH BELOW SECTION 1) */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      {/* ========================================================================= */}
+      {/* SECTION 2: CURATED CURRICULUM COMPETENCY CATALOG (DIFFERENT VISUAL STYLE) */}
+      {/* ========================================================================= */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        {/* Section 2 Header */}
+        <div className="p-6 border-b border-slate-100 bg-slate-50/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
+            <div className="flex items-center gap-2.5">
+              <span className="w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                 2
               </span>
-              <h2 className="font-heading text-base font-semibold text-slate-900">
-                Target Curriculum Competencies
+              <h2 className="font-heading text-lg font-bold text-slate-900 tracking-tight">
+                Curriculum Competencies Catalog
               </h2>
-              <span className="text-[11px] text-slate-400 font-normal">
-                (Official curriculum modules • Click to toggle selection)
-              </span>
             </div>
+            <p className="text-xs text-slate-500 mt-1 pl-9">
+              Select verified competencies from the official statistical training syllabus to test directly or combine with uploaded media.
+            </p>
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-1.5 flex-wrap">
+          {/* Distinct Category Filter Pills */}
+          <div className="flex items-center gap-1.5 flex-wrap self-start md:self-center pl-9 md:pl-0">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setActiveCategory(cat)}
                 className={cn(
-                  "px-2.5 py-1 text-xs font-medium rounded-lg transition",
+                  "px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-all duration-150",
                   activeCategory === cat
-                    ? "bg-blue-600 text-white shadow-xs font-semibold"
+                    ? "bg-slate-900 text-white shadow-xs font-bold"
                     : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
                 )}
               >
@@ -484,44 +545,54 @@ export function IngestionHub() {
           </div>
         </div>
 
-        {/* Symmetrical Grid of Modules */}
-        <div className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Distinct Catalog Cards: Distinct Left Border & Structured Metadata */}
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredModules.map((module) => {
             const isSelected = selectedSubskill === module.id;
+            
+            // Distinct left border color based on competency
+            const leftBorderColor = 
+              module.category === "Probability" ? "border-l-indigo-600" :
+              module.category === "Sampling Design" ? "border-l-blue-600" :
+              "border-l-teal-600";
+
             return (
               <div
                 key={module.id}
                 onClick={() => setSelectedSubskill(isSelected ? null : module.id)}
                 className={cn(
-                  "p-4 rounded-xl border cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[120px] relative",
+                  "p-5 rounded-xl border border-l-4 cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[140px] relative bg-white",
+                  leftBorderColor,
                   isSelected
-                    ? "border-blue-600 ring-2 ring-blue-600/10 bg-blue-50/30 shadow-xs"
-                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/40"
+                    ? "border-blue-600 ring-2 ring-blue-600/15 bg-blue-50/30 shadow-xs"
+                    : "border-slate-200 hover:border-slate-300 hover:shadow-xs hover:-translate-y-0.5"
                 )}
               >
                 <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                  <div className="flex items-start justify-between gap-3 mb-2.5">
+                    <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200/80">
                       {module.comp}
                     </span>
                     <div className={cn(
-                      "w-4 h-4 rounded-full flex items-center justify-center border transition-colors",
-                      isSelected ? "bg-blue-600 border-blue-600 text-white" : "border-slate-300 bg-white"
+                      "w-5 h-5 rounded-full flex items-center justify-center border transition-all shrink-0",
+                      isSelected ? "bg-blue-600 border-blue-600 text-white shadow-2xs" : "border-slate-300 bg-white"
                     )}>
-                      {isSelected && <Check className="w-2.5 h-2.5" />}
+                      {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                     </div>
                   </div>
-                  <h3 className="text-xs font-semibold text-slate-900 leading-snug">
+                  
+                  <h3 className="text-sm font-bold text-slate-900 leading-snug">
                     {module.name}
                   </h3>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-                  <span>{module.subskillsCount} Subskills</span>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+                  <span className="font-medium">{module.subskillsCount} Subskills</span>
                   <span className={cn(
-                    "font-medium",
-                    module.difficulty === "Advanced" ? "text-purple-600" :
-                    module.difficulty === "Intermediate" ? "text-amber-600" : "text-emerald-600"
+                    "font-semibold px-2 py-0.5 rounded",
+                    module.difficulty === "Advanced" ? "bg-purple-50 text-purple-700 border border-purple-100" :
+                    module.difficulty === "Intermediate" ? "bg-amber-50 text-amber-700 border border-amber-100" : 
+                    "bg-emerald-50 text-emerald-700 border border-emerald-100"
                   )}>
                     {module.difficulty}
                   </span>
@@ -532,49 +603,51 @@ export function IngestionHub() {
         </div>
       </div>
 
+      {/* ========================================================================= */}
       {/* SECTION 3: CALIBRATION & INGESTION ACTION BAR (PERSISTENT AT BOTTOM) */}
+      {/* ========================================================================= */}
       <div className={cn(
-        "rounded-xl border shadow-xs p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-300",
-        isIngested ? "bg-emerald-50/40 border-emerald-200" : "bg-white border-slate-200"
+        "rounded-2xl border-2 shadow-xs p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all duration-300",
+        isIngested ? "bg-emerald-50/50 border-emerald-300" : "bg-white border-slate-200"
       )}>
         {/* Left Side Status */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {isIngested ? (
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0">
-              <CheckCircle2 className="w-5 h-5" />
+            <div className="w-12 h-12 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0 shadow-xs">
+              <CheckCircle2 className="w-6 h-6" />
             </div>
           ) : (
-            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-              <Layers className="w-5 h-5" />
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 shadow-xs">
+              <Layers className="w-6 h-6" />
             </div>
           )}
 
           <div>
             {isIngested ? (
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-900">
-                    Ingestion & Knowledge Graph Calibrated
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-bold text-slate-900">
+                    Ingestion & Calibration Complete:
                   </span>
-                  <span className="font-mono text-[11px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold border border-emerald-200">
+                  <span className="font-mono text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-lg font-bold border border-emerald-200">
                     {ingestedSessionId}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  {ingestedSummary?.chunks} concept nodes indexed • 3 Assessment Tiers Ready (Easy, Medium, Tough)
+                <p className="text-xs text-slate-600 mt-1">
+                  {ingestedSummary?.chunks} semantic knowledge nodes indexed • 3 Assessment Tiers Ready (Easy, Medium, Tough)
                 </p>
               </div>
             ) : (
               <div>
-                <div className="text-xs font-semibold text-slate-800">
+                <div className="text-sm font-bold text-slate-800">
                   {stagedSourcesCount > 0
                     ? `${stagedSourcesCount} source(s) staged for synthesis`
                     : "No materials or modules selected"}
                 </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 mt-1">
                   {stagedSourcesCount > 0
                     ? "Ready to extract semantics and calibrate 3-tier adaptive assessment"
-                    : "Select at least one source above or a curriculum module to begin"}
+                    : "Select at least one custom material above or a curriculum module to begin"}
                 </p>
               </div>
             )}
@@ -582,26 +655,26 @@ export function IngestionHub() {
         </div>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           {isIngested ? (
             <>
               <button
                 type="button"
                 onClick={handleReset}
-                className="px-4 py-2.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition shadow-xs flex items-center gap-1.5"
+                className="px-5 py-2.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition shadow-xs flex items-center gap-2"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-                <span>Ingest New Data</span>
+                <RotateCcw className="w-4 h-4 text-slate-400" />
+                <span>Reset & Ingest New</span>
               </button>
               <button
                 type="button"
                 id="start-assessment-btn"
                 onClick={() => router.push(`/dashboard/assessments?session_id=${ingestedSessionId}`)}
-                className="px-6 py-2.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition flex items-center gap-2"
+                className="px-7 py-3 text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm transition flex items-center gap-2.5"
               >
-                <ClipboardCheck className="w-4 h-4" />
+                <ClipboardCheck className="w-5 h-5" />
                 <span>Start Assessment</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </>
           ) : (
@@ -610,7 +683,7 @@ export function IngestionHub() {
               onClick={handleSubmit}
               disabled={!hasInputs || isProcessing}
               className={cn(
-                "px-6 py-2.5 rounded-lg text-xs font-semibold text-white shadow-xs transition flex items-center gap-2",
+                "px-7 py-3 rounded-xl text-sm font-bold text-white shadow-xs transition flex items-center gap-2.5",
                 !hasInputs
                   ? "bg-slate-300 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700 hover:shadow-sm"
@@ -618,13 +691,13 @@ export function IngestionHub() {
             >
               {isProcessing ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Processing Knowledge Engine...</span>
                 </>
               ) : (
                 <>
                   <span>Ingest & Process Data</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
+                  <ChevronRight className="w-4 h-4" />
                 </>
               )}
             </button>
@@ -644,12 +717,12 @@ export function IngestionHub() {
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 border border-slate-200"
+              className="bg-white rounded-2xl shadow-xl max-w-md w-full p-7 border border-slate-200"
             >
-              <h3 className="font-heading text-lg text-slate-900 mb-5 text-center">
+              <h3 className="font-heading text-xl font-bold text-slate-900 mb-6 text-center">
                 Processing Knowledge Engine
               </h3>
-              <div className="space-y-3.5">
+              <div className="space-y-4">
                 {[
                   "Extracting Text & Transcribing Media",
                   "Segmenting into Semantic Knowledge Chunks",
@@ -659,10 +732,10 @@ export function IngestionHub() {
                   const isActive = currentStep === idx;
                   const isDone = currentStep > idx;
                   return (
-                    <div key={idx} className="flex items-center gap-3">
+                    <div key={idx} className="flex items-center gap-3.5">
                       <div
                         className={cn(
-                          "w-6 h-6 shrink-0 rounded-full flex items-center justify-center border",
+                          "w-7 h-7 shrink-0 rounded-full flex items-center justify-center border transition-all",
                           isDone
                             ? "bg-emerald-50 border-emerald-200 text-emerald-600"
                             : isActive
@@ -671,20 +744,20 @@ export function IngestionHub() {
                         )}
                       >
                         {isDone ? (
-                          <Check className="w-3.5 h-3.5" />
+                          <Check className="w-4 h-4" />
                         ) : isActive ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
-                          <span className="text-[10px] font-medium">{idx + 1}</span>
+                          <span className="text-xs font-semibold">{idx + 1}</span>
                         )}
                       </div>
                       <span
                         className={cn(
-                          "text-xs font-medium transition-colors",
+                          "text-sm font-semibold transition-colors",
                           isDone
                             ? "text-slate-700"
                             : isActive
-                            ? "text-blue-700 font-semibold"
+                            ? "text-blue-700 font-bold"
                             : "text-slate-400"
                         )}
                       >
