@@ -47,8 +47,10 @@ class Rubric(BaseModel):
 
     @model_validator(mode="after")
     def validate_criteria_total(self) -> "Rubric":
-        if sum(item.max_score for item in self.criteria) > self.max_score + 1e-6:
-            raise ValueError("Rubric criterion maximum cannot exceed rubric max_score")
+        if self.max_score != 10:
+            raise ValueError("Scenario rubric max_score must be 10")
+        if abs(sum(item.max_score for item in self.criteria) - self.max_score) > 1e-6:
+            raise ValueError("Rubric criterion maximum must equal rubric max_score")
         return self
 
 
@@ -123,6 +125,8 @@ class EvaluationDetails(BaseModel):
 
     @model_validator(mode="after")
     def validate_score(self) -> "EvaluationDetails":
+        if self.max_score != 10:
+            raise ValueError("Scenario evaluation max_score must be 10")
         if self.score > self.max_score:
             raise ValueError("Evaluation score cannot exceed max_score")
         normalized = round(self.score / self.max_score * 100, 4)

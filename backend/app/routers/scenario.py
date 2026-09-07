@@ -16,6 +16,7 @@ from app.models.scenario import ScenarioAttempt, ScenarioEvaluation, ScenarioIte
 from app.models.user import User
 from app.schemas.scenario import (
     ScenarioAttemptCreateResponse,
+    ScenarioDirectSubmitRequest,
     ScenarioDeliveryResponse,
     ScenarioEvaluationResponse,
     ScenarioGenerateRequest,
@@ -88,11 +89,16 @@ def _validate_evaluation_output(output, item: ScenarioItem) -> None:
     if output.evaluation.max_score != rubric["max_score"]:
         raise ValueError("Evaluator max_score does not match scenario rubric")
     limits = {criterion["criterion_id"]: criterion["max_score"] for criterion in rubric["criteria"]}
+    returned_ids = [result.criterion_id for result in output.evaluation.criterion_results]
+    if set(returned_ids) != set(limits) or len(returned_ids) != len(set(returned_ids)):
+        raise ValueError("Evaluator criteria do not match scenario rubric")
     for result in output.evaluation.criterion_results:
         if result.criterion_id not in limits:
             raise ValueError("Evaluator returned an unknown rubric criterion")
         if result.score > limits[result.criterion_id]:
             raise ValueError("Evaluator criterion score exceeds rubric limit")
+    if abs(sum(result.score for result in output.evaluation.criterion_results) - output.evaluation.score) > 1e-6:
+        raise ValueError("Evaluator criterion scores do not match evaluation score")
 
 
 def _persisted_evaluation_payload(evaluation: ScenarioEvaluation) -> dict[str, Any]:
@@ -109,9 +115,10 @@ def _persisted_evaluation_payload(evaluation: ScenarioEvaluation) -> dict[str, A
     }
 
 
-def _delivery(output: ScenarioGeneratorOutput) -> ScenarioDeliveryResponse:
+def _delivery(output: ScenarioGeneratorOutput, item: ScenarioItem) -> ScenarioDeliveryResponse:
     return ScenarioDeliveryResponse(
         status="AVAILABLE",
+        task_id=item.id,
         scenario_id=output.scenario_id,
         competency_id=output.competency_id,
         subskill_id=output.subskill_id,
@@ -166,8 +173,8 @@ def generate_scenario(
         _validate_generator_output(output, payload)
         db.rollback()
         with db.begin():
-            _persist_scenario(db, output)
-        return _delivery(output)
+            item = _persist_scenario(db, output)
+        return _delivery(output, item)
     except ScenarioProviderUnavailable as exc:
         db.rollback()
         raise HTTPException(status_code=503, detail={"status": "PROVIDER_UNAVAILABLE", "message": str(exc)}) from exc
@@ -184,6 +191,7 @@ def get_scenario(scenario_id: str, user: User = Depends(get_current_user), db: S
     item = _learner_scenario(db, user, scenario_id)
     return ScenarioDeliveryResponse(
         status=item.status,
+        task_id=item.id,
         scenario_id=item.scenario_id,
         competency_id=item.competency_id,
         subskill_id=item.subskill_id,
@@ -211,6 +219,113 @@ def create_scenario_attempt(scenario_id: str, user: User = Depends(get_current_u
         db.add(attempt)
         db.flush()
     return ScenarioAttemptCreateResponse(status="ATTEMPTED", attempt_id=attempt.id, scenario_id=scenario_id)
+
+
+def _evaluate_attempt(
+    db: Session,
+    user: User,
+    item: ScenarioItem,
+    attempt: ScenarioAttempt,
+    response: dict[str, Any],
+    evaluator: ScenarioEvaluator,
+    response_text: str | None = None,
+    failure_policy: str = "legacy",
+) -> ScenarioSubmitResponse:
+    request = ScenarioEvaluatorRequest(
+        scenario_id=item.scenario_id,
+        competency_id=item.competency_id,
+        subskill_id=item.subskill_id,
+        scenario={"title": item.title, "context": item.context, "context_data": item.context_data, "task": {"question": item.task_question, "response_type": item.response_type, "instructions": item.instructions}},
+        learner_response=response,
+        expected_reasoning=item.expected_reasoning,
+        rubric=item.rubric,
+    )
+    attempt.submitted_response = response
+    if response_text is not None:
+        attempt.response_text = response_text
+    attempt.submitted_at = datetime.now(timezone.utc)
+    attempt.status = "SUBMITTED"
+    try:
+        output = ScenarioEvaluationOutput.model_validate(evaluator.evaluate(request))
+        _validate_evaluation_output(output, item)
+    except ScenarioProviderUnavailable:
+        attempt.status = "PENDING_EVALUATION"
+        db.flush()
+        return ScenarioSubmitResponse(status="PENDING_EVALUATION", attempt_id=attempt.id, scenario_id=item.scenario_id)
+    except Exception:
+        if failure_policy == "legacy":
+            raise
+        attempt.status = "FAILED"
+        db.flush()
+        return ScenarioSubmitResponse(status="FAILED", attempt_id=attempt.id, scenario_id=item.scenario_id)
+
+    evaluation = ScenarioEvaluation(
+        scenario_attempt_id=attempt.id,
+        scenario_id=output.scenario_id,
+        competency_id=output.competency_id,
+        subskill_id=output.subskill_id,
+        score=output.evaluation.score,
+        max_score=output.evaluation.max_score,
+        percentage=output.evaluation.percentage,
+        overall_result=output.evaluation.overall_result,
+        criterion_results=[result.model_dump(mode="json") for result in output.evaluation.criterion_results],
+        feedback=output.feedback.model_dump(mode="json"),
+        demonstrated_competency=output.evidence.demonstrated_competency,
+        evaluator_confidence=output.evidence.confidence,
+        evaluator_metadata=output.metadata.model_dump(mode="json"),
+    )
+    db.add(evaluation)
+    attempt.status = "EVALUATED"
+    attempt.completed_at = datetime.now(timezone.utc)
+    db.flush()
+    db.add(Evidence(
+        user_id=user.id,
+        competency_id=item.competency_id,
+        subskill_id=item.subskill_id,
+        evidence_type=EvidenceType.APPLICATION_SCENARIO,
+        title=f"Scenario assessment: {item.title}",
+        description=output.feedback.summary,
+        score=output.evaluation.percentage / 100,
+        weight=1.0,
+        evidence_metadata=json.dumps({"scenario_id": item.scenario_id, "attempt_id": attempt.id, "evaluation": output.model_dump(mode="json")}),
+    ))
+    db.flush()
+    recalculate_competency_state(db, user.id, item.competency_id)
+    return ScenarioSubmitResponse(status="EVALUATED", attempt_id=attempt.id, scenario_id=item.scenario_id, evaluation_id=evaluation.id, evaluation=output.model_dump(mode="json"))
+
+
+@router.post("/scenario/submit", response_model=ScenarioSubmitResponse)
+def submit_new_scenario_attempt(
+    payload: ScenarioDirectSubmitRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    evaluator: ScenarioEvaluator = Depends(get_scenario_evaluator),
+) -> ScenarioSubmitResponse:
+    item = db.get(ScenarioItem, payload.scenario_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+    _validate_scope(db, user, item.competency_id, item.subskill_id)
+    if item.response_type != "structured_text":
+        raise HTTPException(status_code=422, detail="Virtual lab tasks require structured-text responses")
+    response_text = payload.response_text.strip()
+    if not response_text:
+        raise HTTPException(status_code=422, detail="response_text must be a non-empty string")
+    db.rollback()
+    try:
+        with db.begin():
+            attempt = ScenarioAttempt(
+                scenario_item_id=item.id,
+                scenario_id=item.scenario_id,
+                user_id=user.id,
+                competency_id=item.competency_id,
+                subskill_id=item.subskill_id,
+            )
+            db.add(attempt)
+            db.flush()
+            return _evaluate_attempt(db, user, item, attempt, {"text": response_text}, evaluator, response_text=response_text, failure_policy="v1")
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Scenario submission failed; no changes were saved") from exc
 
 
 @router.post("/scenario-assessments/{scenario_id}/attempts/{attempt_id}/submit", response_model=ScenarioSubmitResponse)
@@ -244,61 +359,10 @@ def submit_scenario(
     if not isinstance(payload.response, dict) or not payload.response:
         raise HTTPException(status_code=422, detail="Scenario response must be a non-empty object")
     _validate_response(payload.response, item.response_type)
-    request = ScenarioEvaluatorRequest(
-        scenario_id=item.scenario_id,
-        competency_id=item.competency_id,
-        subskill_id=item.subskill_id,
-        scenario={"title": item.title, "context": item.context, "context_data": item.context_data, "task": {"question": item.task_question, "response_type": item.response_type, "instructions": item.instructions}},
-        learner_response=payload.response,
-        expected_reasoning=item.expected_reasoning,
-        rubric=item.rubric,
-    )
     db.rollback()
     try:
         with db.begin():
-            attempt.submitted_response = payload.response
-            attempt.submitted_at = datetime.now(timezone.utc)
-            attempt.status = "SUBMITTED"
-            try:
-                output = ScenarioEvaluationOutput.model_validate(evaluator.evaluate(request))
-            except ScenarioProviderUnavailable:
-                attempt.status = "PENDING_EVALUATION"
-                db.flush()
-                return ScenarioSubmitResponse(status="PENDING_EVALUATION", attempt_id=attempt.id, scenario_id=scenario_id)
-            _validate_evaluation_output(output, item)
-            evaluation = ScenarioEvaluation(
-                scenario_attempt_id=attempt.id,
-                scenario_id=output.scenario_id,
-                competency_id=output.competency_id,
-                subskill_id=output.subskill_id,
-                score=output.evaluation.score,
-                max_score=output.evaluation.max_score,
-                percentage=output.evaluation.percentage,
-                overall_result=output.evaluation.overall_result,
-                criterion_results=[result.model_dump(mode="json") for result in output.evaluation.criterion_results],
-                feedback=output.feedback.model_dump(mode="json"),
-                demonstrated_competency=output.evidence.demonstrated_competency,
-                evaluator_confidence=output.evidence.confidence,
-                evaluator_metadata=output.metadata.model_dump(mode="json"),
-            )
-            db.add(evaluation)
-            attempt.status = "EVALUATED"
-            attempt.completed_at = datetime.now(timezone.utc)
-            db.flush()
-            db.add(Evidence(
-                user_id=user.id,
-                competency_id=item.competency_id,
-                subskill_id=item.subskill_id,
-                evidence_type=EvidenceType.APPLICATION_SCENARIO,
-                title=f"Scenario assessment: {item.title}",
-                description=output.feedback.summary,
-                score=output.evaluation.percentage / 100,
-                weight=1.0,
-                evidence_metadata=json.dumps({"scenario_id": item.scenario_id, "attempt_id": attempt.id, "evaluation": output.model_dump(mode="json")}),
-            ))
-            db.flush()
-            recalculate_competency_state(db, user.id, item.competency_id)
-            return ScenarioSubmitResponse(status="EVALUATED", attempt_id=attempt.id, scenario_id=scenario_id, evaluation_id=evaluation.id, evaluation=output.model_dump(mode="json"))
+            return _evaluate_attempt(db, user, item, attempt, payload.response, evaluator)
     except ValueError as exc:
         db.rollback()
         raise HTTPException(status_code=422, detail=str(exc)) from exc

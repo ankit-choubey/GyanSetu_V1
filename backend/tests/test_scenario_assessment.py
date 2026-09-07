@@ -50,11 +50,32 @@ class FakeEvaluator:
     output: ScenarioEvaluationOutput | None = None
     unavailable: bool = False
     calls: int = 0
+    requests: list = None
 
     def evaluate(self, request):
         self.calls += 1
+        if self.requests is None:
+            self.requests = []
+        self.requests.append(request)
         if self.unavailable:
             raise ScenarioProviderUnavailable("test evaluator unavailable")
+        return self.output
+
+
+@dataclass
+class FailingEvaluator:
+    calls: int = 0
+
+    def evaluate(self, request):
+        self.calls += 1
+        raise RuntimeError("evaluation failed")
+
+
+@dataclass
+class RawEvaluator:
+    output: object
+
+    def evaluate(self, request):
         return self.output
 
 
@@ -162,6 +183,7 @@ def test_generator_persists_scenario_and_delivery_hides_private_fields(db):
     assert response.json()["scenario_id"] == "scenario-001"
     assert "expected_reasoning" not in response.json()
     stored = session.execute(select(ScenarioItem).where(ScenarioItem.scenario_id == "scenario-001")).scalar_one()
+    assert response.json()["task_id"] == stored.id
     assert stored.rubric["max_score"] == 10
     assert stored.generator_metadata["provider"] == "TEST"
 
@@ -273,6 +295,40 @@ def test_evaluator_unavailable_preserves_pending_attempt_without_evidence(db):
     assert session.scalar(select(func.count()).select_from(Evidence).where(Evidence.evidence_type == EvidenceType.APPLICATION_SCENARIO)) == 0
 
 
+def test_legacy_evaluator_exception_retains_previous_rollback_behavior(db):
+    session, learner, _, competency, subskill = db
+    output = generated_scenario(competency.id, subskill.id)
+    override_dependencies(session, learner, FakeGenerator(output), FailingEvaluator())
+    try:
+        client = TestClient(app)
+        assert client.post("/api/scenario-assessments", json={"competency_id": competency.id, "subskill_id": subskill.id}).status_code == 200
+        attempt = client.post("/api/scenario-assessments/scenario-001/attempts").json()["attempt_id"]
+        with pytest.raises(RuntimeError, match="evaluation failed"):
+            client.post(f"/api/scenario-assessments/scenario-001/attempts/{attempt}/submit", json={"response": {"text": "answer"}})
+    finally:
+        clear_dependencies()
+    assert session.scalar(select(func.count()).select_from(ScenarioAttempt)) == 1
+    assert session.scalar(select(func.count()).select_from(ScenarioEvaluation)) == 0
+    assert session.scalar(select(func.count()).select_from(Evidence)) == 0
+
+
+def test_legacy_invalid_evaluator_output_retains_previous_422_behavior(db):
+    session, learner, _, competency, subskill = db
+    output = generated_scenario(competency.id, subskill.id)
+    override_dependencies(session, learner, FakeGenerator(output), RawEvaluator({"scenario_id": "scenario-001"}))
+    try:
+        client = TestClient(app)
+        assert client.post("/api/scenario-assessments", json={"competency_id": competency.id, "subskill_id": subskill.id}).status_code == 200
+        attempt = client.post("/api/scenario-assessments/scenario-001/attempts").json()["attempt_id"]
+        response = client.post(f"/api/scenario-assessments/scenario-001/attempts/{attempt}/submit", json={"response": {"text": "answer"}})
+    finally:
+        clear_dependencies()
+    assert response.status_code == 422
+    assert session.scalar(select(func.count()).select_from(ScenarioAttempt)) == 1
+    assert session.scalar(select(func.count()).select_from(ScenarioEvaluation)) == 0
+    assert session.scalar(select(func.count()).select_from(Evidence)) == 0
+
+
 def test_unauthorized_role_and_attempt_ownership_are_rejected(db):
     session, learner, other, competency, subskill = db
     output = generated_scenario(competency.id, subskill.id)
@@ -291,3 +347,104 @@ def test_unauthorized_role_and_attempt_ownership_are_rejected(db):
     finally:
         clear_dependencies()
     assert response.status_code == 403
+
+
+def test_direct_submission_creates_a_new_attempt_and_keeps_hidden_context(db):
+    session, learner, _, competency, subskill = db
+    output = generated_scenario(competency.id, subskill.id)
+    evaluator = FakeEvaluator(evaluated_scenario("scenario-001", competency.id, subskill.id))
+    override_dependencies(session, learner, FakeGenerator(output), evaluator)
+    try:
+        generated = TestClient(app).post("/api/scenario-assessments", json={"competency_id": competency.id, "subskill_id": subskill.id})
+        scenario_id = generated.json()["task_id"]
+        client = TestClient(app)
+        first = client.post("/api/scenario/submit", json={"scenario_id": scenario_id, "response_text": "First decision"})
+        second = client.post("/api/scenario/submit", json={"scenario_id": scenario_id, "response_text": "Second decision"})
+    finally:
+        clear_dependencies()
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert first.json()["status"] == "EVALUATED"
+    assert second.json()["status"] == "EVALUATED"
+    assert first.json()["attempt_id"] != second.json()["attempt_id"]
+    assert session.scalar(select(func.count()).select_from(ScenarioAttempt)) == 2
+    assert session.scalar(select(func.count()).select_from(ScenarioEvaluation)) == 2
+    assert len(evaluator.requests) == 2
+    assert evaluator.requests[0].expected_reasoning.reference_answer
+    assert evaluator.requests[0].rubric.max_score == 10
+
+
+def test_direct_submission_requires_scenario_id_and_response_text(db):
+    session, learner, _, competency, subskill = db
+    output = generated_scenario(competency.id, subskill.id)
+    override_dependencies(session, learner, FakeGenerator(output))
+    try:
+        generated = TestClient(app).post("/api/scenario-assessments", json={"competency_id": competency.id, "subskill_id": subskill.id})
+    finally:
+        clear_dependencies()
+    scenario_id = generated.json()["task_id"]
+    override_dependencies(session, learner)
+    client = TestClient(app)
+    try:
+        missing_scenario = client.post("/api/scenario/submit", json={"response_text": "Decision"})
+        missing_response = client.post("/api/scenario/submit", json={"scenario_id": scenario_id})
+        legacy_shape = client.post("/api/scenario/submit", json={"task_id": scenario_id, "response": {"text": "Decision"}})
+        whitespace = client.post("/api/scenario/submit", json={"scenario_id": scenario_id, "response_text": "   "})
+    finally:
+        clear_dependencies()
+    assert missing_scenario.status_code == 422
+    assert missing_response.status_code == 422
+    assert legacy_shape.status_code == 422
+    assert whitespace.status_code == 422
+    assert session.scalar(select(func.count()).select_from(ScenarioAttempt)) == 0
+
+
+def test_direct_submission_failure_preserves_attempt_without_evidence(db):
+    session, learner, _, competency, subskill = db
+    output = generated_scenario(competency.id, subskill.id)
+    override_dependencies(session, learner, FakeGenerator(output))
+    try:
+        generated = TestClient(app).post("/api/scenario-assessments", json={"competency_id": competency.id, "subskill_id": subskill.id})
+    finally:
+        clear_dependencies()
+    failing = FailingEvaluator()
+    override_dependencies(session, learner, evaluator=failing)
+    try:
+        response = TestClient(app).post("/api/scenario/submit", json={"scenario_id": generated.json()["task_id"], "response_text": "Decision"})
+    finally:
+        clear_dependencies()
+    assert response.status_code == 200
+    assert response.json()["status"] == "FAILED"
+    attempt = session.execute(select(ScenarioAttempt)).scalars().all()
+    assert len(attempt) == 1
+    assert attempt[0].response_text == "Decision"
+    assert attempt[0].status == "FAILED"
+    assert session.scalar(select(func.count()).select_from(ScenarioEvaluation)) == 0
+    assert session.scalar(select(func.count()).select_from(Evidence)) == 0
+
+
+def test_invalid_evaluator_output_preserves_failed_attempt_without_evidence(db):
+    session, learner, _, competency, subskill = db
+    output = generated_scenario(competency.id, subskill.id)
+    override_dependencies(session, learner, FakeGenerator(output))
+    try:
+        generated = TestClient(app).post("/api/scenario-assessments", json={"competency_id": competency.id, "subskill_id": subskill.id})
+    finally:
+        clear_dependencies()
+    invalid = {
+        "scenario_id": "scenario-001",
+        "competency_id": competency.id,
+        "subskill_id": subskill.id,
+        "evaluation": {"score": 8, "max_score": 10, "percentage": 80, "criterion_results": [], "overall_result": "partially_correct"},
+        "feedback": {"summary": "invalid criteria"},
+        "evidence": {"demonstrated_competency": True, "evidence_type": "scenario_assessment", "confidence": 0.8},
+    }
+    override_dependencies(session, learner, evaluator=RawEvaluator(invalid))
+    try:
+        response = TestClient(app).post("/api/scenario/submit", json={"scenario_id": generated.json()["task_id"], "response_text": "Decision"})
+    finally:
+        clear_dependencies()
+    assert response.status_code == 200
+    assert response.json()["status"] == "FAILED"
+    assert session.scalar(select(func.count()).select_from(ScenarioEvaluation)) == 0
+    assert session.scalar(select(func.count()).select_from(Evidence)) == 0

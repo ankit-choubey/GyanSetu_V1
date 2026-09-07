@@ -58,6 +58,17 @@ class ScenarioAttempt(SQLModel, table=True):
     submitted_at: datetime | None = None
     completed_at: datetime | None = None
 
+    @property
+    def response_text(self) -> str | None:
+        if not isinstance(self.submitted_response, dict):
+            return None
+        value = self.submitted_response.get("text")
+        return value if isinstance(value, str) else None
+
+    @response_text.setter
+    def response_text(self, value: str) -> None:
+        self.submitted_response = {"text": value}
+
     scenario: ScenarioItem = Relationship(back_populates="attempts")
     user: "User" = Relationship(back_populates="scenario_attempts")
     competency: "Competency" = Relationship()

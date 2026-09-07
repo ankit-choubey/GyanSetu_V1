@@ -13,6 +13,7 @@ class ScenarioGenerateRequest(ScenarioGeneratorRequest):
 
 class ScenarioDeliveryResponse(BaseModel):
     status: str
+    task_id: int | None = None
     scenario_id: str | None = None
     competency_id: int | None = None
     subskill_id: int | None = None
@@ -30,6 +31,11 @@ class ScenarioAttemptCreateResponse(BaseModel):
 
 class ScenarioSubmitRequest(BaseModel):
     response: dict[str, Any]
+
+
+class ScenarioDirectSubmitRequest(BaseModel):
+    scenario_id: int = Field(gt=0)
+    response_text: str = Field(min_length=1)
 
 
 class ScenarioSubmitResponse(BaseModel):
