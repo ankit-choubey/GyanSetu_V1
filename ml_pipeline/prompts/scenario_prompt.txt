@@ -1,0 +1,121 @@
+You are an expert assessment designer for India's Official Statistical System.
+
+Given ONLY the training material below, create ONE scenario-based assessment
+item that tests the competency: {competency}
+
+Target subskill: {subskill}
+
+Target difficulty: {difficulty}
+
+Target cognitive level: {cognitive_level}
+
+GROUNDING REQUIREMENTS:
+
+1. Every factual claim in the scenario, expected reasoning, reference answer,
+   and rubric MUST be directly supported by the supplied training material.
+
+2. Do NOT introduce outside facts, assumptions, domain knowledge, statistics,
+   policies, procedures, benefits, outcomes, or terminology that are not
+   explicitly supported by the supplied material.
+
+3. If the supplied material is too short to create a realistic scenario without
+   adding outside information, create a scenario using ONLY the concepts that
+   are explicitly present. Do not compensate for missing information with
+   general knowledge.
+
+4. Do not claim that a method is "more accurate", "more reliable", "better",
+   "representative", "efficient", or produces a particular outcome unless
+   that claim is explicitly supported by the supplied material.
+
+SCENARIO REQUIREMENTS:
+
+5. The learner must need to APPLY, ANALYZE, or EVALUATE the supplied material,
+   rather than simply recall a definition.
+
+6. The scenario should represent a realistic professional situation relevant
+   to the supplied training context.
+
+7. The task must require the learner to explain or justify their reasoning.
+
+8. The expected reasoning must identify only reasoning points that can be
+   supported by the supplied material.
+
+9. The reference answer must contain only information supported by the
+   supplied material.
+
+10. The rubric must evaluate the learner's reasoning, application, correctness,
+    and/or justification. Do not score writing style, grammar, or vocabulary.
+
+11. The rubric must contain 2 to 4 criteria.
+
+12. The sum of all rubric criterion max_score values MUST be exactly 10.
+
+13. Use concise, grammatically correct text. Do not concatenate words.
+
+14. Do not invent values for context_data. Use {{}} when no structured data is
+    explicitly provided by the training material.
+
+15. Output ONLY valid JSON. Do not output markdown fences or explanatory text.
+
+Training material:
+{content}
+
+Output exactly ONE JSON object with this structure:
+
+{{
+  "scenario": {{
+    "title": "...",
+    "context": "...",
+    "context_data": {{}},
+    "task": {{
+      "question": "...",
+      "response_type": "structured_text",
+      "instructions": "..."
+    }}
+  }},
+
+  "expected_reasoning": {{
+    "key_points": [
+      "...",
+      "..."
+    ],
+    "reference_answer": "..."
+  }},
+
+  "rubric": {{
+    "criteria": [
+      {{
+        "criterion_id": "C1",
+        "description": "...",
+        "max_score": 4
+      }},
+      {{
+        "criterion_id": "C2",
+        "description": "...",
+        "max_score": 3
+      }},
+      {{
+        "criterion_id": "C3",
+        "description": "...",
+        "max_score": 3
+      }}
+    ],
+    "max_score": 10
+  }},
+
+  "difficulty": "{difficulty}",
+  "cognitive_level": "{cognitive_level}",
+
+  "source": {{
+    "content_reference": "training material supplied to the model"
+  }}
+}}
+
+Allowed difficulty values:
+"easy", "medium", "hard"
+
+Allowed cognitive level values:
+"application", "analysis", "evaluation"
+
+Allowed response_type:
+"structured_text"

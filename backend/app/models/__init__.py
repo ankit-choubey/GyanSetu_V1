@@ -6,6 +6,8 @@ from .evidence import Evidence, EvidenceType
 from .intervention import Intervention
 from .misconception import Misconception
 from .monitoring_event import MonitoringEvent
+from .scenario import ScenarioItem
+from .scenario_attempt import ScenarioAttempt
 from .user import User
 
 __all__ = [
@@ -25,4 +27,6 @@ __all__ = [
     "CompetencyState",
     "Misconception",
     "MonitoringEvent",
+    "ScenarioItem",
+    "ScenarioAttempt",
 ]
