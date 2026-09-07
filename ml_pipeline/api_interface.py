@@ -21,6 +21,7 @@ from ml_pipeline.vector_store import add_chunks, count_chunks
 from ml_pipeline.chatbot import ask_chatbot
 from ml_pipeline.adaptive_selector import select_next_question
 from ml_pipeline.explanation_generator import generate_feedback
+from ml_pipeline.resource_recommender import rank_resources
 
 
 def ingest_training_document(file_path: str, competency: str | None = None) -> dict[str, Any]:
@@ -88,6 +89,21 @@ def get_next_adaptive_mcq(
         item_bank=item_bank,
         session_history=session_history,
         competency=competency,
+    )
+
+
+def recommend_learning_resources(
+    resources: list[dict[str, Any]],
+    competency_id: int | None = None,
+    subskill_id: int | None = None,
+    gap_reason: str | None = None,
+) -> list[dict[str, Any]]:
+    """Ranks normalized learning resources against a learner gap."""
+    return rank_resources(
+        resources=resources,
+        competency_id=competency_id,
+        subskill_id=subskill_id,
+        gap_reason=gap_reason,
     )
 
 
