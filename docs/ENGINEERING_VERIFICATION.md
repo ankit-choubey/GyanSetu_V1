@@ -823,3 +823,73 @@ All 15 required Phase 7 scenarios (A through O) are verified in `backend/tests/t
  ALL 10 PHASE 7 END-TO-END VERIFICATION STEPS PASSED SUCCESSFULLY!
 ===========================================================================
 ```
+
+---
+
+# PHASE 5.X — Production-Grade Modular Scenario, Content Ingestion & Practical Learning Backend
+
+## 1. Objectives & Scope
+Phase 5.x solidifies the **backend engineering system-of-record** for situated scenarios, modular content ingestion, and practical competency verification:
+- **5.2b Scenario Backend**: Relational domain models (`Scenario`, `ScenarioAttempt`, `ScenarioResponse`, `ScenarioEvaluation`), boundary interfaces (`ScenarioGenerator`, `ScenarioEvaluator`), evidence emission (`EvidenceType.APPLICATION_SCENARIO`), real-time Bayesian competency updating, learner isolation, and idempotency.
+- **5.3b Content Backend**: Modular ingestion pipeline (`ContentAsset`, `ContentVersion`, `ContentChunk`, `ProcessingJob`), strict state machine transitions (`UPLOADED` $\to$ `VALIDATING` $\to$ `PROCESSING` $\to$ `EXTRACTED` $\to$ `STRUCTURED` $\to$ `MAPPED` $\to$ `READY`/`FAILED`/`RETIRED`), pluggable interfaces (`ContentExtractor`, `ContentParser`, `ContentChunker`, `ContentMapper`, `AssessmentGenerator`), checksum duplicate handling, admin controls, candidate assessment validation.
+- **5.4 Practical Learning Hardening**: Preserve and harden existing Phase 5 practical models (`PracticalTask`, `PracticalAttempt`, `PracticalEvaluator`, `recalculate_competency_state`), verify non-mastery rule, tolerance rules, and review-required states.
+- **Zero AI/ML Research Alterations**: Pluggable interfaces with deterministic offline baselines. Zero modifications to `ml_pipeline/` research models or weights.
+- **Strict Database Schema Hygiene**: Zero runtime `CREATE TABLE` / `PRAGMA` / `ALTER TABLE` mutations; all schema changes version-controlled via Alembic migration (`f1a2b3c4d5e6`).
+
+## 2. Component Implementation & System Boundaries
+
+| Component | Files Added / Modified | Description & Architectural Guarantees |
+|---|---|---|
+| **Scenario Domain Models** | `backend/app/models/scenario.py` | `Scenario`, `ScenarioAttempt`, `ScenarioResponse`, `ScenarioEvaluation` with UUID attempt tracking, foreign keys to competencies and subskills, JSON evaluation rubrics, and composite status tracking. |
+| **Scenario Intelligence Boundary** | `backend/app/services/scenarios/scenario_interfaces.py`<br>`backend/app/services/scenarios/scenario_service.py` | `ScenarioGenerator` and `ScenarioEvaluator` Protocol boundaries. `DeterministicScenarioGenerator` and `DeterministicScenarioEvaluator` baselines. Strict taxonomy link validation (`CandidateValidationError`), evidence emission (`APPLICATION_SCENARIO`, confidence 0.85), real-time mastery recalculation. |
+| **Scenario API Router** | `backend/app/routers/scenarios.py`<br>`backend/app/schemas/scenario.py` | REST endpoints `/api/scenarios`, `/api/scenarios/{id}`, `/api/scenarios/{id}/start`, `/api/scenarios/attempts/{id}/submit`, `/api/scenarios/attempts/{id}`. Strict learner attempt isolation and idempotency-key deduplication. |
+| **Content Ingestion Domain Models** | `backend/app/models/content.py` | `ContentAsset`, `ContentVersion`, `ContentChunk`, `ProcessingJob`. Track SHA-256 checksums, chunk token counts, taxonomy links, pipeline stage transitions, and job retry counts. |
+| **Content Ingestion Pipeline** | `backend/app/services/content/content_interfaces.py`<br>`backend/app/services/content/content_service.py` | 8-stage state machine (`UPLOADED` through `READY` / `FAILED` / `RETIRED`). Interfaces for `ContentExtractor`, `ContentParser`, `ContentChunker`, `ContentMapper`, and `AssessmentGenerator`. Idempotent duplicate detection, failed job retry queue. |
+| **Content API Router** | `backend/app/routers/content.py`<br>`backend/app/schemas/content.py` | REST endpoints `/api/content/upload`, `/api/content`, `/api/content/{id}`, `/api/content/{id}/process`, `/api/content/{id}/chunks`, `/api/content/jobs/{id}/retry`, `/api/content/{id}/retire`. Multipart upload validation (max 50MB, MIME verification), RBAC restrictions. |
+| **Practical Learning Hardening** | `backend/app/services/practical/practical_service.py`<br>`backend/app/services/practical/deterministic_evaluator.py` | Hardened `PracticalService` to accept `Idempotency-Key`, enforce numerical tolerance checks, non-mastery rule on failure (`passed == False` caps mastery), and `REVIEW_REQUIRED` state preservation. |
+| **Alembic Migration** | `backend/migrations/versions/f1a2b3c4d5e6_add_phase_5x_scenario_and_content.py` | Idempotent migration creating 8 relational tables (`scenarios`, `scenario_attempts`, `scenario_responses`, `scenario_evaluations`, `content_assets`, `content_versions`, `content_chunks`, `processing_jobs`) with indexed foreign keys. |
+| **Integration Contracts** | `docs/BACKEND_ML_INTEGRATION_CONTRACT.md`<br>`docs/BACKEND_FRONTEND_API_CONTRACT.md` | Comprehensive boundary contracts defining Protocol interfaces, Pydantic DTO schemas, fallback chains, REST endpoints, and error handling. |
+
+## 3. Test Accounting & Distinct Metrics Breakdown
+
+### 3.1 Distinct Metrics Summary
+- **Backend Pytest Unit & Integration Tests**: **259 test cases** (`backend/tests/`)
+  - Phase 5.2b Scenario Suite: 18 / 18 passed (`test_task_5_2b_scenario.py`)
+  - Phase 5.3b Content Ingestion Suite: 20 / 20 passed (`test_task_5_3b_content.py`)
+  - Phase 5.4 Practical Learning Suite: 22 / 22 passed (`test_task_5_4_practical.py`)
+  - Frozen Phase 1-5 & Phase 7 Suites: 199 / 199 passed
+- **Cross-Layer System Tests**: **1 test case** (`tests/system/test_cross_layer_system.py`)
+- **Total Pytest Regression Suite**: **260 passed (100%)**
+- **Runtime E2E Verification Steps**: **60 test cases across 3 specialized runners**:
+  - `scripts/verify_task_5_2b_e2e.py`: **18 / 18 steps passed**
+  - `scripts/verify_task_5_3b_e2e.py`: **20 / 20 steps passed**
+  - `scripts/verify_task_5_4_e2e.py`: **22 / 22 steps passed**
+
+### 3.2 Master Verification Runner Scorecard (`scripts/verify_backend_5x.py`)
+
+```
+================================================================================
+FINAL 5.X VERIFICATION SCORECARD
+================================================================================
+5.2b SCENARIO             ........ PASS
+5.3b CONTENT              ........ PASS
+5.4 PRACTICAL             ........ PASS
+AUTH/RBAC                 ........ PASS
+DB/MIGRATION              ........ PASS
+ML CONTRACT               ........ PASS
+FRONTEND CONTRACT         ........ PASS
+REGRESSION                ........ PASS
+--------------------------------------------------------------------------------
+TOTAL BACKEND TEST CASES:    259
+TOTAL SYSTEM TEST CASES:     1
+TOTAL E2E SCENARIOS/STEPS:   60
+FAILED TESTS:                0
+  - NONE
+--------------------------------------------------------------------------------
+KNOWN LIMITATIONS:
+  1. Document extraction uses deterministic text/layout parser; multi-page OCR requires external Tesseract/Vision API.
+  2. Scenario generation uses DeterministicScenarioGenerator baseline; LLMScenarioGenerator is a pluggable boundary.
+  3. Practical tasks execute official-statistics-aligned simulations in SANDBOX mode; live TPAC integration not claimed.
+================================================================================
+```
+

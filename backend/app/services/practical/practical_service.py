@@ -46,10 +46,24 @@ class PracticalService:
         ).scalar_one_or_none()
 
     @staticmethod
-    def start_attempt(db: Session, user_id: int, task_id_or_int: str | int) -> PracticalAttempt:
+    def start_attempt(
+        db: Session,
+        user_id: int,
+        task_id_or_int: str | int,
+        idempotency_key: str | None = None,
+    ) -> PracticalAttempt:
         task = PracticalService.get_task(db, task_id_or_int)
         if not task:
             raise ValueError(f"Practical task '{task_id_or_int}' not found.")
+
+        if idempotency_key:
+            existing = db.execute(
+                select(PracticalAttempt).where(PracticalAttempt.idempotency_key == idempotency_key)
+            ).scalar_one_or_none()
+            if existing:
+                if existing.user_id != user_id:
+                    raise PermissionError("Idempotency key belongs to another user.")
+                return existing
 
         attempt_id = f"pr_att_{uuid.uuid4().hex[:12]}"
         attempt = PracticalAttempt(
@@ -59,6 +73,7 @@ class PracticalService:
             status=AttemptStatus.STARTED.value,
             task_version=task.version,
             rubric_version=task.rubric_version,
+            idempotency_key=idempotency_key,
             started_at=datetime.now(timezone.utc),
         )
         db.add(attempt)

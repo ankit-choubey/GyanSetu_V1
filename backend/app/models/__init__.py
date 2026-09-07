@@ -25,6 +25,22 @@ from .practical import (
     PracticalTask,
 )
 from .recommendation import RecommendationRecord
+from .scenario import (
+    Scenario,
+    ScenarioAttempt,
+    ScenarioAttemptStatus,
+    ScenarioEvaluation,
+    ScenarioResponse,
+    ScenarioStatus,
+)
+from .content import (
+    ContentAsset,
+    ContentChunk,
+    ContentStatus,
+    ContentVersion,
+    JobStatus,
+    ProcessingJob,
+)
 from .user import User
 
 __all__ = [
@@ -60,6 +76,18 @@ __all__ = [
     "ModelRegistryRecord",
     "ModelStatus",
     "WorkforceAuditLog",
+    "Scenario",
+    "ScenarioAttempt",
+    "ScenarioResponse",
+    "ScenarioEvaluation",
+    "ScenarioStatus",
+    "ScenarioAttemptStatus",
+    "ContentAsset",
+    "ContentVersion",
+    "ContentChunk",
+    "ProcessingJob",
+    "ContentStatus",
+    "JobStatus",
 ]
 
 

@@ -93,14 +93,19 @@ def get_task(
 @router.post("/tasks/{task_identifier}/attempts", response_model=PracticalAttemptRead)
 def start_attempt(
     task_identifier: str,
+    idempotency_key: str | None = Query(None, description="Optional idempotency key"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> PracticalAttemptRead:
     try:
-        attempt = PracticalService.start_attempt(db, current_user.id, task_identifier)
+        attempt = PracticalService.start_attempt(
+            db, current_user.id, task_identifier, idempotency_key=idempotency_key
+        )
         return _format_attempt_read(attempt)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    except PermissionError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc))
 
 
 @router.get("/attempts", response_model=list[PracticalAttemptRead])

@@ -16,6 +16,7 @@ from app.routers.intervention import router as intervention_router
 from app.routers.misconception import router as misconception_router
 from app.routers.monitoring import router as monitoring_router
 from app.routers.practical import router as practical_router
+from app.routers.scenarios import router as scenarios_router
 from app.routers.users import router as users_router
 from app.routers.workforce import router as workforce_router
 
@@ -76,6 +77,7 @@ app.include_router(monitoring_router, prefix="/api")
 app.include_router(intervention_router, prefix="/api")
 app.include_router(ecosystem_router, prefix="/api")
 app.include_router(practical_router, prefix="/api")
+app.include_router(scenarios_router, prefix="/api")
 app.include_router(workforce_router, prefix="/api")
 
 
