@@ -189,3 +189,28 @@ def get_competency_history(
         )
         for r in records
     ]
+
+
+@router.get("/competency/timeline")
+def get_learner_longitudinal_timeline(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Retrieves multi-competency longitudinal progression timeline for the authenticated learner."""
+    from app.services.longitudinal_analytics_service import LongitudinalAnalyticsService
+    return LongitudinalAnalyticsService.get_learner_timeline(db, user_id=user.id)
+
+
+@router.get("/competency/timeline/{competency_id}")
+def get_learner_competency_longitudinal_history(
+    competency_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Retrieves detailed longitudinal state transitions and evidence trajectory for a specific competency."""
+    from app.services.longitudinal_analytics_service import LongitudinalAnalyticsService
+    res = LongitudinalAnalyticsService.get_competency_history(db, user_id=user.id, competency_id=competency_id)
+    if "error" in res:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=res["error"])
+    return res
+

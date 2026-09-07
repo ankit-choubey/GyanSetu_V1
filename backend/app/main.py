@@ -19,6 +19,7 @@ from app.routers.practical import router as practical_router
 from app.routers.scenarios import router as scenarios_router
 from app.routers.users import router as users_router
 from app.routers.workforce import router as workforce_router
+from app.routers.governance import router as governance_router
 
 
 app = FastAPI(
@@ -79,6 +80,7 @@ app.include_router(ecosystem_router, prefix="/api")
 app.include_router(practical_router, prefix="/api")
 app.include_router(scenarios_router, prefix="/api")
 app.include_router(workforce_router, prefix="/api")
+app.include_router(governance_router, prefix="/api")
 
 
 @app.get("/health")

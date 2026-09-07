@@ -41,6 +41,7 @@ from .content import (
     JobStatus,
     ProcessingJob,
 )
+from .audit import AuditEvent
 from .user import User
 
 __all__ = [
@@ -88,6 +89,7 @@ __all__ = [
     "ProcessingJob",
     "ContentStatus",
     "JobStatus",
+    "AuditEvent",
 ]
 
 
