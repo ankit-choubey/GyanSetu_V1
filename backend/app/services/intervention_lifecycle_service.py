@@ -40,13 +40,25 @@ class InterventionLifecycleService:
         if not rec:
             raise ValueError(f"Recommendation '{recommendation_id}' not found for user {user.id}")
 
-        valid_actions = {"ACCEPTED", "REJECTED", "SKIPPED"}
+        action_map = {
+            "ACCEPT": "ACCEPTED",
+            "ACCEPTED": "ACCEPTED",
+            "REJECT": "REJECTED",
+            "REJECTED": "REJECTED",
+            "SKIP": "SKIPPED",
+            "SKIPPED": "SKIPPED",
+            "COMPLETE": "COMPLETED",
+            "COMPLETED": "COMPLETED",
+            "START": "STARTED",
+            "STARTED": "STARTED",
+        }
         normalized = action.strip().upper()
-        if normalized not in valid_actions:
-            raise ValueError(f"Invalid feedback action '{action}'. Must be one of {valid_actions}")
+        if normalized not in action_map:
+            raise ValueError(f"Invalid feedback action '{action}'. Must be one of {set(action_map.keys())}")
 
-        rec.status = normalized
-        rec.feedback_notes = notes
+        rec.status = action_map[normalized]
+        if notes:
+            rec.feedback_notes = notes
         rec.updated_at = datetime.now(timezone.utc)
         db.commit()
         db.refresh(rec)

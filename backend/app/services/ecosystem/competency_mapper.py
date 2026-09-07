@@ -36,6 +36,13 @@ CURATED_TAXONOMY_ALIASES: dict[str, tuple[str, str | None]] = {
 }
 
 
+# Subskill aliases for cross-competency mismatch validation
+CURATED_SUB_ALIASES: dict[str, tuple[str, str | None]] = {
+    "cpi compilation": ("Index Numbers", "Price relatives"),
+    "consumer price index compilation": ("Index Numbers", "Price relatives"),
+}
+
+
 class CompetencyMappingService:
     """Service to normalize and validate external provider competency terminology into GyanSetu system-of-record."""
 
@@ -68,15 +75,57 @@ class CompetencyMappingService:
         clean_comp = competency_hint.strip().lower()
         clean_sub = subskill_hint.strip().lower() if subskill_hint else None
 
+        # Helper to validate subskill belongs to competency
+        def _resolve_subskill(comp_id: int, sub_name_clean: str | None) -> tuple[int | None, str | None, bool]:
+            if not sub_name_clean:
+                return None, None, True
+            s_obj = self._subskills.get(sub_name_clean)
+            if not s_obj:
+                # Subskill name not directly in dictionary; check partial
+                for s_key, s_val in self._subskills.items():
+                    if sub_name_clean in s_key or s_key in sub_name_clean:
+                        s_obj = s_val
+                        break
+            if s_obj:
+                if s_obj.competency_id == comp_id:
+                    return s_obj.id, s_obj.name, True
+                else:
+                    # Mismatch: subskill belongs to a DIFFERENT competency!
+                    return None, None, False
+
+            # Check curated subskill aliases
+            if sub_name_clean in CURATED_SUB_ALIASES:
+                target_comp_name, canonical_sub = CURATED_SUB_ALIASES[sub_name_clean]
+                target_comp = self._competencies.get(target_comp_name.lower())
+                if target_comp:
+                    if target_comp.id == comp_id:
+                        sub_resolved = self._subskills.get(canonical_sub.lower()) if canonical_sub else None
+                        return sub_resolved.id if sub_resolved else None, canonical_sub, True
+                    else:
+                        # Mismatch: subskill alias belongs to another competency!
+                        return None, None, False
+
+            return None, None, False
+
         # 1. Exact Match against Canonical Competencies
         if clean_comp in self._competencies:
             comp_obj = self._competencies[clean_comp]
-            sub_obj = self._subskills.get(clean_sub) if clean_sub else None
+            sub_id, sub_name, sub_valid = _resolve_subskill(comp_obj.id, clean_sub)
+            if not sub_valid:
+                return MappingResolution(
+                    competency_id=comp_obj.id,
+                    subskill_id=None,
+                    competency_name=comp_obj.name,
+                    subskill_name=subskill_hint,
+                    status="UNDER_REVIEW",
+                    confidence=0.30,
+                    reason=f"Invalid mapping: subskill '{subskill_hint}' does not belong to competency '{comp_obj.name}'",
+                )
             return MappingResolution(
                 competency_id=comp_obj.id,
-                subskill_id=sub_obj.id if sub_obj else None,
+                subskill_id=sub_id,
                 competency_name=comp_obj.name,
-                subskill_name=sub_obj.name if sub_obj else None,
+                subskill_name=sub_name,
                 status="VERIFIED",
                 confidence=1.0,
                 reason=f"Exact match against canonical MoSPI competency '{comp_obj.name}'",
@@ -86,13 +135,24 @@ class CompetencyMappingService:
         if clean_comp in CURATED_TAXONOMY_ALIASES:
             canonical_comp_name, canonical_sub_name = CURATED_TAXONOMY_ALIASES[clean_comp]
             comp_obj = self._competencies.get(canonical_comp_name.lower())
-            sub_obj = self._subskills.get(canonical_sub_name.lower()) if canonical_sub_name else None
             if comp_obj:
+                effective_sub = clean_sub or (canonical_sub_name.lower() if canonical_sub_name else None)
+                sub_id, sub_name, sub_valid = _resolve_subskill(comp_obj.id, effective_sub)
+                if not sub_valid:
+                    return MappingResolution(
+                        competency_id=comp_obj.id,
+                        subskill_id=None,
+                        competency_name=comp_obj.name,
+                        subskill_name=subskill_hint,
+                        status="UNDER_REVIEW",
+                        confidence=0.30,
+                        reason=f"Invalid mapping: subskill '{subskill_hint}' does not belong to competency '{comp_obj.name}'",
+                    )
                 return MappingResolution(
                     competency_id=comp_obj.id,
-                    subskill_id=sub_obj.id if sub_obj else None,
+                    subskill_id=sub_id,
                     competency_name=comp_obj.name,
-                    subskill_name=sub_obj.name if sub_obj else None,
+                    subskill_name=sub_name,
                     status="CURATED",
                     confidence=0.95,
                     reason=f"Resolved via curated synonym alias: '{competency_hint}' -> '{canonical_comp_name}'",
@@ -141,3 +201,18 @@ class CompetencyMappingService:
             confidence=0.20,
             reason=f"Unrecognized provider taxonomy concept '{competency_hint}' quarantined under review",
         )
+
+    def validate_mapping(self, competency_id: int | None, subskill_id: int | None = None) -> tuple[bool, str]:
+        """Strictly validate whether a competency exists and whether subskill belongs to it."""
+        if competency_id is None:
+            return False, "Competency ID is None (does not exist)"
+        comp = self.db.get(Competency, competency_id)
+        if not comp:
+            return False, f"Competency ID {competency_id} does not exist in canonical taxonomy"
+        if subskill_id is not None:
+            sub = self.db.get(SubSkill, subskill_id)
+            if not sub:
+                return False, f"SubSkill ID {subskill_id} does not exist in canonical taxonomy"
+            if sub.competency_id != competency_id:
+                return False, f"SubSkill ID {subskill_id} belongs to Competency ID {sub.competency_id}, not {competency_id}"
+        return True, "Mapping is valid"

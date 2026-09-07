@@ -135,6 +135,23 @@ def register_intervention(
 # Recommendation & Next Best Action Endpoints
 # ---------------------------------------------------------------------------
 
+@router.get("/recommendations", response_model=list[RecommendationResponse])
+def list_user_recommendations(
+    status_filter: str | None = Query(default=None, alias="status"),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[RecommendationResponse]:
+    """List recommendations for the authenticated learner with strict isolation."""
+    query = select(RecommendationRecord).where(RecommendationRecord.user_id == current_user.id)
+    if status_filter:
+        query = query.where(RecommendationRecord.status == status_filter)
+    query = query.order_by(RecommendationRecord.id.desc()).offset(offset).limit(limit)
+    records = db.execute(query).scalars().all()
+    return [_format_recommendation_response(r, db) for r in records]
+
+
 @router.post("/recommendations/next-best-action", response_model=RecommendationResponse)
 def compute_next_best_action(
     payload: NextBestActionRequest | None = None,
@@ -143,6 +160,37 @@ def compute_next_best_action(
 ) -> RecommendationResponse:
     target_comp_id = payload.competency_id if payload else None
     rec = nba_service.get_next_best_action(db, learner=current_user, competency_id=target_comp_id)
+    return _format_recommendation_response(rec, db)
+
+
+@router.post("/recommendations/next", response_model=RecommendationResponse)
+def compute_next_recommendation(
+    payload: NextBestActionRequest | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> RecommendationResponse:
+    """Canonical alias for next best recommendation."""
+    target_comp_id = payload.competency_id if payload else None
+    rec = nba_service.get_next_best_action(db, learner=current_user, competency_id=target_comp_id)
+    return _format_recommendation_response(rec, db)
+
+
+@router.get("/recommendations/{recommendation_id}", response_model=RecommendationResponse)
+def get_recommendation_details(
+    recommendation_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> RecommendationResponse:
+    """Get single recommendation details with strict learner isolation."""
+    rec = db.execute(
+        select(RecommendationRecord).where(
+            RecommendationRecord.recommendation_id == recommendation_id
+        )
+    ).scalar_one_or_none()
+    if not rec:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recommendation not found")
+    if rec.user_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access to recommendation prohibited")
     return _format_recommendation_response(rec, db)
 
 
@@ -238,6 +286,7 @@ def start_recommended_intervention(
 # ---------------------------------------------------------------------------
 
 @router.post("/interventions/{intervention_id}/outcome", response_model=InterventionOutcomeResponse)
+@router.post("/interventions/{intervention_id}/outcomes", response_model=InterventionOutcomeResponse)
 def record_intervention_outcome(
     intervention_id: int,
     payload: InterventionOutcomeRequest,
@@ -259,3 +308,25 @@ def record_intervention_outcome(
         return InterventionOutcomeResponse.model_validate(outcome)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post("/interventions/{intervention_id}/launch")
+def launch_intervention(
+    intervention_id: int,
+    payload: dict[str, Any] | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> dict[str, Any]:
+    from app.services.ecosystem.outcome_service import EcosystemOutcomeService
+    outcome_service = EcosystemOutcomeService(db)
+    result = outcome_service.launch_intervention(intervention_id=intervention_id, current_user=current_user)
+    return {
+        "provider": result.provider,
+        "provider_resource_id": result.provider_resource_id,
+        "session_id": result.provider_activity_id,
+        "launch_url": result.launch_url,
+        "status": result.status,
+        "integration_mode": result.integration_mode,
+        "launched_at": result.launched_at.isoformat(),
+    }
+

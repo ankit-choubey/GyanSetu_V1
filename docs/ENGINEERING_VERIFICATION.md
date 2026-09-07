@@ -893,3 +893,98 @@ KNOWN LIMITATIONS:
 ================================================================================
 ```
 
+---
+
+# PHASE 6.X — Production-Grade Ecosystem Adapters, Workforce Intelligence & Recommendation Backend
+
+## 1. Objectives & Scope
+Phase 6.x completes the backend engineering responsibilities for external ecosystem integration, organizational workforce intelligence, and transparent recommendations with observable explainability:
+- **6.1 Ecosystem Adapters**:
+  - Integration modes (`LIVE`, `SANDBOX`, `REPLAY`, `UNAVAILABLE`) with runtime health checks and fallback handling.
+  - Canonical normalization via `CanonicalInterventionPayload` across disparate providers (iGOT Karmayogi, DIKSHA, SWAYAM, MoSPI Internal, NSSTA).
+  - Strict competency taxonomy mapping validation with `UNDER_REVIEW` quarantine for ambiguous or unmapped external titles.
+  - 180-day staleness threshold rejection for outdated external catalog items.
+  - Secure launch lifecycle token issuance and outcome webhook ingestion emitting verified evidence into the learner competency ledger.
+  - Non-mastery rule enforcement: non-passing or incomplete external outcomes cap mastery at 0.50 and prevent automatic verification.
+- **6.2 Workforce Intelligence**:
+  - Organizational aggregation across roles, competencies, subskills, and administrative cohorts.
+  - $N < 5$ privacy suppression protecting small cohorts against individual deanonymization.
+  - Safe mathematical division handling zero-learners and zero-evidence cases without NaN/div-by-zero errors.
+  - Confidence triage categorizing evidence reliability into high, medium, and low bands.
+  - Four-Fifths rule fairness diagnostic across institutional roles and demographic cohorts.
+  - Zero demographic fabrication: gracefully handles absent demographic data without fabricating synthetic protected attributes.
+- **6.3 Recommendation & Explainability**:
+  - Full recommendation lifecycle (`PROPOSED`, `ACCEPTED`, `STARTED`, `COMPLETED`, `SKIPPED`, `REJECTED`).
+  - Standardized candidate rejection reason codes (`PREREQUISITE_NOT_MET`, `POLICY_EXCLUDED`, `ALREADY_COMPLETED`, `RESOURCE_STALE`, `PROVIDER_UNAVAILABLE`).
+  - Data-grounded explainability derived strictly from observable signals (competency gap, recent evidence, target misconception, priority level).
+  - Strict exclusion of unsupported psychological/cognitive inferences ("lazy", "anxious", "demotivated").
+  - Cold-start handling for unassessed learners using role baseline priorities.
+  - Idempotent recommendation feedback submissions.
+- **6.4 Integration Governance, Extensibility & Reliability**:
+  - Complete end-to-end learning-remediation system loop from assessment failure to intervention launch and competency recovery.
+  - Extensibility contract verified via pluggable `MockSwayamAdapter`.
+  - ML candidate ranking plug-in contract verified via `MLCandidatePluginInterface`.
+  - Frontend OpenAPI contract surface verification for all Phase 6 routes.
+  - Database transaction integrity and workforce audit logging.
+- **Strict Constraints**:
+  - Zero ML research model modifications (`ml_pipeline/` remains pristine).
+  - Zero runtime DB schema mutations (Alembic head `f1a2b3c4d5e6` remains authoritative).
+
+## 2. Component Implementation & System Boundaries
+
+| Component | Files Added / Modified | Description & Architectural Guarantees |
+|---|---|---|
+| **Ecosystem Adapters** | `backend/app/services/adapters/base_adapter.py`<br>`backend/app/services/adapters/provider_adapters.py`<br>`backend/app/services/adapters/__init__.py` | Base `InterventionAdapter` ABC with `CanonicalInterventionPayload` normalization. Provider implementations: `IgotAdapter`, `DikshaAdapter`, `SwayamAdapter`, `MospiInternalAdapter`, `NsstaAdapter`. Support for `LIVE`, `SANDBOX`, `REPLAY`, `UNAVAILABLE` modes with dynamic availability toggles. |
+| **Competency Mapping Service** | `backend/app/services/ecosystem/competency_mapper.py`<br>`backend/app/services/ecosystem/sync_service.py` | Strict string normalization and subskill mapping with curated aliases. Unmatched or cross-competency mismatched items quarantined as `UNDER_REVIEW` (confidence $\le 0.20$). Stale item detection (> 180 days). Idempotent upsert deduplication by `(provider, source_id)`. |
+| **Intervention Lifecycle & Outcomes** | `backend/app/services/intervention_lifecycle_service.py`<br>`backend/app/services/ecosystem/outcome_service.py` | Signed launch token generation with 30-minute expiry. External outcome ingestion with score normalization, evidence ledger emission (`EvidenceType.TRAINING_HISTORY`), and non-mastery rule enforcement. |
+| **Workforce Intelligence** | `backend/app/services/workforce_intelligence.py`<br>`backend/app/routers/workforce.py` | Aggregates role mastery, competency coverage, and gap distributions. Enforces $N < 5$ cell suppression returning `"privacy_suppressed": True`. Zero demographic fabrication. Four-fifths role fairness auditing. Administrative audit logging into `WorkforceAuditLog`. |
+| **Recommendation Engine & Eligibility** | `backend/app/services/eligibility_engine.py`<br>`backend/app/services/next_best_action_service.py`<br>`backend/app/routers/intervention.py` | Granular candidate eligibility screening returning standardized reason codes. Backward-compatible `EligibilityStatus` string subclass. Observable data-grounded explainability generation. Pluggable ML candidate ranker boundary. Recommendation persistence and idempotent feedback. |
+| **Ecosystem & Workforce Schemas** | `backend/app/schemas/ecosystem.py`<br>`backend/app/schemas/workforce.py`<br>`backend/app/schemas/recommendation.py` | Type-safe Pydantic DTO contracts for sync summaries, health checks, launch payloads, workforce metrics, recommendations, and explanations. |
+
+## 3. Test Accounting & Distinct Metrics Breakdown
+
+### 3.1 Distinct Metrics Summary
+- **Backend Pytest Unit & Integration Tests**: **321 test cases** (`backend/tests/`)
+  - Phase 6.1 Ecosystem Adapters Suite: 20 / 20 passed (`test_task_6_1_ecosystem.py`)
+  - Phase 6.2 Workforce Intelligence Suite: 20 / 20 passed (`test_task_6_2_workforce.py`)
+  - Phase 6.3 Recommendation & Explainability Suite: 22 / 22 passed (`test_task_6_3_recommendation.py`)
+  - Phase 1–5 & Phase 7 Regression Suites: 259 / 259 passed
+- **Cross-Layer System Tests**: **7 test cases** (`tests/system/`)
+  - Phase 5 Cross-Layer System Test: 1 / 1 passed (`test_cross_layer_system.py`)
+  - Phase 6 System Integration Suite: 6 / 6 passed (`test_task_6_backend_integration.py`)
+- **Total Pytest Regression Suite**: **328 passed (100%)**
+- **Runtime E2E Verification Steps**: **62 test cases across 3 specialized runners**:
+  - `scripts/verify_task_6_1_e2e.py`: **20 / 20 steps passed**
+  - `scripts/verify_task_6_2_e2e.py`: **20 / 20 steps passed**
+  - `scripts/verify_task_6_3_e2e.py`: **22 / 22 steps passed**
+
+### 3.2 Master Verification Runner Scorecard (`scripts/verify_backend_6x.py`)
+
+```
+================================================================================
+FINAL 6.X VERIFICATION SCORECARD
+================================================================================
+6.1 ECOSYSTEM ADAPTERS              ........ PASS
+6.2 WORKFORCE INTELLIGENCE          ........ PASS
+6.3 RECOMMENDATION & EXPLAINABILITY ........ PASS
+AUTH/RBAC & ISOLATION               ........ PASS
+PRIVACY & FAIRNESS                  ........ PASS
+REJECTION & GROUNDING               ........ PASS
+6.4 SYSTEM INTEGRATION              ........ PASS
+FULL REGRESSION                     ........ PASS
+--------------------------------------------------------------------------------
+TOTAL BACKEND TEST CASES:    321
+TOTAL SYSTEM TEST CASES:     7
+TOTAL E2E SCENARIOS/STEPS:   62
+FAILED TESTS:                0
+  - NONE
+--------------------------------------------------------------------------------
+KNOWN LIMITATIONS:
+  1. External provider integrations operate in SANDBOX/REPLAY modes unless production credentials and secure network egress are provisioned.
+  2. Demographic fairness screenings are strictly non-fabricating: if protected attributes are absent, fairness audit gracefully indicates missing data rather than fabricating synthetic identities.
+  3. Workforce aggregation suppresses any group/cohort with N < 5 to prevent individual deanonymization.
+  4. Recommendation explanations are grounded exclusively in observable evidence, gap states, and misconception signals; ungrounded psychological traits are rejected.
+================================================================================
+```
+
+

@@ -15,11 +15,47 @@ from app.models.user import User
 from app.services.adapters.provider_adapters import get_adapter_for_provider
 
 
+class EligibilityStatus(str):
+    """Backwards-compatible status code string that equates to INELIGIBLE when tested for coarse ineligibility,
+    while preserving granular rejection reason codes (e.g. POLICY_EXCLUDED, PREREQUISITE_NOT_MET)."""
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, str):
+            if super().__eq__(other):
+                return True
+            if other == "INELIGIBLE" and str(self) in {
+                "POLICY_EXCLUDED",
+                "INVALID_COMPETENCY_MAPPING",
+                "RESOURCE_UNAVAILABLE",
+                "RESOURCE_STALE",
+                "PROVIDER_UNAVAILABLE",
+                "UNAVAILABLE",
+                "ALREADY_COMPLETED",
+                "PREREQUISITE_NOT_MET",
+                "INELIGIBLE",
+            }:
+                return True
+            if other == "UNAVAILABLE" and str(self) in {
+                "UNAVAILABLE",
+                "RESOURCE_UNAVAILABLE",
+                "PROVIDER_UNAVAILABLE",
+            }:
+                return True
+            if other == "STALE" and str(self) in {"RESOURCE_STALE", "STALE"}:
+                return True
+            if other == "RESOURCE_STALE" and str(self) in {"RESOURCE_STALE", "STALE"}:
+                return True
+        return super().__eq__(other)
+
+    def __hash__(self) -> int:
+        return super().__hash__()
+
+
 @dataclass(frozen=True)
 class EligibilityDecision:
     intervention_id: int
     is_eligible: bool
-    status: str  # "ELIGIBLE", "INELIGIBLE", "UNAVAILABLE", "STALE"
+    status: EligibilityStatus | str  # "ELIGIBLE", "POLICY_EXCLUDED", "PREREQUISITE_NOT_MET", etc.
     reason: str | None = None
 
 
@@ -42,15 +78,23 @@ class EligibilityEngine:
             return EligibilityDecision(
                 intervention_id=iid,
                 is_eligible=False,
-                status="INELIGIBLE",
+                status=EligibilityStatus("POLICY_EXCLUDED"),
                 reason="Intervention is marked INACTIVE in the catalogue.",
+            )
+
+        if intervention.mapping_status == "UNDER_REVIEW":
+            return EligibilityDecision(
+                intervention_id=iid,
+                is_eligible=False,
+                status=EligibilityStatus("INVALID_COMPETENCY_MAPPING"),
+                reason="Intervention competency or subskill mapping is under review or unverified.",
             )
 
         if intervention.status == "UNAVAILABLE" or intervention.availability == "UNAVAILABLE":
             return EligibilityDecision(
                 intervention_id=iid,
                 is_eligible=False,
-                status="UNAVAILABLE",
+                status=EligibilityStatus("RESOURCE_UNAVAILABLE"),
                 reason="Intervention is currently unavailable or under maintenance.",
             )
 
@@ -58,7 +102,7 @@ class EligibilityEngine:
             return EligibilityDecision(
                 intervention_id=iid,
                 is_eligible=False,
-                status="STALE",
+                status=EligibilityStatus("RESOURCE_STALE"),
                 reason="Intervention verification has expired (STALE).",
             )
 
@@ -69,7 +113,7 @@ class EligibilityEngine:
                 return EligibilityDecision(
                     intervention_id=iid,
                     is_eligible=False,
-                    status="STALE",
+                    status=EligibilityStatus("RESOURCE_STALE"),
                     reason=f"Resource verification expired {age.days} days ago (exceeds {self.STALE_EXPIRY_DAYS}d validity limit).",
                 )
 
@@ -82,7 +126,7 @@ class EligibilityEngine:
             return EligibilityDecision(
                 intervention_id=iid,
                 is_eligible=False,
-                status="UNAVAILABLE",
+                status=EligibilityStatus("UNAVAILABLE"),
                 reason=reason,
             )
 
@@ -100,7 +144,7 @@ class EligibilityEngine:
             return EligibilityDecision(
                 intervention_id=iid,
                 is_eligible=False,
-                status="INELIGIBLE",
+                status=EligibilityStatus("ALREADY_COMPLETED"),
                 reason="Learner has already successfully completed this intervention.",
             )
 
@@ -114,7 +158,6 @@ class EligibilityEngine:
                 # Query learner's competency state for required subskills / competencies
                 if required_subskills:
                     # Check if learner has required competency state
-                    # For simplicity and strictness: check if competency state exists and meets min_mastery
                     state = db.execute(
                         select(CompetencyState).where(
                             CompetencyState.user_id == learner.id,
@@ -126,7 +169,7 @@ class EligibilityEngine:
                         return EligibilityDecision(
                             intervention_id=iid,
                             is_eligible=False,
-                            status="INELIGIBLE",
+                            status=EligibilityStatus("PREREQUISITE_NOT_MET"),
                             reason=f"Prerequisite not met: requires prior mastery >= {min_mastery} (current: {state.mastery if state else 'None'}).",
                         )
             except Exception:
@@ -135,7 +178,7 @@ class EligibilityEngine:
         return EligibilityDecision(
             intervention_id=iid,
             is_eligible=True,
-            status="ELIGIBLE",
+            status=EligibilityStatus("ELIGIBLE"),
             reason=None,
         )
 

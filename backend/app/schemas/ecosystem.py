@@ -13,6 +13,10 @@ class ProviderHealthResponse(BaseModel):
     resource_count: int
     details: Optional[str] = None
     checked_at: str
+    last_success: Optional[str] = None
+    error_code: Optional[str] = None
+    message: Optional[str] = None
+    metadata: Optional[dict[str, Any]] = None
 
 
 class ProviderSyncResponse(BaseModel):
@@ -61,6 +65,7 @@ class LaunchInterventionResponse(BaseModel):
 
 
 class EcosystemOutcomeRequest(BaseModel):
+    intervention_id: Optional[int] = None
     status: str = Field(default="COMPLETED")
     completion_score: Optional[float] = Field(default=None, ge=0.0, le=1.0)
     has_post_assessment_evidence: bool = Field(default=False)

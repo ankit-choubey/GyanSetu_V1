@@ -89,6 +89,15 @@ class NextBestActionService:
             rec_id = f"rec_{uuid.uuid4().hex[:12]}"
             explanation = {
                 "why": "Learner competency state is currently UNASSESSED with zero verified evidence.",
+                "primary_reason": "Baseline diagnostic assessment required to establish initial competency state.",
+                "competency_gap": "Unassessed competency (missing evidence != low competency)",
+                "subskill_gap": "Foundational assessment needed before subskill-level prescription",
+                "evidence_support": ["Zero prior evidence records in ledger for target competency"],
+                "learner_context": [f"Role ID: {learner.role_id}" if learner.role_id else "Role unassigned"],
+                "candidate_factors": ["+ Foundational baseline evidence required"],
+                "rejected_candidates": [],
+                "policy_version": self.ranker.POLICY_VERSION,
+                "confidence": 0.0,
                 "positive_factors": ["+ Foundational baseline evidence required"],
                 "negative_factors": ["- Missing evidence must NOT be equated with low competency"],
                 "caution_notes": ["Baseline diagnostic recommended before prescribing learning interventions."],
@@ -209,8 +218,33 @@ class NextBestActionService:
             )
         else:
             sel = ranking_result.selected
+            comp_gap_str = (
+                f"Estimated mastery {state.mastery:.2f} below target standard 0.70"
+                if state and state.mastery is not None
+                else "Unassessed competency gap"
+            )
+            sub_gap_str = f"Target subskill '{sname}'" if sname else "General competency development"
+            ev_support = [
+                f"Evidence count: {state.evidence_count}" if state else "No prior evidence records",
+                f"State status: {state.status}" if state else "State: UNASSESSED",
+            ]
+            if target_misconception and target_misconception.pattern_key:
+                ev_support.append(f"Observed error pattern on misconception '{target_misconception.pattern_key}'")
+
             explanation = {
                 "why": sel.primary_reason,
+                "primary_reason": sel.primary_reason,
+                "competency_gap": comp_gap_str,
+                "subskill_gap": sub_gap_str,
+                "evidence_support": ev_support,
+                "learner_context": [
+                    f"Role ID: {learner.role_id}" if learner.role_id else "Role unassigned",
+                    f"Prior completion status: {len(ranking_result.ranked_options)} eligible candidate(s)",
+                ],
+                "candidate_factors": sel.positive_factors + sel.negative_factors,
+                "rejected_candidates": ranking_result.rejected_candidates,
+                "policy_version": self.ranker.POLICY_VERSION,
+                "confidence": sel.relevance,
                 "positive_factors": sel.positive_factors,
                 "negative_factors": sel.negative_factors,
                 "caution_notes": sel.caution_notes,

@@ -331,3 +331,213 @@ Official statistics simulation and practical task verification.
 | `403 Forbidden` | Learner isolation violation or non-admin access | Show unauthorized access banner. |
 | `404 Not Found` | Scenario, task, or asset does not exist | Show 404 empty state. |
 | `422 Unprocessable` | Schema / type mismatch on payload | Highlight invalid fields in the form. |
+
+---
+
+## 6. Ecosystem Integration Endpoints (`/api/ecosystem`)
+
+Connect external training providers (iGOT Karmayogi, DIKSHA, SWAYAM, MoSPI Internal, NSSTA) into GyanSetu.
+
+### 6.1 Discover Providers
+- **Method**: `GET /api/ecosystem/providers`
+- **Access**: Authenticated
+- **Response 200 OK**:
+```json
+[
+  {
+    "provider_name": "iGOT",
+    "integration_mode": "SANDBOX",
+    "capabilities": ["sync", "launch", "outcome_reporting", "health_check"],
+    "is_available": true
+  }
+]
+```
+
+### 6.2 Provider Health Check
+- **Method**: `GET /api/ecosystem/providers/{provider}/health`
+- **Access**: Authenticated
+- **Response 200 OK**:
+```json
+{
+  "provider": "iGOT",
+  "status": "HEALTHY",
+  "checked_at": "2026-09-08T00:30:00Z",
+  "latency_ms": 42.5,
+  "mode": "SANDBOX"
+}
+```
+
+### 6.3 Synchronize Catalog (Admin Only)
+- **Method**: `POST /api/ecosystem/sync`
+- **Access**: Admin only (`role == "ADMINISTRATOR"`)
+- **Query Parameter**: `provider` (optional `str`, defaults to syncing all providers)
+- **Response 200 OK**:
+```json
+{
+  "iGOT": {
+    "provider": "iGOT",
+    "mode": "SANDBOX",
+    "added_count": 5,
+    "updated_count": 0,
+    "skipped_count": 0,
+    "rejected_count": 1,
+    "total_processed": 6,
+    "synced_at": "2026-09-08T00:30:00Z"
+  }
+}
+```
+
+### 6.4 Launch External Resource
+- **Method**: `POST /api/ecosystem/resources/{intervention_id}/launch`
+- **Access**: Authenticated Learner
+- **Response 200 OK**:
+```json
+{
+  "intervention_id": 42,
+  "launch_url": "https://igotkarmayogi.gov.in/learn/course/IGOT-001?auth_token=eyJhbGci...",
+  "launch_token": "eyJhbGci...",
+  "provider": "iGOT",
+  "expires_in_seconds": 1800
+}
+```
+- **Response 400 Bad Request**: Raised if resource is `STALE` (> 180 days) or `UNDER_REVIEW`.
+- **Response 503 Service Unavailable**: Raised if provider is unavailable.
+
+### 6.5 Webhook Outcome Ingestion
+- **Method**: `POST /api/ecosystem/outcomes/webhook`
+- **Access**: Authenticated / Provider Webhook Secret
+- **Request Body**:
+```json
+{
+  "user_id": 1,
+  "intervention_id": 42,
+  "provider": "iGOT",
+  "provider_activity_id": "ACT-109283",
+  "status": "COMPLETED",
+  "score": 0.88,
+  "time_spent_minutes": 45,
+  "completed_at": "2026-09-08T00:35:00Z"
+}
+```
+- **Response 200 OK**:
+```json
+{
+  "status": "RECORDED",
+  "outcome_id": 108,
+  "evidence_id": 512,
+  "mastery_updated": true,
+  "new_mastery": 0.74
+}
+```
+
+---
+
+## 7. Workforce Intelligence Endpoints (`/api/workforce`)
+
+Organizational aggregations, gap distributions, and institutional fairness audits.
+
+### 7.1 Workforce Overview
+- **Method**: `GET /api/workforce/overview`
+- **Access**: Admin or Supervisor only (`role in ["ADMINISTRATOR", "SUPERVISOR"]`)
+- **Query Parameter**: `cohort_id` (optional `str`), `role_id` (optional `int`)
+- **Response 200 OK**:
+```json
+{
+  "total_workforce": 120,
+  "active_assessed_learners": 95,
+  "assessed_ratio": 0.792,
+  "average_mastery": 0.684,
+  "average_confidence": 0.712,
+  "roles_summary": [
+    {
+      "role_id": 1,
+      "role_name": "Junior Statistical Officer",
+      "headcount": 45,
+      "avg_mastery": 0.65,
+      "privacy_suppressed": false
+    }
+  ]
+}
+```
+- **Privacy Suppression Note**: If any group has fewer than 5 learners ($N < 5$), metrics are masked with `"privacy_suppressed": true` and numeric averages are omitted.
+
+### 7.2 Institutional Fairness Audit
+- **Method**: `GET /api/workforce/fairness`
+- **Access**: Admin only (`role == "ADMINISTRATOR"`)
+- **Response 200 OK**:
+```json
+{
+  "metric": "FOUR_FIFTHS_RULE",
+  "role_selection_disparity": [
+    {
+      "role_name": "Junior Statistical Officer",
+      "qualified_ratio": 0.82,
+      "adverse_impact_flag": false
+    }
+  ],
+  "demographic_screening": {
+    "status": "DEMOGRAPHIC_DATA_ABSENT",
+    "notes": "No synthetic or fabricated demographic data was generated. Compliance screening relies strictly on institutional role distribution."
+  }
+}
+```
+
+---
+
+## 8. Recommendation & Explainability Endpoints (`/api/recommendations`)
+
+Personalized next best actions grounded in observable gap and evidence signals.
+
+### 8.1 Request Next Best Action
+- **Method**: `POST /api/recommendations/next`
+- **Access**: Authenticated Learner
+- **Request Body**:
+```json
+{
+  "competency_id": 1,
+  "subskill_id": 2,
+  "target_duration_minutes": 30
+}
+```
+- **Response 200 OK**:
+```json
+{
+  "recommendation_id": "rec_f8a9b2c3d4",
+  "selected_intervention": {
+    "id": 12,
+    "title": "Stratified Sampling Allocation Fundamentals",
+    "provider": "INTERNAL",
+    "modality": "ONLINE_SELF_PACED",
+    "duration_minutes": 25,
+    "difficulty": "medium"
+  },
+  "explanation": {
+    "primary_reason": "Remediates identified competency gap in Sampling Design (current mastery 0.35)",
+    "competency_gap": 0.65,
+    "evidence_support": "Triggered by incorrect response in Diagnostic session evaluating stratified variance estimation",
+    "priority": "HIGH"
+  },
+  "status": "PROPOSED",
+  "created_at": "2026-09-08T00:40:00Z"
+}
+```
+
+### 8.2 Get Recommendation Details & Explanation
+- **Method**: `GET /api/recommendations/{recommendation_id}`
+- **Method**: `GET /api/recommendations/{recommendation_id}/explanation`
+- **Access**: Authenticated Recommendation Owner (Strict Learner Isolation)
+- **Response 200 OK**: Inspectable explanation and candidate rejection rationale.
+
+### 8.3 Submit Recommendation Feedback
+- **Method**: `POST /api/recommendations/{recommendation_id}/feedback`
+- **Access**: Authenticated Recommendation Owner
+- **Request Body**:
+```json
+{
+  "action": "ACCEPT",
+  "notes": "Enrolled for this morning."
+}
+```
+- **Allowed Actions**: `ACCEPT`, `START`, `COMPLETE`, `SKIP`, `REJECT`.
+- **Response 200 OK**: Idempotent feedback response reflecting current status (`ACCEPTED`, `STARTED`, `COMPLETED`, `SKIPPED`, `REJECTED`).
+

@@ -16,6 +16,8 @@ from .provider_adapters import (
     VirtualLabAdapter,
     get_adapter_for_provider,
     list_all_adapters,
+    register_adapter,
+    unregister_adapter,
 )
 
 __all__ = [
@@ -34,5 +36,7 @@ __all__ = [
     "InternalAdapter",
     "get_adapter_for_provider",
     "list_all_adapters",
+    "register_adapter",
+    "unregister_adapter",
 ]
 

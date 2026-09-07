@@ -28,6 +28,8 @@ class HealthStatus(str, Enum):
     HEALTHY = "HEALTHY"
     DEGRADED = "DEGRADED"
     UNAVAILABLE = "UNAVAILABLE"
+    CONFIGURATION_ERROR = "CONFIGURATION_ERROR"
+    UNKNOWN = "UNKNOWN"
     NOT_CONFIGURED = "NOT_CONFIGURED"
     UNAUTHORIZED = "UNAUTHORIZED"
 
@@ -41,6 +43,10 @@ class ProviderHealth:
     resource_count: int = 0
     details: str | None = None
     checked_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_success: datetime | None = None
+    error_code: str | None = None
+    message: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -51,6 +57,10 @@ class ProviderHealth:
             "resource_count": self.resource_count,
             "details": self.details,
             "checked_at": self.checked_at.isoformat(),
+            "last_success": self.last_success.isoformat() if self.last_success else None,
+            "error_code": self.error_code,
+            "message": self.message or self.details,
+            "metadata": self.metadata,
         }
 
 
@@ -159,6 +169,12 @@ class InterventionAdapter(ABC):
         """Search available provider resources matching query or competency."""
         pass
 
+    def discover_resources(
+        self, query: str | None = None, competency: str | None = None
+    ) -> list[CanonicalInterventionPayload]:
+        """Canonical discovery method conforming to InterventionAdapter contract."""
+        return self.search_resources(query=query, competency=competency)
+
     @abstractmethod
     def get_resource(self, resource_id: str) -> CanonicalInterventionPayload | None:
         """Fetch normalized resource metadata from the provider."""
@@ -168,6 +184,25 @@ class InterventionAdapter(ABC):
     def launch_resource(self, resource_id: str, learner_id: int) -> LaunchResult:
         """Launch or reference external resource, creating a unique provider activity ID."""
         pass
+
+    def launch(self, resource_id: str, learner_id: int) -> LaunchResult:
+        """Canonical launch method conforming to InterventionAdapter contract."""
+        return self.launch_resource(resource_id=resource_id, learner_id=learner_id)
+
+    def record_outcome(
+        self, resource_id: str, learner_id: int, outcome_data: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """Record an outcome on the provider side if supported."""
+        data = outcome_data or {}
+        return {
+            "provider": self.get_provider_name(),
+            "resource_id": resource_id,
+            "learner_id": learner_id,
+            "status": data.get("status", "COMPLETED"),
+            "score": data.get("completion_score"),
+            "recorded_at": datetime.now(timezone.utc).isoformat(),
+            "mode": self.get_integration_mode().value,
+        }
 
     @abstractmethod
     def sync_resources(self) -> list[CanonicalInterventionPayload]:

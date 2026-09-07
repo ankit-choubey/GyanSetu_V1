@@ -33,8 +33,24 @@ class EcosystemOutcomeService:
         if not intervention:
             raise HTTPException(status_code=404, detail="Intervention not found")
 
+        # 1. Verify Resource Freshness
+        if intervention.status == "STALE":
+            raise HTTPException(
+                status_code=400,
+                detail=f"Resource '{intervention.title}' is marked STALE and requires revalidation before launch.",
+            )
+
         adapter: InterventionAdapter = get_adapter_for_provider(intervention.provider)
         res_id = intervention.source_id or str(intervention.id)
+
+        # 2. Verify Provider Availability
+        avail = adapter.check_availability(res_id)
+        if not avail.is_available:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Provider {intervention.provider} is currently unavailable for resource {res_id}: {avail.reason}",
+            )
+
         result = adapter.launch_resource(res_id, current_user.id)
 
         if result.status == "FAILED":
@@ -105,7 +121,7 @@ class EcosystemOutcomeService:
         if has_post_assessment_evidence and completion_score is not None and intervention.competency_id:
             evidence_type = EvidenceType.PRACTICAL_TASK
             if intervention.modality in ("ASSESSMENT", "DIAGNOSTIC"):
-                evidence_type = EvidenceType.ASSESSMENT
+                evidence_type = EvidenceType.KNOWLEDGE_ASSESSMENT
             elif intervention.modality == "VIRTUAL_LAB":
                 evidence_type = EvidenceType.PRACTICAL_TASK
 

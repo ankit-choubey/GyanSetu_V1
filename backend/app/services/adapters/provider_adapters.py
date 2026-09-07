@@ -796,3 +796,13 @@ def get_adapter_for_provider(provider_name: str) -> InterventionAdapter:
 
 def list_all_adapters() -> list[InterventionAdapter]:
     return list(_REGISTRY_ADAPTERS.values())
+
+
+def register_adapter(provider_name: str, adapter: InterventionAdapter) -> None:
+    """Register a new or dynamic provider adapter."""
+    _REGISTRY_ADAPTERS[provider_name.upper().strip()] = adapter
+
+
+def unregister_adapter(provider_name: str) -> None:
+    """Unregister a provider adapter (useful for teardown in extensibility tests)."""
+    _REGISTRY_ADAPTERS.pop(provider_name.upper().strip(), None)

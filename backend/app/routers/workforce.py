@@ -158,6 +158,15 @@ def read_data_quality_audit(
     return res
 
 
+@router.get("/quality")
+def read_workforce_quality(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin),
+) -> Dict[str, Any]:
+    """Canonical alias for data quality audit diagnostics."""
+    return read_data_quality_audit(db=db, admin=admin)
+
+
 @router.get("/insights")
 def read_administrative_insights(
     db: Session = Depends(get_db),

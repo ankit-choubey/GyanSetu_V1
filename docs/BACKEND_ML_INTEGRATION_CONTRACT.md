@@ -279,3 +279,48 @@ Before submitting any new ML adapter:
 2. Ensure all output models match the exact Pydantic DTO definitions.
 3. Catch all network, API, and timeout exceptions internally and return a structured fallback result or raise the specific domain exception (`CandidateValidationError`, `ContentExtractionError`).
 4. Run `backend/.venv/bin/pytest backend/tests/test_task_5_2b_scenario.py backend/tests/test_task_5_3b_content.py backend/tests/test_task_5_4_practical.py` to confirm zero regression against backend contracts.
+
+---
+
+## 7. Phase 6 Recommendation Candidate Plug-in Contract
+
+Defined in `backend/app/services/next_best_action_service.py` and `tests/system/test_task_6_backend_integration.py`.
+
+### 7.1 Interface Specification (`MLCandidatePluginInterface`)
+
+External recommendation and ranking models (e.g. contextual bandits, reinforcement learning, collaborative filtering) interact with GyanSetu via the `MLCandidatePluginInterface`:
+
+```python
+class MLCandidatePluginInterface(Protocol):
+    def rank_candidates(
+        self,
+        learner_id: int,
+        competency_id: int,
+        subskill_id: int | None,
+        candidate_ids: list[int],
+        context: dict[str, Any] | None = None,
+    ) -> list[int]:
+        """Rank eligible candidate intervention IDs.
+        
+        Must return a permutation or subset of the provided candidate_ids.
+        """
+        ...
+```
+
+### 7.2 Authoritative Eligibility Gatekeeper
+1. **Backend Filtering Precedence**: The backend `EligibilityEngine` evaluates every intervention candidate BEFORE and AFTER ranking. Even if an external ML model ranks a candidate #1, the candidate is discarded if it violates any institutional rule:
+   - `PREREQUISITE_NOT_MET`: Subskill or mastery prerequisites not satisfied.
+   - `POLICY_EXCLUDED`: Institutional policy (e.g. non-repeat course) excludes candidate.
+   - `ALREADY_COMPLETED`: Non-repeatable resource already completed by learner.
+   - `RESOURCE_STALE`: Resource has not been re-verified within 180 days.
+   - `PROVIDER_UNAVAILABLE`: External provider health check fails.
+2. **Deterministic Fallback**: If the ML candidate plug-in raises an exception, times out (> 1000ms), or returns an empty list, `NextBestActionService` falls back to deterministic rule-based ranking:
+   - Priority weight (HIGH > MEDIUM > LOW).
+   - Targeted misconception alignment.
+   - Difficulty alignment matching learner current mastery ($L \pm 0.15$).
+3. **Data-Grounded Explainability**: All generated explanations must cite observable signals:
+   - Identified competency gap ($1.0 - \text{mastery}$).
+   - Recent triggering evidence and misconception pattern.
+   - Target subskill and estimated completion duration.
+   - **Zero Psychological Inference**: Causal claims attributing performance to psychological traits ("demotivated", "lazy", "anxious") are strictly prohibited and scrubbed by the backend explanation builder.
+
