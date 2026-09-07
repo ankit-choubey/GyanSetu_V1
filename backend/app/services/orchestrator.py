@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.competency import Competency
+from app.models.competency_history import CompetencyHistory
 from app.models.competency_state import CompetencyState
 from app.models.evidence import Evidence
 from app.services.competency_engine import CompetencyCalculation, calculate_competency_state, identify_gaps
@@ -23,6 +24,7 @@ def recalculate_competency_state(
     user_id: int,
     competency_id: int,
     *,
+    triggering_evidence_id: int | None = None,
     now: datetime | None = None,
 ) -> OrchestrationResult:
     """Recalculate state inside the caller's transaction; this function never commits."""
@@ -34,7 +36,7 @@ def recalculate_competency_state(
         select(Evidence).where(
             Evidence.user_id == user_id,
             Evidence.competency_id == competency_id,
-        )
+        ).order_by(Evidence.id)
     ).scalars().all()
     subskills = list(competency.subskills)
     calculation = calculate_competency_state(evidence, len(subskills), now=now)
@@ -55,6 +57,12 @@ def recalculate_competency_state(
             CompetencyState.competency_id == competency_id,
         )
     ).scalar_one_or_none()
+
+    prev_mastery = state.mastery if state else None
+    prev_confidence = state.confidence if state else 0.0
+    prev_status = state.status if state else "UNASSESSED"
+    prev_version = getattr(state, "state_version", 0) if state else 0
+
     if state is None:
         state = CompetencyState(user_id=user_id, competency_id=competency_id)
         db.add(state)
@@ -71,8 +79,30 @@ def recalculate_competency_state(
         if calculation.status == "CONFLICTING_EVIDENCE"
         else "ASSESSED"
     )
+    state.state_version = prev_version + 1
+    state.last_assessed_at = now or datetime.now(timezone.utc)
     state.updated_at = now or datetime.now(timezone.utc)
     db.flush()
+
+    # Record versioned history transition
+    latest_evidence_id = triggering_evidence_id or (evidence[-1].id if evidence else None)
+    history_entry = CompetencyHistory(
+        user_id=user_id,
+        competency_id=competency_id,
+        previous_mastery=prev_mastery,
+        new_mastery=state.mastery,
+        previous_confidence=prev_confidence,
+        new_confidence=state.confidence,
+        previous_status=prev_status,
+        new_status=state.status,
+        triggering_evidence_id=latest_evidence_id,
+        calculation_version="v2.0-deterministic",
+        state_version=state.state_version,
+        timestamp=now or datetime.now(timezone.utc),
+    )
+    db.add(history_entry)
+    db.flush()
+
     return OrchestrationResult(state=state, calculation=calculation)
 
 

@@ -9,8 +9,11 @@ from app.routers.chatbot import router as chatbot_router
 from app.routers.competency import router as competency_router
 from app.routers.content import router as content_router
 from app.routers.dashboard import router as dashboard_router
-from app.routers.users import router as users_router
+from app.routers.diagnostic import router as diagnostic_router
+from app.routers.evidence import router as evidence_router
+from app.routers.misconception import router as misconception_router
 from app.routers.monitoring import router as monitoring_router
+from app.routers.users import router as users_router
 
 app = FastAPI(
     title=settings.app_name,
@@ -18,6 +21,14 @@ app = FastAPI(
     description="GyanSetu backend foundation for competency-driven learning platform.",
     debug=settings.debug,
 )
+
+
+@app.on_event("startup")
+def on_startup() -> None:
+    from sqlmodel import SQLModel
+    from app.database import engine
+    import app.models  # noqa: F401
+    SQLModel.metadata.create_all(engine)
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,6 +42,9 @@ app.include_router(auth_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
 app.include_router(competency_router, prefix="/api")
 app.include_router(assessment_router, prefix="/api")
+app.include_router(diagnostic_router, prefix="/api")
+app.include_router(evidence_router, prefix="/api")
+app.include_router(misconception_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
 app.include_router(chatbot_router, prefix="/api")
 app.include_router(content_router, prefix="/api")

@@ -48,15 +48,23 @@ def track_response(
 ) -> MisconceptionTrackResult:
     if response.is_correct:
         return MisconceptionTrackResult(misconception=None, classifier_status="NOT_APPLICABLE")
-    if response.attempt is None or response.attempt.user_id is None:
+
+    attempt = response.attempt
+    if (attempt is None or attempt.user_id is None) and response.attempt_id:
+        from app.models.assessment import AssessmentAttempt
+        attempt = db.get(AssessmentAttempt, response.attempt_id)
+
+    if attempt is None or attempt.user_id is None:
         raise ValueError("Assessment response must be linked to an attempt and learner")
+    learner_id = attempt.user_id
+
     if response.competency_id is None or response.assessment_item_id is None:
         raise ValueError("Assessment response must identify competency and assessment item")
 
     pattern_key = build_pattern_key(response.assessment_item_id, response.selected_option)
     existing = db.execute(
         select(Misconception).where(
-            Misconception.learner_id == response.attempt.user_id,
+            Misconception.learner_id == learner_id,
             Misconception.competency_id == response.competency_id,
             Misconception.subskill_id == response.subskill_id,
             Misconception.pattern_key == pattern_key,
@@ -72,7 +80,7 @@ def track_response(
 
     classification = classifier.classify(response) if classifier is not None else None
     record = Misconception(
-        learner_id=response.attempt.user_id,
+        learner_id=learner_id,
         competency_id=response.competency_id,
         subskill_id=response.subskill_id,
         pattern_key=pattern_key,

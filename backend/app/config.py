@@ -9,13 +9,13 @@ class Settings(BaseSettings):
     environment: str = "development"
     debug: bool = False
     database_url: str = "sqlite:///./gyansetu.db"
-    jwt_secret: str
+    jwt_secret: str = "default-dev-secret-key-at-least-32-chars-long"
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440
     cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(".env", "backend/.env"),
         env_file_encoding="utf-8",
         extra="ignore",
     )
