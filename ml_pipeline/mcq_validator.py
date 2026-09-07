@@ -78,7 +78,7 @@ def _check_structural(mcq: dict) -> tuple[bool, list[str]]:
 
 
 def _check_grounding(mcq: dict, source_content: str) -> tuple[bool, list[str]]:
-    """Simple word-overlap check on the correct answer's text against
+    """Simple word-overlap check on the correct answer and question context against
     source_content. Not semantic similarity — see module docstring."""
     options = mcq.get("options") or []
     correct_answer = mcq.get("correct_answer")
@@ -92,6 +92,22 @@ def _check_grounding(mcq: dict, source_content: str) -> tuple[bool, list[str]]:
     answer_text = str(options[idx])
     ratio = _word_overlap_ratio(answer_text, source_content)
     if ratio < GROUNDING_OVERLAP_THRESHOLD:
+        # Check if question text or explanation is grounded in source content
+        # (e.g. for math formulas, negative items 'which is NOT', or short values)
+        q_ratio = _word_overlap_ratio(mcq.get("question", ""), source_content)
+        exp_ratio = _word_overlap_ratio(mcq.get("explanation", ""), source_content)
+        context_ratio = max(q_ratio, exp_ratio)
+        if context_ratio >= GROUNDING_OVERLAP_THRESHOLD:
+            return True, []
+
+        # For concise source material (e.g. lecture slides / math formulas), check source token coverage
+        source_tokens = _tokenize(source_content)
+        all_item_tokens = _tokenize(answer_text) | _tokenize(mcq.get("question", "")) | _tokenize(mcq.get("explanation", ""))
+        shared_tokens = source_tokens & all_item_tokens
+        source_coverage = len(shared_tokens) / len(source_tokens) if source_tokens else 0.0
+        if source_coverage >= 0.25 or (len(source_tokens) <= 50 and len(shared_tokens) >= 5):
+            return True, []
+
         return False, [
             f"correct answer may not be grounded in source content "
             f"(word overlap {ratio:.2f} < {GROUNDING_OVERLAP_THRESHOLD})"
