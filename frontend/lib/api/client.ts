@@ -105,4 +105,22 @@ export const client = {
 
     return res.json();
   },
+
+  async delete<T>(path: string, options?: { headers?: Record<string, string>; token?: string }): Promise<T> {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: "DELETE",
+      headers: getHeaders(options?.headers, options?.token),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new ApiError(
+        `API Request Failed: ${res.status} ${res.statusText}`,
+        res.status,
+        errorData
+      );
+    }
+
+    return res.json();
+  },
 };

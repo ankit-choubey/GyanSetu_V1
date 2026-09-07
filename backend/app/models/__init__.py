@@ -44,6 +44,7 @@ from .content import (
 from .audit import AuditEvent
 from .user import User
 from .password_reset import PasswordResetOTP
+from .library import UserLibraryDocument
 
 __all__ = [
     "User",
@@ -92,6 +93,7 @@ __all__ = [
     "JobStatus",
     "AuditEvent",
     "PasswordResetOTP",
+    "UserLibraryDocument",
 ]
 
 

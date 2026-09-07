@@ -37,3 +37,23 @@ def get_current_admin(user: User = Depends(get_current_user), db: Session = Depe
 
 
 get_current_active_user = get_current_user
+
+security_optional = HTTPBearer(auto_error=False)
+
+
+def get_current_user_optional(
+    credentials: HTTPAuthorizationCredentials | None = Depends(security_optional),
+    db: Session = Depends(get_db),
+) -> User | None:
+    if not credentials:
+        return None
+    try:
+        token_data = decode_access_token(credentials.credentials)
+        user_id = int(token_data["sub"])
+        user = db.get(User, user_id)
+        if user and user.is_active:
+            return user
+    except Exception:
+        pass
+    return None
+

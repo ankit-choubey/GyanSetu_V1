@@ -5,12 +5,15 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.dependencies import get_current_admin, get_current_active_user
+from app.dependencies import get_current_admin, get_current_active_user, get_current_user_optional
 from app.models.content import ContentAsset, ContentChunk, ProcessingJob
+from app.models.library import UserLibraryDocument
 from app.models.user import User
 from app.schemas.content import (
     CandidateAssessmentResponse,
@@ -155,6 +158,110 @@ def list_content_assets(
 ) -> list[ContentAssetResponse]:
     assets = ContentService.list_content_assets(db, status=status_filter, skip=skip, limit=limit)
     return [_serialize_asset(a) for a in assets]
+
+
+# =========================================================================
+# STUDY LIBRARY MANAGEMENT ENDPOINTS
+# =========================================================================
+
+@router.get("/library")
+def get_user_study_library(
+    user: User | None = Depends(get_current_user_optional),
+    db: Session = Depends(get_db),
+) -> list[dict[str, Any]]:
+    """Returns all ingested documents and lectures stored for the user."""
+    effective_user_id = user.id if user else 1
+    docs = db.execute(
+        select(UserLibraryDocument)
+        .where(UserLibraryDocument.user_id == effective_user_id)
+        .order_by(UserLibraryDocument.created_at.desc())
+    ).scalars().all()
+
+    return [
+        {
+            "id": doc.id,
+            "title": doc.title,
+            "source_type": doc.source_type,
+            "source_url": doc.source_url,
+            "filename": doc.filename,
+            "file_size": doc.file_size,
+            "competency_mapped": doc.competency_mapped,
+            "summary": doc.summary,
+            "concepts": doc.get_concepts(),
+            "questions_count": doc.questions_count,
+            "has_file": bool(doc.file_path and os.path.exists(doc.file_path)),
+            "created_at": doc.created_at.isoformat() if doc.created_at else None,
+        }
+        for doc in docs
+    ]
+
+
+@router.get("/library/{doc_id}")
+def get_study_library_document(
+    doc_id: int,
+    user: User | None = Depends(get_current_user_optional),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    """Returns a specific document with its full set of 15 generated questions."""
+    doc = db.get(UserLibraryDocument, doc_id)
+    if not doc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
+
+    return {
+        "id": doc.id,
+        "title": doc.title,
+        "source_type": doc.source_type,
+        "source_url": doc.source_url,
+        "filename": doc.filename,
+        "file_size": doc.file_size,
+        "competency_mapped": doc.competency_mapped,
+        "summary": doc.summary,
+        "concepts": doc.get_concepts(),
+        "questions_count": doc.questions_count,
+        "questions": doc.get_questions(),
+        "has_file": bool(doc.file_path and os.path.exists(doc.file_path)),
+        "created_at": doc.created_at.isoformat() if doc.created_at else None,
+    }
+
+
+@router.delete("/library/{doc_id}")
+def delete_study_library_document(
+    doc_id: int,
+    user: User | None = Depends(get_current_user_optional),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
+    """Deletes a document from the study library and removes its file from disk."""
+    doc = db.get(UserLibraryDocument, doc_id)
+    if not doc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
+
+    if doc.file_path and os.path.exists(doc.file_path):
+        try:
+            os.remove(doc.file_path)
+        except Exception:
+            pass
+
+    db.delete(doc)
+    db.commit()
+    return {"status": "success", "message": "Document removed from your study library"}
+
+
+@router.api_route("/library/{doc_id}/file", methods=["GET", "HEAD"])
+def download_study_library_file(
+    doc_id: int,
+    db: Session = Depends(get_db),
+):
+    """Serves the uploaded document file for download or in-browser viewing."""
+    doc = db.get(UserLibraryDocument, doc_id)
+    if not doc or not doc.file_path or not os.path.exists(doc.file_path):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Physical file not found on server")
+
+    media_type = "application/pdf" if (doc.filename or "").lower().endswith(".pdf") else "application/octet-stream"
+    return FileResponse(
+        path=doc.file_path,
+        filename=doc.filename or os.path.basename(doc.file_path),
+        media_type=media_type,
+    )
 
 
 @router.get("/{asset_id}", response_model=ContentAssetResponse)
@@ -324,6 +431,7 @@ class YouTubeIngestRequest(BaseModel):
 @router.post("/youtube-ingest")
 def ingest_youtube_video(
     payload: YouTubeIngestRequest,
+    user: User | None = Depends(get_current_user_optional),
     db: Session = Depends(get_db),
 ) -> dict:
     from ml_pipeline.video_processor import process_youtube_url, is_youtube_url, extract_youtube_video_id
@@ -363,7 +471,7 @@ def ingest_youtube_video(
         mcqs = generate_mcqs(
             context_text,
             target_topic,
-            num_questions=max(1, min(payload.num_questions, 10)),
+            num_questions=max(1, min(payload.num_questions, 15)),
             difficulty=payload.difficulty,
         )
     except Exception as exc:
@@ -425,6 +533,29 @@ def ingest_youtube_video(
         except Exception:
             db.rollback()
 
+    # Persist in User Library
+    effective_user_id = user.id if user else 1
+    lib_doc = UserLibraryDocument(
+        user_id=effective_user_id,
+        title=f"YouTube Lecture ({video_id})",
+        source_type="youtube",
+        source_url=clean_url,
+        filename=None,
+        file_path=None,
+        file_size=len(raw_text),
+        competency_mapped="Official Statistics & Survey Analysis",
+        summary=raw_text[:400] + ("..." if len(raw_text) > 400 else ""),
+        extracted_concepts_json=json.dumps([f"Video {video_id}", "Transcription", "Survey Concepts"]),
+        questions_json=json.dumps(formatted_questions),
+        questions_count=len(formatted_questions),
+    )
+    db.add(lib_doc)
+    try:
+        db.commit()
+        db.refresh(lib_doc)
+    except Exception:
+        db.rollback()
+
     return {
         "status": "success",
         "session_id": f"yt_sess_{video_id}",
@@ -433,6 +564,7 @@ def ingest_youtube_video(
         "transcript_length": len(raw_text),
         "questions_count": len(formatted_questions),
         "questions": formatted_questions,
+        "library_id": lib_doc.id if lib_doc.id else None,
     }
 
 
@@ -441,6 +573,7 @@ async def ingest_document(
     file: UploadFile = File(...),
     num_questions: int = Query(default=15, ge=1, le=15),
     difficulty: str = Query(default="medium"),
+    user: User | None = Depends(get_current_user_optional),
     db: Session = Depends(get_db),
 ) -> dict:
     import tempfile, hashlib, json, re
@@ -465,6 +598,13 @@ async def ingest_document(
         )
 
     file_hash = hashlib.sha256(content_bytes).hexdigest()[:10]
+
+    # Save a permanent copy to uploads/documents directory for library
+    upload_dir = Path("/Users/utkarshsingh/Desktop/GyanSetu/main/backend/uploads/documents")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    permanent_filename = f"{file_hash}_{raw_filename}"
+    permanent_path = upload_dir / permanent_filename
+    permanent_path.write_bytes(content_bytes)
 
     # Save to temp file for PyMuPDF (fitz) or python-pptx extraction
     with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
@@ -562,6 +702,30 @@ async def ingest_document(
         except Exception:
             db.rollback()
 
+    # Persist in User Library
+    effective_user_id = user.id if user else 1
+    doc_type = "pdf" if ext == ".pdf" else ("pptx" if ext == ".pptx" else "document")
+    lib_doc = UserLibraryDocument(
+        user_id=effective_user_id,
+        title=doc_title,
+        source_type=doc_type,
+        source_url=raw_filename,
+        filename=raw_filename,
+        file_path=str(permanent_path),
+        file_size=len(content_bytes),
+        competency_mapped="Official Statistics & Sampling",
+        summary=extracted_text[:400] + ("..." if len(extracted_text) > 400 else ""),
+        extracted_concepts_json=json.dumps([doc_title, f"{doc_type.upper()} Manual", "MoSPI Framework"]),
+        questions_json=json.dumps(formatted_questions),
+        questions_count=len(formatted_questions),
+    )
+    db.add(lib_doc)
+    try:
+        db.commit()
+        db.refresh(lib_doc)
+    except Exception:
+        db.rollback()
+
     return {
         "status": "success",
         "session_id": f"doc_sess_{file_hash}",
@@ -570,4 +734,7 @@ async def ingest_document(
         "text_length": len(extracted_text),
         "questions_count": len(formatted_questions),
         "questions": formatted_questions,
+        "library_id": lib_doc.id if lib_doc.id else None,
     }
+
+

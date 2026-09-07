@@ -142,3 +142,19 @@ export interface KPISummaryDerived {
   assessed_count: number;
   total_count: number;
 }
+
+export interface StudyLibraryItem {
+  id: number;
+  title: string;
+  source_type: "pdf" | "pptx" | "youtube" | string;
+  source_url?: string | null;
+  filename?: string | null;
+  file_size: number;
+  competency_mapped: string;
+  summary?: string | null;
+  concepts: string[];
+  questions_count: number;
+  has_file: boolean;
+  created_at: string | null;
+}
+

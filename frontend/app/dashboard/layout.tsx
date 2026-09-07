@@ -15,6 +15,7 @@ import {
   Lock,
   LogOut,
   UploadCloud,
+  BookOpen,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
@@ -110,6 +111,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       active: pathname?.startsWith("/dashboard/ingestion"),
     },
     {
+      name: "Study Library",
+      href: "/dashboard/library",
+      icon: BookOpen,
+      active: pathname?.startsWith("/dashboard/library"),
+    },
+    {
       name: "Assessments",
       href: "/dashboard/assessments",
       icon: ClipboardCheck,
@@ -149,6 +156,9 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     }
     if (pathname?.startsWith("/dashboard/ingestion")) {
       return { title: "Data Ingestion", subtitle: "Multi-modal knowledge extraction & syllabus mapping" };
+    }
+    if (pathname?.startsWith("/dashboard/library")) {
+      return { title: "Study Library", subtitle: "Curated training documents, lecture transcripts & generated 15-MCQ assessments" };
     }
     if (pathname?.startsWith("/dashboard/assessments")) {
       return { title: "Assessments", subtitle: "Adaptive multi-tier diagnostic evaluations" };
