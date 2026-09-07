@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
 const bebasNeue = Bebas_Neue({
   weight: "400",
@@ -38,8 +39,9 @@ export default function RootLayout({
       className={`scroll-smooth ${bebasNeue.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="min-h-screen bg-white text-[#0F172A] font-body antialiased overflow-x-hidden">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
 }
+

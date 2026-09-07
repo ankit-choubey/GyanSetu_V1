@@ -8,9 +8,11 @@ import { GridOverlay } from "@/components/ui/GridOverlay";
 import { DotPattern } from "@/components/ui/DotPattern";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useAuth } from "@/context/AuthContext";
 
 export function HeroSection() {
   const shouldReduceMotion = useReducedMotion();
+  const { isAuthenticated, user } = useAuth();
 
   const headlineLines = [
     "IDENTIFY GAPS.",
@@ -87,7 +89,7 @@ export function HeroSection() {
           </div>
 
           <Link
-            href="/dashboard"
+            href={isAuthenticated ? (user?.role === "admin" ? "/dashboard/workforce" : "/dashboard") : "/login?redirect=/dashboard&notice=required"}
             className="shrink-0 bg-[#0F172A] hover:bg-[#1E293B] text-white font-body text-xs font-semibold px-4 py-2.5 rounded-[8px] transition-transform active:scale-95"
           >
             Find my gap
