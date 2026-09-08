@@ -37,6 +37,17 @@ export function AskGeminiChatDrawer({
 
   return (
     <>
+      {/* Suppress default OmniDimension floating fixed popups on the dashboard */}
+      <style jsx global>{`
+        #chat-helper-button-container,
+        #omni-minimized-pill,
+        #chat-iframe-container {
+          display: none !important;
+          visibility: hidden !important;
+          pointer-events: none !important;
+        }
+      `}</style>
+
       {/* Script Tag as required */}
       <Script
         id="omnidimension-web-widget"

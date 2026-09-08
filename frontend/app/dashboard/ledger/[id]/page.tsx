@@ -47,6 +47,9 @@ export default function ReportDetailPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputQuery, setInputQuery] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [activeTab, setActiveTab] = useState<"chat" | "voice_call">("chat");
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -72,21 +75,12 @@ export default function ReportDetailPage() {
         sender: "assistant",
         text: `Namaste ${found.full_name}. I am your GyanSetu AI Cadre Advisory Coach.\n\nI have reviewed your **${found.competency_name}** evaluation (${found.tier}). You scored **${found.score}%** (${found.result_status}) with **${found.correct_count} of ${found.total_questions}** questions correct.${
           incorrectCount > 0
-            ? ` You have ${incorrectCount} question(s) recommended for remediation. Ask me any question below to examine misconceptions or practical steps!`
+            ? ` You have ${incorrectCount} question(s) recommended for remediation. You can type or use the voice button below to examine misconceptions, find video timestamps, or ask for remediation steps!`
             : " Outstanding performance achieving 100% mastery!"
         }`,
         time: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages([initialGreeting]);
-    }
-
-    // Ensure OmniDimension widget script is dynamically appended if not already present
-    if (typeof window !== "undefined" && !document.getElementById("omnidimension-web-widget")) {
-      const script = document.createElement("script");
-      script.id = "omnidimension-web-widget";
-      script.src = "https://omnidim.io/web_widget.js?secret_key=628436b05158eddb33eaa9eed3343b9e";
-      script.async = true;
-      document.body.appendChild(script);
     }
   }, [rawId]);
 
@@ -106,38 +100,65 @@ export default function ReportDetailPage() {
     }
   };
 
-  const handleLaunchVoiceWidget = () => {
+  // Web Speech API Voice Recognition (Voice Button)
+  const startVoiceInput = () => {
     if (typeof window === "undefined") return;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-    // 1. Try triggering existing OmniDimension launcher button or widget container
-    const omniElements = document.querySelectorAll(
-      "#chat-helper-button, #chat-helper-button-container, .omnidim-launcher, [id*='omni-launcher'], [id*='chat-helper']"
-    );
-    for (let i = 0; i < omniElements.length; i++) {
-      const el = omniElements[i] as HTMLElement;
-      if (el && el.id !== "omni-voice-widget-btn") {
-        el.click();
-        return;
+    if (!SpeechRecognition) {
+      // If Web Speech API is not supported in this browser, switch to Live Voice Call mode
+      setActiveTab("voice_call");
+      return;
+    }
+
+    if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {
+          // ignore
+        }
       }
-    }
-
-    // 2. Check if global OmniDim or web widget JS has an open function
-    const omniGlobal = (window as any).OmniDim || (window as any).omnidim || (window as any).OmniDimension;
-    if (omniGlobal && typeof omniGlobal.open === "function") {
-      omniGlobal.open();
+      setIsListening(false);
       return;
     }
 
-    // 3. Make sure iframe container is visible if present
-    const iframeContainer = document.getElementById("chat-iframe-container");
-    if (iframeContainer) {
-      iframeContainer.style.display = "block";
-      iframeContainer.style.visibility = "visible";
-      iframeContainer.style.pointerEvents = "auto";
-      return;
-    }
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = false;
 
-    window.dispatchEvent(new CustomEvent("gyansetu:open_voice"));
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognition.onresult = (event: any) => {
+        setIsListening(false);
+        const speechText = event.results?.[0]?.[0]?.transcript;
+        if (speechText && speechText.trim()) {
+          setInputQuery(speechText);
+          handleSendMessage(speechText);
+        }
+      };
+
+      recognition.onerror = (e: any) => {
+        console.warn("Speech recognition notice:", e);
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.error("Failed to start voice recognition:", err);
+      setIsListening(false);
+      setActiveTab("voice_call");
+    }
   };
 
   const handleSendMessage = (textToSend?: string) => {
@@ -180,8 +201,45 @@ export default function ReportDetailPage() {
         };
       };
 
-      // 1. Check if asking about timestamp / where to study in video
+      const missedList = (item.items || []).filter((q) => !q.is_correct);
+
+      // 1. Natural greeting handling (Never return robotic "Regarding hi...")
       if (
+        /^(hi|hello|hey|namaste|good\s*(morning|afternoon|evening)|greetings)\b/i.test(lower.trim()) ||
+        lower.trim() === "hi" ||
+        lower.trim() === "hello" ||
+        lower.trim() === "namaste"
+      ) {
+        replyText = `Namaste ${item.full_name}! I am your GyanSetu AI Cadre Advisory Coach.\n\nI have analyzed your **${item.competency_name}** evaluation (${item.tier}). You scored **${item.score}%** (${item.result_status}) with **${item.correct_count} of ${item.total_questions}** questions correct.${
+          missedList.length > 0
+            ? `\n\nYou have **${missedList.length} question(s)** recommended for remediation. How can I assist you right now?\n\n• **Examine Missed Questions**: Ask *"Why did I miss Q1?"* to see misconceptions.\n• **Targeted Video Study**: Ask *"Where in the video should I study?"* for exact timestamps & jump links.\n• **Reach 97% Accuracy**: Ask *"How to reach 97% accuracy?"* for formula guidance.\n• Or click any suggested query chip above!`
+            : `\n\nOutstanding work achieving 100% mastery! You can ask me about Tier 2 competencies or practical field deployment.`
+        }`;
+      }
+
+      // 2. Accuracy & score improvement queries (e.g., "Accuracy 97.", "how to reach 97% accuracy", "score")
+      else if (
+        lower.includes("accuracy") ||
+        lower.includes("97") ||
+        lower.includes("how to improve") ||
+        lower.includes("raise score")
+      ) {
+        const missedTopics = missedList
+          .map((m) => m.subskill_name)
+          .filter(Boolean)
+          .slice(0, 3)
+          .join(", ");
+
+        replyText = `🎯 **Action Roadmap to Reach 97%+ Accuracy in ${item.competency_name}**:\n\n` +
+          `1. **Current Standing**: Your baseline score is **${item.score}%** (${item.result_status}) with a Bayesian Mastery Index of **${item.mastery ? (item.mastery * 100).toFixed(0) : "80"}%**.\n` +
+          `2. **Core Competency Gaps**: You have **${missedList.length}** item(s) to remediate${missedTopics ? ` focusing on **${missedTopics}**` : ""}.\n` +
+          `3. **Video Study Protocol**: Revisit the lecture timestamps (e.g. **01:00 – 02:25**) where the instructor derives these exact formulas.\n` +
+          `4. **Retake & Unlock**: Re-evaluating after reviewing these segments will elevate your Bayesian Mastery Index above **95%**, unlocking official Tier Certification.\n\n` +
+          `💡 Would you like me to walk you through the first missed question or show the video timestamp link?`;
+      }
+
+      // 3. Timestamp / Where to study in video queries
+      else if (
         lower.includes("where") ||
         lower.includes("timestamp") ||
         lower.includes("point") ||
@@ -225,9 +283,9 @@ export default function ReportDetailPage() {
         }
       }
 
-      // 2. Check if asking about specific question (e.g., "Q1", "Q2", "question 2")
-      if (!replyText) {
-        const qMatch = lower.match(/q(\d+)|question\s*(\d+)/);
+      // 4. Specific question breakdown (e.g., "Q1", "Q2", "question 2")
+      else if (/q\d+|question\s*\d+/i.test(lower)) {
+        const qMatch = lower.match(/q(\d+)|question\s*(\d+)/i);
         if (qMatch) {
           const qNum = parseInt(qMatch[1] || qMatch[2], 10);
           const qIdx = qNum - 1;
@@ -245,8 +303,8 @@ export default function ReportDetailPage() {
         }
       }
 
-      // Check if asking why missed / why wrong
-      if (!replyText && (lower.includes("why") || lower.includes("miss") || lower.includes("wrong") || lower.includes("incorrect"))) {
+      // 5. Check if asking why missed / why wrong
+      else if (lower.includes("why") || lower.includes("miss") || lower.includes("wrong") || lower.includes("incorrect")) {
         const missed = (item.items || []).filter((q) => !q.is_correct);
         if (missed.length === 0) {
           replyText = `You did not miss any questions on this evaluation! All ${item.total_questions} items were answered correctly with a 100% score.`;
@@ -261,19 +319,24 @@ export default function ReportDetailPage() {
         }
       }
 
-      // Check if asking about remediation or tasks
-      if (!replyText && (lower.includes("remediat") || lower.includes("task") || lower.includes("improv") || lower.includes("plan"))) {
-        replyText = `**Recommended Remediation Plan for ${item.competency_name}**:\n1. Re-read standard guidelines on ${item.difficulty_band}.\n2. Complete targeted computational exercises to elevate your Bayesian Mastery Index from **${item.mastery ? (item.mastery * 100).toFixed(0) : "80"}%** to **95%**.\n3. Take the unlocked **${item.next_tier_unlocked || "Higher Tier"}** assessment in the Assessments dashboard.\n4. Download and file your official signed report using the **Download Official DOCX** button on the right!`;
+      // 6. Formulas and statistical concepts
+      else if (lower.includes("formula") || lower.includes("equation") || lower.includes("calculate") || lower.includes("variance") || lower.includes("standard error") || lower.includes("sampling")) {
+        replyText = `📐 **MoSPI Statistical Formulation & Principles**:\n\n` +
+          `• **Sample Variance ($s^2$)**: $s^2 = \\frac{1}{n - 1} \\sum_{i=1}^n (x_i - \\bar{x})^2$\n` +
+          `• **Standard Error of the Mean ($SE$)**: $SE = \\frac{s}{\\sqrt{n}}$\n` +
+          `• **Finite Population Correction (FPC)**: $\\sqrt{\\frac{N - n}{N - 1}}$, applied when sample fraction $n/N > 0.05$.\n` +
+          `• **MoSPI Standard**: In official survey sampling, always apply design weights and stratified cluster variance estimation per NSSTA protocols.\n\n` +
+          `Would you like me to show how this applies to any specific question on your test?`;
       }
 
-      // Check if asking about score or mastery
-      if (!replyText && (lower.includes("score") || lower.includes("mastery") || lower.includes("bayesian") || lower.includes("kpi"))) {
-        replyText = `**Evaluation KPI Summary**:\n- **Score**: ${item.score}% (${item.result_status})\n- **Bayesian Mastery**: ${item.mastery ? (item.mastery * 100).toFixed(0) : "80"}%\n- **Statistical Confidence**: ${(item.confidence * 100).toFixed(0)}%\n- **Competency Coverage**: ${(item.coverage * 100).toFixed(0)}%\n- **Uncertainty**: ${(item.uncertainty ?? 0.15).toFixed(2)}\n\nPassing threshold is 70%. Your reliability status is **${item.reliability_status}**.`;
+      // 7. Remediation plan
+      else if (lower.includes("remediat") || lower.includes("task") || lower.includes("plan") || lower.includes("workplace")) {
+        replyText = `**Recommended Workplace Remediation Plan for ${item.competency_name}**:\n1. Re-read standard guidelines on ${item.difficulty_band}.\n2. Complete targeted computational exercises to elevate your Bayesian Mastery Index from **${item.mastery ? (item.mastery * 100).toFixed(0) : "80"}%** to **95%**.\n3. Take the unlocked **${item.next_tier_unlocked || "Higher Tier"}** assessment in the Assessments dashboard.\n4. Download and file your official signed report using the **Download Official DOCX** button on the right!`;
       }
 
-      // Fallback response
-      if (!replyText) {
-        replyText = `Regarding **"${query}"** in the context of **${item.competency_name}** (${item.tier}):\n\nYour test record indicates a performance score of **${item.score}%** (${item.result_status}). To maximize your statistical rigor, prioritize review of the questions detailed in Section IV of the report on the right. You can also click any suggested prompt above or download your official Word report!`;
+      // 8. General inquiry response (contextual & conversational, never robotic)
+      else {
+        replyText = `I understand your inquiry: **"${query}"** regarding your **${item.competency_name}** attempt.\n\nBased on your evaluation record (Score: **${item.score}%**, Status: **${item.result_status}**):\n\n• For in-depth concept review, consult Section IV of the official report on the right.\n• You can watch targeted lecture segments using the video timestamps.\n• Feel free to ask about any specific question (e.g. *"Why did I miss Q1?"*), request formula explanations, or use the voice button to speak directly!`;
       }
 
       const botReply: ChatMessage = {
@@ -285,7 +348,7 @@ export default function ReportDetailPage() {
 
       setMessages((prev) => [...prev, botReply]);
       setIsTyping(false);
-    }, 600);
+    }, 500);
   };
 
   if (!item) {
@@ -354,9 +417,9 @@ export default function ReportDetailPage() {
         {/* ========================================================================= */}
         <div className="lg:col-span-5 w-full lg:sticky lg:top-6 space-y-4">
           <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden flex flex-col h-[780px]">
-            {/* Widget Header */}
+            {/* Widget Header with Tab Switcher */}
             <div className="bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900 text-white p-4 shrink-0">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-300/30 flex items-center justify-center text-indigo-300 shadow-sm">
                     <Bot className="w-5 h-5" />
@@ -377,141 +440,211 @@ export default function ReportDetailPage() {
                   </div>
                 </div>
 
-                {/* OmniDimension Voice AI Widget Button */}
-                <button
-                  id="omni-voice-widget-btn"
-                  type="button"
-                  onClick={handleLaunchVoiceWidget}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-900 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 hover:from-emerald-300 hover:to-teal-200 transition shadow-sm active:scale-95 shrink-0"
-                  title="Start Voice Interaction with AI Coach"
-                >
-                  <Mic className="w-3.5 h-3.5 text-slate-950 animate-pulse" />
-                  <span>Voice AI Coach</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Suggested Inquiries Chips */}
-            <div className="bg-slate-50 border-b border-slate-200 p-3 shrink-0">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
-                Suggested Report Queries:
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => handleSendMessage("Where in the video lecture should I go and study?")}
-                  className="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-semibold px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
-                >
-                  📍 Video Timestamps to Study
-                </button>
-                {missedQuestions.length > 0 && (
+                {/* Tab Switcher: Chat (Text & Voice) vs Live Voice Call */}
+                <div className="flex items-center bg-white/10 p-1 rounded-xl border border-white/10 gap-1 text-xs shrink-0 self-start sm:self-auto">
                   <button
-                    onClick={() => handleSendMessage(`Where in the video should I study for ${missedQuestions[0].question_number || "Question 1"}?`)}
-                    className="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
-                  >
-                    🔍 Study Point for {missedQuestions[0].question_number || "Q1"}
-                  </button>
-                )}
-                <button
-                  onClick={() => handleSendMessage("What is my personalized remediation action plan?")}
-                  className="text-[11px] bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
-                >
-                  🎯 Workplace Action Plan
-                </button>
-                <button
-                  onClick={() => handleSendMessage("How can I raise my Bayesian Mastery Index to 95%?")}
-                  className="text-[11px] bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
-                >
-                  📈 Raise Mastery to 95%
-                </button>
-                {item.items && item.items[1]?.subskill_name && (
-                  <button
-                    onClick={() => handleSendMessage(`Explain formula for ${item.items![1].subskill_name}`)}
-                    className="text-[11px] bg-white hover:bg-purple-50 text-purple-700 border border-purple-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
-                  >
-                    📐 Explain Formula
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Chat Message Stream */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-3 font-sans text-xs bg-slate-50/50">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={cn(
-                    "flex flex-col max-w-[88%]",
-                    msg.sender === "user" ? "ml-auto items-end" : "mr-auto items-start"
-                  )}
-                >
-                  <div className="flex items-center gap-1.5 mb-1 text-[10px] text-slate-400">
-                    {msg.sender === "assistant" ? (
-                      <>
-                        <Sparkles className="w-3 h-3 text-indigo-600" />
-                        <span className="font-semibold text-indigo-900">Ask GyanSetu AI</span>
-                      </>
-                    ) : (
-                      <span className="font-semibold text-slate-600">{item.full_name}</span>
-                    )}
-                    <span>• {msg.time}</span>
-                  </div>
-
-                  <div
+                    type="button"
+                    onClick={() => setActiveTab("chat")}
                     className={cn(
-                      "p-3 rounded-2xl whitespace-pre-wrap leading-relaxed shadow-2xs",
-                      msg.sender === "user"
-                        ? "bg-blue-600 text-white rounded-tr-none"
-                        : "bg-white text-slate-800 border border-slate-200 rounded-tl-none"
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition text-xs",
+                      activeTab === "chat"
+                        ? "bg-white text-slate-900 shadow-xs"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                     )}
+                    title="Interactive Text & Voice Assistant"
                   >
-                    {msg.text}
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>Chat & Voice</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("voice_call")}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition text-xs",
+                      activeTab === "voice_call"
+                        ? "bg-emerald-400 text-slate-950 font-bold shadow-xs"
+                        : "text-emerald-300 hover:text-white hover:bg-white/10"
+                    )}
+                    title="Connect Live Voice Call with Cadre Coach"
+                  >
+                    <Mic className="w-3.5 h-3.5 animate-pulse" />
+                    <span>Live Voice Call</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* TAB 1: LIVE VOICE CALL (OmniDimension Embedded Directly in Card) */}
+            {activeTab === "voice_call" ? (
+              <div className="flex-1 bg-slate-950 flex flex-col items-center justify-between p-2 relative overflow-hidden">
+                <div className="w-full text-center py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl mb-2 text-[11px] text-slate-300 flex items-center justify-between shadow-xs">
+                  <span className="flex items-center gap-2 text-emerald-400 font-semibold">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    Live Voice Channel Connected
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("chat")}
+                    className="text-xs text-indigo-400 hover:text-indigo-300 underline font-semibold transition"
+                  >
+                    Switch to Text & Voice Chat
+                  </button>
+                </div>
+                <iframe
+                  src="https://omnidim.io/voice-widget?secret=628436b05158eddb33eaa9eed3343b9e"
+                  className="w-full flex-1 border-0 rounded-xl min-h-[640px] bg-slate-900"
+                  allow="microphone; autoplay; camera"
+                  title="GyanSetu Live Voice AI Coach"
+                />
+              </div>
+            ) : (
+              /* TAB 2: CHAT (TEXT & VOICE CHAT WITH GROUNDED ASSISTANT) */
+              <>
+                {/* Suggested Inquiries Chips */}
+                <div className="bg-slate-50 border-b border-slate-200 p-3 shrink-0">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                    Suggested Report Queries:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => handleSendMessage("Where in the video lecture should I go and study?")}
+                      className="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-semibold px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                    >
+                      📍 Video Timestamps to Study
+                    </button>
+                    {missedQuestions.length > 0 && (
+                      <button
+                        onClick={() => handleSendMessage(`Where in the video should I study for ${missedQuestions[0].question_number || "Question 1"}?`)}
+                        className="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                      >
+                        🔍 Study Point for {missedQuestions[0].question_number || "Q1"}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleSendMessage("How can I raise my score to 97% accuracy?")}
+                      className="text-[11px] bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                    >
+                      📈 Reach 97% Accuracy
+                    </button>
+                    <button
+                      onClick={() => handleSendMessage("What is my personalized remediation action plan?")}
+                      className="text-[11px] bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                    >
+                      🎯 Workplace Action Plan
+                    </button>
+                    {item.items && item.items[1]?.subskill_name && (
+                      <button
+                        onClick={() => handleSendMessage(`Explain formula for ${item.items![1].subskill_name}`)}
+                        className="text-[11px] bg-white hover:bg-purple-50 text-purple-700 border border-purple-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                      >
+                        📐 Explain Formula
+                      </button>
+                    )}
                   </div>
                 </div>
-              ))}
 
-              {isTyping && (
-                <div className="mr-auto items-start flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 text-xs">
-                  <Bot className="w-4 h-4 text-indigo-600 animate-pulse" />
-                  <span>GyanSetu AI is analyzing evaluation report...</span>
+                {/* Chat Message Stream */}
+                <div className="flex-1 p-4 overflow-y-auto space-y-3 font-sans text-xs bg-slate-50/50">
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={cn(
+                        "flex flex-col max-w-[88%]",
+                        msg.sender === "user" ? "ml-auto items-end" : "mr-auto items-start"
+                      )}
+                    >
+                      <div className="flex items-center gap-1.5 mb-1 text-[10px] text-slate-400">
+                        {msg.sender === "assistant" ? (
+                          <>
+                            <Sparkles className="w-3 h-3 text-indigo-600" />
+                            <span className="font-semibold text-indigo-900">Ask GyanSetu AI</span>
+                          </>
+                        ) : (
+                          <span className="font-semibold text-slate-600">{item.full_name}</span>
+                        )}
+                        <span>• {msg.time}</span>
+                      </div>
+
+                      <div
+                        className={cn(
+                          "p-3 rounded-2xl whitespace-pre-wrap leading-relaxed shadow-2xs",
+                          msg.sender === "user"
+                            ? "bg-blue-600 text-white rounded-tr-none"
+                            : "bg-white text-slate-800 border border-slate-200 rounded-tl-none"
+                        )}
+                      >
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+
+                  {isTyping && (
+                    <div className="mr-auto items-start flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 text-xs">
+                      <Bot className="w-4 h-4 text-indigo-600 animate-pulse" />
+                      <span>GyanSetu AI is analyzing evaluation report...</span>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
                 </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
 
-            {/* Input Box */}
-            <div className="p-3 bg-white border-t border-slate-200 shrink-0">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSendMessage();
-                }}
-                className="flex items-center gap-2"
-              >
-                <input
-                  type="text"
-                  placeholder="Ask GyanSetu AI about questions, formulas, remediation..."
-                  value={inputQuery}
-                  onChange={(e) => setInputQuery(e.target.value)}
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
-                />
-                <button
-                  type="button"
-                  onClick={handleLaunchVoiceWidget}
-                  className="p-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition shadow-xs flex items-center justify-center shrink-0"
-                  title="Start Voice Interaction with AI Coach"
-                >
-                  <Mic className="w-4 h-4" />
-                </button>
-                <button
-                  type="submit"
-                  disabled={!inputQuery.trim() || isTyping}
-                  className="p-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl transition shadow-xs shrink-0"
-                  title="Send message"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
-              </form>
-            </div>
+                {/* Input Box (Supports both Text and Voice) */}
+                <div className="p-3 bg-white border-t border-slate-200 shrink-0">
+                  {isListening && (
+                    <div className="mb-2 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-xs text-emerald-900 shadow-2xs animate-pulse">
+                      <span className="flex items-center gap-2 font-semibold">
+                        <Mic className="w-4 h-4 text-emerald-600 animate-bounce" />
+                        Listening to your voice... Speak your query now
+                      </span>
+                      <button
+                        type="button"
+                        onClick={startVoiceInput}
+                        className="text-[11px] font-bold text-emerald-700 underline hover:text-emerald-900"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Ask GyanSetu AI about questions, formulas, remediation..."
+                      value={inputQuery}
+                      onChange={(e) => setInputQuery(e.target.value)}
+                      className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
+                    />
+                    {/* Voice Input Button (Speech-to-Text) */}
+                    <button
+                      type="button"
+                      onClick={startVoiceInput}
+                      className={cn(
+                        "p-2.5 rounded-xl transition shadow-xs flex items-center justify-center shrink-0",
+                        isListening
+                          ? "bg-rose-500 hover:bg-rose-600 text-white animate-pulse"
+                          : "bg-emerald-500 hover:bg-emerald-600 text-white"
+                      )}
+                      title={isListening ? "Listening... Click to cancel" : "Speak your query with voice"}
+                    >
+                      <Mic className="w-4 h-4" />
+                    </button>
+                    {/* Text Send Button */}
+                    <button
+                      type="submit"
+                      disabled={!inputQuery.trim() || isTyping}
+                      className="p-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl transition shadow-xs shrink-0"
+                      title="Send text message"
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </form>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Quick Context Summary Card */}
