@@ -1,3 +1,14 @@
+import os
+import sys
+from pathlib import Path
+
+# Ensure main directory is in sys.path for ml_pipeline and AI modules
+_backend_dir = Path(__file__).resolve().parent.parent
+_main_dir = _backend_dir.parent
+for _p in [str(_main_dir), str(_backend_dir)]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

@@ -28,6 +28,7 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
   useEffect(() => {
     async function loadQuestions() {
       // 1. Check if dynamically generated questions exist (from YouTube or document ingestion)
+      let allQuestions: AssessmentQuestion[] = [];
       const cached = typeof window !== "undefined" ? localStorage.getItem("active_assessment_questions") : null;
       const storedTitle = typeof window !== "undefined" ? localStorage.getItem("active_source_title") : null;
       if (storedTitle) {
@@ -38,20 +39,58 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
         try {
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setQuestions(parsed);
-            return;
+            allQuestions = parsed;
           }
         } catch (e) {
           console.warn("Failed to parse cached questions:", e);
         }
       }
 
-      // 2. Default to the comprehensive 15-question bank for the active tier
+      // If not in localStorage and sessionId indicates a library item (lib_X)
+      if (allQuestions.length === 0 && sessionId && sessionId.startsWith("lib_")) {
+        try {
+          const docId = sessionId.replace("lib_", "");
+          const docRes = await client.get<any>(`/api/content/library/${docId}`);
+          if (docRes && Array.isArray(docRes.questions) && docRes.questions.length > 0) {
+            allQuestions = docRes.questions;
+            if (docRes.title) setSourceTitle(docRes.title);
+          }
+        } catch (e) {
+          console.warn("Failed to fetch questions for library doc:", e);
+        }
+      }
+
+      // 2. Divide questions across tiers (5 per tier for a standard 15-question set)
+      if (allQuestions.length >= 15) {
+        if (tier === "easy") {
+          setQuestions(allQuestions.slice(0, 5));
+        } else if (tier === "medium") {
+          setQuestions(allQuestions.slice(5, 10));
+        } else {
+          setQuestions(allQuestions.slice(10, 15));
+        }
+        return;
+      } else if (allQuestions.length >= 3) {
+        const sliceSize = Math.ceil(allQuestions.length / 3);
+        if (tier === "easy") {
+          setQuestions(allQuestions.slice(0, sliceSize));
+        } else if (tier === "medium") {
+          setQuestions(allQuestions.slice(sliceSize, sliceSize * 2));
+        } else {
+          setQuestions(allQuestions.slice(sliceSize * 2));
+        }
+        return;
+      } else if (allQuestions.length > 0) {
+        setQuestions(allQuestions);
+        return;
+      }
+
+      // 3. Fall back to curated comprehensive question bank for the active tier
       const defaultSet = QUESTION_BANK[tier] || QUESTION_BANK.easy;
       setQuestions(defaultSet);
     }
     loadQuestions();
-  }, [tier]);
+  }, [tier, sessionId]);
 
   const handleSelect = (qId: string, optId: string) => {
     setAnswers(prev => ({ ...prev, [qId]: optId }));
@@ -88,7 +127,7 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
       };
     });
 
-    const total = questions.length > 0 ? questions.length : 15;
+    const total = questions.length > 0 ? questions.length : 5;
     const score = Math.round((correctCount / total) * 100);
     const passed = score >= 70;
 
@@ -169,32 +208,31 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
     // Immediately persist tier progression & real-time review score to localStorage
     if (typeof window !== "undefined") {
       try {
+        const isExplicitSession = !!(sessionId && sessionId !== "demo_session" && sessionId !== "default");
         const effectiveSessionId = sessionId || localStorage.getItem("active_session_id") || "default";
-        const keysToUpdate = [
-          `gyansetu_tiers_${effectiveSessionId}`,
-          "gyansetu_tiers_default"
-        ];
+        const sessionKey = isExplicitSession ? `gyansetu_tiers_${effectiveSessionId}` : "gyansetu_tiers_default";
         
-        keysToUpdate.forEach(k => {
-          const raw = localStorage.getItem(k);
-          let list = raw ? JSON.parse(raw) : null;
-          if (!list || !Array.isArray(list)) {
-            list = [
-              { id: "easy", name: "Tier 1: Foundation", badgeColor: "text-emerald-600 bg-emerald-50 border-emerald-200", difficultyText: "Easy • Recall & Definitions", unlocked: true, completed: false, score: null, passing_score: 70, description: "Core definitions, terminology, and foundational knowledge of the statistical concept." },
-              { id: "medium", name: "Tier 2: Application", badgeColor: "text-amber-600 bg-amber-50 border-amber-200", difficultyText: "Medium • Formulas & Calculations", unlocked: false, completed: false, score: null, passing_score: 70, description: "Apply formulas and solve direct computational problems using real data sets.", unlock_requirement: "Complete Tier 1 with ≥ 70% to unlock." },
-              { id: "tough", name: "Tier 3: Analysis", badgeColor: "text-purple-600 bg-purple-50 border-purple-200", difficultyText: "Hard • Multi-Step & Policy", unlocked: false, completed: false, score: null, passing_score: 70, description: "Complex multi-step problems requiring deep analytical reasoning and policy trade-offs.", unlock_requirement: "Complete Tier 2 with ≥ 70% to unlock." }
-            ];
+        const raw = localStorage.getItem(sessionKey);
+        let list = raw ? JSON.parse(raw) : null;
+        if (!list || !Array.isArray(list)) {
+          list = [
+            { id: "easy", name: "Tier 1: Foundation", badgeColor: "text-emerald-600 bg-emerald-50 border-emerald-200", difficultyText: "Easy • Recall & Definitions", unlocked: true, completed: false, score: null, passing_score: 70, description: "Core definitions, terminology, and foundational knowledge of the statistical concept." },
+            { id: "medium", name: "Tier 2: Application", badgeColor: "text-amber-600 bg-amber-50 border-amber-200", difficultyText: "Medium • Formulas & Calculations", unlocked: false, completed: false, score: null, passing_score: 70, description: "Apply formulas and solve direct computational problems using real data sets.", unlock_requirement: "Complete Tier 1 with ≥ 70% to unlock." },
+            { id: "tough", name: "Tier 3: Analysis", badgeColor: "text-purple-600 bg-purple-50 border-purple-200", difficultyText: "Hard • Multi-Step & Policy", unlocked: false, completed: false, score: null, passing_score: 70, description: "Complex multi-step problems requiring deep analytical reasoning and policy trade-offs.", unlock_requirement: "Complete Tier 2 with ≥ 70% to unlock." }
+          ];
+        }
+        const idx = list.findIndex((t: any) => t.id === tier);
+        if (idx > -1) {
+          list[idx].completed = true;
+          list[idx].score = score;
+          if (passed && idx + 1 < list.length) {
+            list[idx + 1].unlocked = true;
           }
-          const idx = list.findIndex((t: any) => t.id === tier);
-          if (idx > -1) {
-            list[idx].completed = true;
-            list[idx].score = score;
-            if (passed && idx + 1 < list.length) {
-              list[idx + 1].unlocked = true;
-            }
-          }
-          localStorage.setItem(k, JSON.stringify(list));
-        });
+        }
+        localStorage.setItem(sessionKey, JSON.stringify(list));
+        if (!isExplicitSession) {
+          localStorage.setItem("gyansetu_tiers_default", JSON.stringify(list));
+        }
 
         window.dispatchEvent(
           new CustomEvent("gyansetu:assessment_updated", {

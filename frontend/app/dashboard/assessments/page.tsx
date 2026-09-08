@@ -66,33 +66,29 @@ function getResolvedTiers(currentSessionId: string): TierStatus[] {
   if (typeof window === "undefined") return result;
 
   try {
-    // 1. Check session-specific storage
-    const sessionKey = `gyansetu_tiers_${currentSessionId || "default"}`;
+    const isExplicitSession = !!(
+      currentSessionId && 
+      currentSessionId !== "demo_session" && 
+      currentSessionId !== "default"
+    );
+    const sessionKey = isExplicitSession ? `gyansetu_tiers_${currentSessionId}` : "gyansetu_tiers_default";
     const sessionData = localStorage.getItem(sessionKey);
-    let hasLoaded = false;
+
     if (sessionData) {
       const parsed = JSON.parse(sessionData);
       if (Array.isArray(parsed) && parsed.length === 3) {
         result = parsed;
-        hasLoaded = true;
       }
     }
 
-    // 2. Check default key if session key was empty or had 0 completed
-    if (!hasLoaded || !result.some(t => t.completed)) {
-      const defaultData = localStorage.getItem("gyansetu_tiers_default");
-      if (defaultData) {
-        const parsed = JSON.parse(defaultData);
-        if (Array.isArray(parsed) && parsed.length === 3 && parsed.some(t => t.completed)) {
-          result = parsed;
-        }
-      }
-    }
-
-    // 3. Reconcile with Test Report Ledger records for absolute cross-session consistency
+    // Only reconcile with ledger for the EXACT matching session!
+    // Never apply unrelated historical ledger items to a fresh or new session.
     const ledgerItems = getLocalLedgerItems();
     if (Array.isArray(ledgerItems) && ledgerItems.length > 0) {
-      ledgerItems.forEach(item => {
+      const targetSession = isExplicitSession ? currentSessionId : "sess_mospi_base_001";
+      const matchingItems = ledgerItems.filter(item => item.session_id === targetSession);
+
+      matchingItems.forEach(item => {
         const itemTier = (item.tier || "").toLowerCase();
         const tierId = 
           itemTier.includes("tier 1") || itemTier.includes("foundation") ? "easy" :
@@ -205,9 +201,12 @@ export default function AssessmentsPage() {
         }
         if (typeof window !== "undefined") {
           try {
-            const key1 = `gyansetu_tiers_${sessionId || "default"}`;
-            localStorage.setItem(key1, JSON.stringify(newTiers));
-            localStorage.setItem("gyansetu_tiers_default", JSON.stringify(newTiers));
+            const isExplicitSession = !!(sessionId && sessionId !== "demo_session" && sessionId !== "default");
+            const sessionKey = isExplicitSession ? `gyansetu_tiers_${sessionId}` : "gyansetu_tiers_default";
+            localStorage.setItem(sessionKey, JSON.stringify(newTiers));
+            if (!isExplicitSession) {
+              localStorage.setItem("gyansetu_tiers_default", JSON.stringify(newTiers));
+            }
             window.dispatchEvent(new Event("gyansetu:assessment_updated"));
           } catch (e) {
             console.warn("Failed saving tiers to localStorage:", e);
