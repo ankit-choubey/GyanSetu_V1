@@ -129,7 +129,7 @@
 
         <!-- Video Player Studio Container -->
         <div id="video-player-container" class="video-container">
-          <video id="lecture-video" src="/video/intro_to_statistics.mp4" playsinline preload="metadata"></video>
+          <video id="lecture-video" src="/video/intro_to_statistics.mp4" playsinline preload="auto" autoplay muted loop></video>
 
           <!-- Big Center Play/Pause Splash Overlay -->
           <div id="video-splash-overlay" class="splash-overlay">
@@ -214,6 +214,29 @@
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Official iGOT Course Video Link Action Bar -->
+        <div class="course-share-strip">
+          <div class="share-strip-left">
+            <div class="share-pulse-dot"></div>
+            <div class="share-info">
+              <span class="share-label">Official iGOT Civil Services Cadre Asset</span>
+              <div class="share-url-row">
+                <span class="share-url-code">https://youtu.be/QIXUTsdj_oA</span>
+                <span class="share-badge-pill">MoSPI Certified</span>
+              </div>
+            </div>
+          </div>
+          <div class="share-strip-right">
+            <button id="btn-copy-course-url" class="btn-copy-igot-course" type="button" title="Copy Course Video URL to clipboard">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copy-btn-text">Copy iGOT Course URL</span>
+            </button>
           </div>
         </div>
 
@@ -574,6 +597,21 @@
       </div>
     </div>
   </footer>
+
+  <!-- Floating Toast Notification for Clipboard Copy -->
+  <div id="copy-toast" class="copy-toast hidden">
+    <div class="toast-inner">
+      <div class="toast-icon-wrap">
+        <svg class="icon-toast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div class="toast-text">
+        <strong class="toast-heading">iGOT Course URL Copied!</strong>
+        <p class="toast-message">Official link copied to clipboard. Ready to paste into GyanSetu Ingestion Hub.</p>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

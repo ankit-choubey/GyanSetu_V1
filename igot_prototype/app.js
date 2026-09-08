@@ -175,18 +175,73 @@ document.addEventListener('DOMContentLoaded', () => {
   // Auto-play on launch with muted fallback
   setTimeout(() => {
     if (video) {
-      video.play().catch(() => {
-        // Autoplay policy prevented unmuted audio; mute and start
-        video.muted = true;
-        if (iconVolHigh && iconVolMuted) {
-          iconVolHigh.classList.add('hidden');
-          iconVolMuted.classList.remove('hidden');
-          volumeSlider.value = 0;
-        }
-        video.play().catch(e => console.warn('Autoplay prevented:', e));
+      video.muted = true;
+      if (iconVolHigh && iconVolMuted) {
+        iconVolHigh.classList.add('hidden');
+        iconVolMuted.classList.remove('hidden');
+        if (volumeSlider) volumeSlider.value = 0;
+      }
+      video.play().then(() => {
+        updatePlayPauseUI(true);
+      }).catch(e => {
+        console.warn('Autoplay prevented:', e);
       });
     }
-  }, 400);
+  }, 200);
+
+  // =========================================================================
+  // 1B. OFFICIAL iGOT COURSE VIDEO URL CLIPBOARD COPY
+  // =========================================================================
+  const btnCopyCourseUrl = document.getElementById('btn-copy-course-url');
+  const copyBtnText = document.getElementById('copy-btn-text');
+  const copyToast = document.getElementById('copy-toast');
+  const COURSE_VIDEO_URL = "https://youtu.be/QIXUTsdj_oA";
+
+  if (btnCopyCourseUrl) {
+    btnCopyCourseUrl.addEventListener('click', async () => {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(COURSE_VIDEO_URL);
+        } else {
+          const textarea = document.createElement('textarea');
+          textarea.value = COURSE_VIDEO_URL;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+        }
+
+        // Visual feedback on button
+        btnCopyCourseUrl.classList.add('copied');
+        if (copyBtnText) copyBtnText.textContent = '✓ Copied to Clipboard!';
+
+        // Show animated toast
+        if (copyToast) {
+          copyToast.classList.remove('hidden');
+          // Force reflow for CSS animation
+          void copyToast.offsetWidth;
+          copyToast.classList.add('show');
+
+          setTimeout(() => {
+            copyToast.classList.remove('show');
+            setTimeout(() => {
+              copyToast.classList.add('hidden');
+            }, 300);
+          }, 3500);
+        }
+
+        // Reset button after 3 seconds
+        setTimeout(() => {
+          btnCopyCourseUrl.classList.remove('copied');
+          if (copyBtnText) copyBtnText.textContent = 'Copy iGOT Course URL';
+        }, 3000);
+      } catch (err) {
+        console.error('Clipboard copy error:', err);
+      }
+    });
+  }
 
   // =========================================================================
   // 2. TABBED STUDIO SWITCHER

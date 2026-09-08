@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -94,6 +94,17 @@ export function IngestionHub() {
   const [files, setFiles] = useState<{ pdf?: File; pptx?: File; audio?: File }>({});
   const [selectedSubskill, setSelectedSubskill] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("All");
+
+  // Read URL query parameter if navigated from iGOT / external link
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlParam = params.get("url");
+      if (urlParam && urlParam.trim().length > 5) {
+        setYoutubeUrl(urlParam.trim());
+      }
+    }
+  }, []);
 
   // Processing & Ingested State
   const [isProcessing, setIsProcessing] = useState(false);
