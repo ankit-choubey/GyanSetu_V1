@@ -125,7 +125,15 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
 
-  const navItems = [
+  interface NavItem {
+    name: string;
+    href: string;
+    icon: any;
+    active: boolean;
+    badge?: string;
+  }
+
+  const navItems: NavItem[] = [
     {
       name: "Dashboard",
       href: "/dashboard",
@@ -161,13 +169,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       href: "/dashboard/tasks",
       icon: ListChecks,
       active: pathname?.startsWith("/dashboard/tasks"),
-    },
-    {
-      name: "Workforce",
-      href: "/dashboard/workforce",
-      icon: Users2,
-      active: pathname?.startsWith("/dashboard/workforce"),
-      badge: "Admin",
     },
     {
       name: "Competency Map",
