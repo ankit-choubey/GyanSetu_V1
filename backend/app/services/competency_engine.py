@@ -7,12 +7,12 @@ from typing import Iterable
 from app.models.evidence import Evidence, EvidenceType
 
 EVIDENCE_WEIGHTS: dict[EvidenceType, float] = {
-    EvidenceType.APPLICATION_SCENARIO: 0.35,
-    EvidenceType.PRACTICAL_TASK: 0.30,
-    EvidenceType.KNOWLEDGE_ASSESSMENT: 0.20,
-    EvidenceType.TRAINING_HISTORY: 0.10,
-    EvidenceType.WORKPLACE_SIGNAL: 0.05,
-    EvidenceType.SELF_REPORT: 0.02,
+    EvidenceType.WORKPLACE_SIGNAL: 0.95,     # Level 5: Workplace Signals (Audited Field Records)
+    EvidenceType.PRACTICAL_TASK: 0.80,        # Level 4: Practical Tasks (PLFS/SUT Simulation Drills)
+    EvidenceType.APPLICATION_SCENARIO: 0.65,   # Level 3: Application Scenarios (Case Trade-offs)
+    EvidenceType.KNOWLEDGE_ASSESSMENT: 0.50,   # Level 2: Knowledge Assessments (3-Tier Diagnostic Quizzes)
+    EvidenceType.TRAINING_HISTORY: 0.30,      # Level 1: Training History (iGOT / NSSTA Attended)
+    EvidenceType.SELF_REPORT: 0.10,           # Level 0: Self-Report & Profile (Calibration Only)
 }
 
 
