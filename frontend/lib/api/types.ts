@@ -158,3 +158,55 @@ export interface StudyLibraryItem {
   created_at: string | null;
 }
 
+export interface TestQuestionDetail {
+  question_number: string;
+  subskill_name: string;
+  question_text: string;
+  options?: string[];
+  user_selected: string;
+  correct_option: string;
+  is_correct: boolean;
+  misconception_hint?: string;
+  remediation_steps?: string;
+}
+
+export interface TestLedgerItem {
+  report_id: string; // e.g. "Test Report #001"
+  numeric_id: number; // e.g. 1
+  session_id: string;
+  timestamp: string; // Formatted datetime
+  iso_date: string;
+  user_id: number;
+  full_name: string;
+  email: string;
+  role_name: string;
+  designation: string;
+  department: string;
+  competency_id: number;
+  competency_name: string;
+  tier: string;
+  difficulty_band: string;
+  score: number; // percentage (0-100)
+  correct_count: number;
+  total_questions: number;
+  passing_score: number; // 70
+  result_status: "PASSED" | "RETRY RECOMMENDED";
+  next_tier_unlocked: string | null;
+  // KPI / Mastery parameters
+  mastery: number | null;
+  confidence: number;
+  coverage: number;
+  uncertainty: number;
+  evidence_count: number;
+  evidence_diversity: number;
+  assessed_count: string;
+  // Audit / Provenance
+  reliability_status: string;
+  provenance: string;
+  evidence_type: string;
+  weight: number;
+  // Question-by-question breakdown
+  items?: TestQuestionDetail[];
+}
+
+

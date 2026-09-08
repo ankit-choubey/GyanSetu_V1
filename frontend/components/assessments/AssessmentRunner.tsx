@@ -106,6 +106,102 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
       console.warn("Persisting assessment attempt failed or offline:", apiErr);
     }
 
+    // Automatically record to the real-time Test Report Ledger
+    try {
+      const { appendTestLedgerItem } = await import("@/lib/api/ledger");
+      const userProfile = typeof window !== "undefined" && localStorage.getItem("gyansetu_user") 
+        ? JSON.parse(localStorage.getItem("gyansetu_user") || "{}") 
+        : null;
+
+      appendTestLedgerItem({
+        session_id: sessionId || `sess_${Date.now().toString(36)}`,
+        timestamp: new Date().toLocaleString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+        iso_date: new Date().toISOString(),
+        user_id: userProfile?.id || 1,
+        full_name: userProfile?.full_name || "Shri Ankit Choubey",
+        email: userProfile?.email || "learner@example.com",
+        role_name: userProfile?.role_name || "Statistical Officer",
+        designation: userProfile?.designation || "Statistical Officer",
+        department: userProfile?.department || "National Accounts Division (NAD)",
+        competency_id: tier === "easy" ? 1 : tier === "medium" ? 2 : 3,
+        competency_name: tier === "easy" ? "Sampling Design & Field Methodologies" : tier === "medium" ? "National Accounts & Price Statistics" : "Survey Data Harmonization & Policy Analytics",
+        tier: tier === "easy" ? "Tier 1: Foundation" : tier === "medium" ? "Tier 2: Application" : "Tier 3: Analysis",
+        difficulty_band: tier === "easy" ? "Recall & Definitions (Bloom L1-L2)" : tier === "medium" ? "Formulas & Calculations (Bloom L3-L4)" : "Multi-Step & Policy Analysis (Bloom L5-L6)",
+        score,
+        correct_count: correctCount,
+        total_questions: total,
+        passing_score: 70,
+        result_status: passed ? "PASSED" : "RETRY RECOMMENDED",
+        next_tier_unlocked: passed ? (tier === "easy" ? "Tier 2: Application" : tier === "medium" ? "Tier 3: Analysis" : null) : null,
+        mastery: Math.min(1.0, Math.max(0.2, score / 100)),
+        confidence: 0.85,
+        coverage: 0.80,
+        uncertainty: 0.15,
+        evidence_count: 5,
+        evidence_diversity: 2,
+        assessed_count: "5 of 7",
+        reliability_status: "VERIFIED",
+        provenance: "[DYNAMIC_INGESTION:ASSESSMENT_RUNNER]",
+        evidence_type: "KNOWLEDGE_ASSESSMENT",
+        weight: 1.0,
+        items: evaluatedItems.map((it, idx) => ({
+          question_number: `Q${idx + 1}`,
+          subskill_name: (questions[idx] as any)?.subskill_name || "Statistical Methodology",
+          question_text: questions[idx]?.text || (questions[idx] as any)?.question_text || `Assessment Question #${idx + 1}`,
+          user_selected: it.user_selected,
+          correct_option: it.correct_option,
+          is_correct: it.is_correct,
+          misconception_hint: it.misconception_hint,
+          remediation_steps: Array.isArray(it.remediation_steps) ? it.remediation_steps.join("; ") : it.remediation_steps,
+        })),
+      });
+    } catch (ledgerErr) {
+      console.warn("Failed recording to Test Report Ledger:", ledgerErr);
+    }
+
+    // Immediately persist tier progression & real-time review score to localStorage
+    if (typeof window !== "undefined") {
+      try {
+        const effectiveSessionId = sessionId || localStorage.getItem("active_session_id") || "default";
+        const keysToUpdate = [
+          `gyansetu_tiers_${effectiveSessionId}`,
+          "gyansetu_tiers_default"
+        ];
+        
+        keysToUpdate.forEach(k => {
+          const raw = localStorage.getItem(k);
+          let list = raw ? JSON.parse(raw) : null;
+          if (!list || !Array.isArray(list)) {
+            list = [
+              { id: "easy", name: "Tier 1: Foundation", badgeColor: "text-emerald-600 bg-emerald-50 border-emerald-200", difficultyText: "Easy • Recall & Definitions", unlocked: true, completed: false, score: null, passing_score: 70, description: "Core definitions, terminology, and foundational knowledge of the statistical concept." },
+              { id: "medium", name: "Tier 2: Application", badgeColor: "text-amber-600 bg-amber-50 border-amber-200", difficultyText: "Medium • Formulas & Calculations", unlocked: false, completed: false, score: null, passing_score: 70, description: "Apply formulas and solve direct computational problems using real data sets.", unlock_requirement: "Complete Tier 1 with ≥ 70% to unlock." },
+              { id: "tough", name: "Tier 3: Analysis", badgeColor: "text-purple-600 bg-purple-50 border-purple-200", difficultyText: "Hard • Multi-Step & Policy", unlocked: false, completed: false, score: null, passing_score: 70, description: "Complex multi-step problems requiring deep analytical reasoning and policy trade-offs.", unlock_requirement: "Complete Tier 2 with ≥ 70% to unlock." }
+            ];
+          }
+          const idx = list.findIndex((t: any) => t.id === tier);
+          if (idx > -1) {
+            list[idx].completed = true;
+            list[idx].score = score;
+            if (passed && idx + 1 < list.length) {
+              list[idx + 1].unlocked = true;
+            }
+          }
+          localStorage.setItem(k, JSON.stringify(list));
+        });
+
+        window.dispatchEvent(new Event("gyansetu:assessment_updated"));
+      } catch (tierErr) {
+        console.warn("Failed saving tier update from AssessmentRunner:", tierErr);
+      }
+    }
+
     if (passed) {
       confetti({
         particleCount: 120,
@@ -131,8 +227,15 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden"
+        className="w-full bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden relative"
       >
+        <button 
+          onClick={() => onClose(results.score, results.passed)}
+          className="absolute top-4 right-4 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition z-10"
+          title="Exit Assessment"
+        >
+          <X className="w-5 h-5" />
+        </button>
         <div className={cn(
           "p-8 text-center border-b font-sans",
           results.passed ? "bg-emerald-50/50 border-emerald-100" : "bg-rose-50/50 border-rose-100"
@@ -253,7 +356,7 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
               onClick={() => onClose(results.score, results.passed)}
               className="px-6 py-2.5 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition shadow-sm"
             >
-              Return to Dashboard
+              Return to Assessments
             </button>
           </div>
         </div>
@@ -274,7 +377,7 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
       className="w-full bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden relative"
     >
       <button 
-        onClick={() => onClose()}
+        onClick={() => onClose(results?.score, results?.passed)}
         className="absolute top-4 right-4 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full transition z-10"
         title="Exit Assessment"
       >

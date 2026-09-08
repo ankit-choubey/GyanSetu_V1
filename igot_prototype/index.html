@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction to Statistics & Data Analysis | iGOT Karmayogi Bharat</title>
+  <meta name="description" content="Official civil services capacity building course simulation for MoSPI cadre on iGOT Karmayogi Bharat.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ========================================================================= -->
+  <!-- 1. iGOT KARMAYOGI OFFICIAL NAVIGATION BAR                                 -->
+  <!-- ========================================================================= -->
+  <header class="igot-header">
+    <div class="header-container">
+      <!-- Brand Logo: Karmayogi Bharat Emblem -->
+      <div class="brand-group">
+        <a href="/" class="brand-link">
+          <div class="emblem-container">
+            <div class="emblem-inner">
+              <span class="emblem-letter">क</span>
+            </div>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">
+              <span class="title-blue">कर्मयोगी</span>
+              <span class="title-orange">भारत</span>
+            </div>
+            <span class="brand-tagline">लोकहितं मम करणीयम् • iGOT Platform</span>
+          </div>
+        </a>
+
+        <div class="header-divider"></div>
+
+        <div class="ministry-badge">
+          <span class="ministry-title">National Programme for Civil Services Capacity Building</span>
+          <span class="ministry-sub">DoPT • Ministry of Statistics and Programme Implementation (MoSPI)</span>
+        </div>
+      </div>
+
+      <!-- Desktop Nav Items -->
+      <nav class="desktop-nav">
+        <span class="nav-link active">Courses</span>
+        <span class="nav-link">Competencies</span>
+        <span class="nav-link">Cadre Roadmap</span>
+        <span class="nav-link">NSSTA Portal</span>
+        <span class="nav-link">Help Centre</span>
+      </nav>
+
+      <!-- Right Actions: Assessment Trigger, Officer Profile, Accessibility -->
+      <div class="header-actions">
+        <button id="open-assessment-btn-header" class="btn-assessment-primary">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="7"/>
+            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+          </svg>
+          <span>GyanSetu Diagnostic</span>
+        </button>
+
+        <!-- Officer Profile Badge -->
+        <div class="officer-profile">
+          <div class="officer-avatar">AC</div>
+          <div class="officer-meta">
+            <span class="officer-name">Shri Ankit Choubey</span>
+            <span class="officer-role">Statistical Officer (JSO)</span>
+          </div>
+        </div>
+
+        <!-- Accessibility Button -->
+        <button class="btn-accessibility" title="Digital Accessibility Suite (WCAG 2.1 AA)" id="accessibility-btn">
+          <span>♿</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 2. BREADCRUMB & COURSE HEADER BANNER                                      -->
+  <!-- ========================================================================= -->
+  <div class="course-banner-strip">
+    <div class="banner-container">
+      <div>
+        <div class="breadcrumbs">
+          <span>iGOT Courses</span>
+          <span class="breadcrumb-sep">›</span>
+          <span>Official Statistics Cadre</span>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-active">Descriptive & Inferential Analytics</span>
+        </div>
+        <h1 class="course-main-title">Introduction to Statistics and Data Analysis</h1>
+        <div class="course-sub-meta">
+          <span>Instructor: <strong>Prof. Steve Brunton</strong></span>
+          <span class="dot-sep">•</span>
+          <span class="nssta-tag">National Statistical Systems Training Academy (NSSTA)</span>
+          <span class="dot-sep">•</span>
+          <span class="cadre-approved-badge">
+            <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+            MoSPI Cadre Approved
+          </span>
+        </div>
+      </div>
+
+      <div class="banner-actions">
+        <button id="hero-diagnostic-trigger" class="btn-hero-launch">
+          <svg class="icon-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          <span>Test with GyanSetu (15 MCQs)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MAIN COURSE STUDIO: VIDEO PLAYER & CURRICULUM GRID                     -->
+  <!-- ========================================================================= -->
+  <main class="main-studio-layout">
+    <div class="studio-grid">
+
+      <!-- LEFT COLUMN (8 Cols): Video Player & Tabbed Info Studio -->
+      <section class="left-video-column">
+
+        <!-- Video Player Studio Container -->
+        <div id="video-player-container" class="video-container">
+          <video id="lecture-video" src="/video/intro_to_statistics.mp4" playsinline preload="metadata"></video>
+
+          <!-- Big Center Play/Pause Splash Overlay -->
+          <div id="video-splash-overlay" class="splash-overlay">
+            <div class="splash-play-btn">
+              <svg class="play-icon-large" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Overlay Custom Media Controls Bar -->
+          <div class="custom-controls-overlay">
+            <!-- Timeline Scrub Bar -->
+            <div class="timeline-container">
+              <input type="range" id="video-scrubber" min="0" max="60" step="0.1" value="0">
+              <div class="scrub-progress-fill" id="scrub-progress-fill"></div>
+            </div>
+
+            <!-- Controls Bottom Row -->
+            <div class="controls-bottom-bar">
+              <div class="controls-left">
+                <!-- Play/Pause Toggle -->
+                <button id="btn-play-pause" class="ctrl-btn" title="Play/Pause (Space)">
+                  <svg id="icon-play" class="icon-md" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                  <svg id="icon-pause" class="icon-md hidden" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="4" width="4" height="16"/>
+                    <rect x="14" y="4" width="4" height="16"/>
+                  </svg>
+                </button>
+
+                <!-- 10s Rewind -->
+                <button id="btn-rewind" class="ctrl-btn" title="Rewind 10 Seconds">
+                  <svg class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="1 4 1 10 7 10"/>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                  </svg>
+                  <span class="rewind-label">10s</span>
+                </button>
+
+                <!-- Volume & Mute -->
+                <div class="volume-group">
+                  <button id="btn-mute" class="ctrl-btn" title="Mute/Unmute">
+                    <svg id="icon-vol-high" class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                    <svg id="icon-vol-muted" class="icon-md hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                      <line x1="23" y1="9" x2="17" y2="15"/>
+                      <line x1="17" y1="9" x2="23" y2="15"/>
+                    </svg>
+                  </button>
+                  <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.85">
+                </div>
+
+                <!-- Time Counter Display -->
+                <span id="video-time-counter" class="time-counter">00:00 / 01:00</span>
+              </div>
+
+              <div class="controls-right">
+                <!-- Playback Speed Chips -->
+                <div class="speed-chips-group">
+                  <button class="speed-chip active" data-speed="1">1x</button>
+                  <button class="speed-chip" data-speed="1.25">1.25x</button>
+                  <button class="speed-chip" data-speed="1.5">1.5x</button>
+                  <button class="speed-chip" data-speed="2">2x</button>
+                </div>
+
+                <!-- 720p HD Quality Tag -->
+                <span class="quality-tag">720p HD</span>
+
+                <!-- Fullscreen Toggle -->
+                <button id="btn-fullscreen" class="ctrl-btn" title="Toggle Fullscreen">
+                  <svg id="icon-fs-enter" class="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 3 21 3 21 9"/>
+                    <polyline points="9 21 3 21 3 15"/>
+                    <line x1="21" y1="3" x2="14" y2="10"/>
+                    <line x1="3" y1="21" x2="10" y2="14"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official Team Karmayogi Bharat Banner under Video -->
+        <div class="team-banner-card">
+          <div class="team-banner-content">
+            <h3>Team Karmayogi Bharat • Official Study Platform</h3>
+            <p>Civil Services Competency Enhancement Track • Statistical Quality, Ingestion & Evidence Engine</p>
+          </div>
+          <button id="evaluate-banner-btn" class="btn-banner-evaluate">
+            <span>Evaluate in GyanSetu →</span>
+          </button>
+        </div>
+
+        <!-- Tabbed Information Studio -->
+        <div class="tabbed-studio-card">
+          <div class="studio-tab-headers">
+            <button class="tab-btn active" data-tab="overview">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              <span>Overview & Outcomes</span>
+            </button>
+            <button class="tab-btn" data-tab="timestamps">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>Interactive Timestamps</span>
+            </button>
+            <button class="tab-btn" data-tab="handbooks">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              <span>MoSPI Handbooks</span>
+            </button>
+          </div>
+
+          <!-- Tab Pane 1: Overview -->
+          <div id="tab-overview" class="tab-pane active">
+            <div class="overview-content">
+              <h4 class="section-title">Lecture Description & Learning Objectives</h4>
+              <p class="section-desc">
+                This flagship lecture series, delivered by <strong>Prof. Steve Brunton</strong> and adopted by the 
+                <strong>National Statistical Systems Training Academy (NSSTA)</strong>, bridges theoretical probability with applied modern data analysis. Learners study how empirical data is structured, cleaned, and statistically characterized for policy decisions.
+              </p>
+
+              <div class="meta-two-col">
+                <div class="meta-box">
+                  <span class="meta-header-title">Core Competencies Covered</span>
+                  <ul class="meta-list">
+                    <li>Probability Density Functions (PDF) & Cumulative Distributions (CDF)</li>
+                    <li>Sampling Variance & Neyman Optimum Allocation</li>
+                    <li>Central Limit Theorem in NSS Survey Rounds</li>
+                    <li>Regression Grounding & Residual Variance Analysis</li>
+                  </ul>
+                </div>
+
+                <div class="meta-box">
+                  <span class="meta-header-title">Official Cadre Relevance</span>
+                  <ul class="meta-list">
+                    <li>Junior Statistical Officers (JSO) & Senior Statistical Officers (SSO)</li>
+                    <li>National Accounts Division (NAD) - Macro Computations</li>
+                    <li>Field Operations Division (FOD) - Survey Rounds</li>
+                    <li>Price & Index Compilation Teams (CPI / IIP)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Pane 2: Timestamps -->
+          <div id="tab-timestamps" class="tab-pane">
+            <p class="tab-instruction">Click any timestamp to navigate the video player directly to that key section:</p>
+            <div class="timestamp-list" id="timestamp-list-container">
+              <!-- Dynamically populated / interactive -->
+              <div class="timestamp-item" data-time="0">
+                <div class="ts-info">
+                  <span class="ts-badge">00:00</span>
+                  <span class="ts-title">Introduction & Foundations of Data-Driven Science</span>
+                </div>
+                <span class="ts-action">Play Section →</span>
+              </div>
+              <div class="timestamp-item" data-time="10">
+                <div class="ts-info">
+                  <span class="ts-badge">00:10</span>
+                  <span class="ts-title">The Role of Statistics in Decision Systems & Policy</span>
+                </div>
+                <span class="ts-action">Play Section →</span>
+              </div>
+              <div class="timestamp-item" data-time="20">
+                <div class="ts-info">
+                  <span class="ts-badge">00:20</span>
+                  <span class="ts-title">Continuous vs. Discrete Probability Models</span>
+                </div>
+                <span class="ts-action">Play Section →</span>
+              </div>
+              <div class="timestamp-item" data-time="30">
+                <div class="ts-info">
+                  <span class="ts-badge">00:30</span>
+                  <span class="ts-title">Variance, Covariance & Uncertainty Quantification</span>
+                </div>
+                <span class="ts-action">Play Section →</span>
+              </div>
+              <div class="timestamp-item" data-time="40">
+                <div class="ts-info">
+                  <span class="ts-badge">00:40</span>
+                  <span class="ts-title">Sampling Bias & The Central Limit Theorem</span>
+                </div>
+                <span class="ts-action">Play Section →</span>
+              </div>
+              <div class="timestamp-item" data-time="50">
+                <div class="ts-info">
+                  <span class="ts-badge">00:50</span>
+                  <span class="ts-title">Regression, Model Grounding & Cadre Competency</span>
+                </div>
+                <span class="ts-action">Play Section →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Pane 3: Handbooks -->
+          <div id="tab-handbooks" class="tab-pane">
+            <div class="handbooks-list">
+              <div class="handbook-card">
+                <div>
+                  <h5 class="handbook-title">MoSPI Compendium of Statistical Methods (PDF)</h5>
+                  <p class="handbook-sub">Official Field Manual & Standard National Formulas • 4.2 MB • Verified</p>
+                </div>
+                <button class="btn-handbook" onclick="alert('Accessing MoSPI Field Manual Repository (Authentic Cadre Archive)')">Download PDF</button>
+              </div>
+
+              <div class="handbook-card">
+                <div>
+                  <h5 class="handbook-title">NSSTA Sampling Protocols & Variance Formulations</h5>
+                  <p class="handbook-sub">Standard Handbook for NSS Rounds & Trainees • 2.8 MB • NSSTA Certified</p>
+                </div>
+                <button class="btn-handbook" onclick="alert('Accessing NSSTA Sampling Handbook')">Download PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN (4 Cols): Playlist & Assessment Launcher -->
+      <aside class="right-sidebar-column">
+
+        <!-- GyanSetu 15-MCQ Assessments Bridge Card -->
+        <div class="assessment-bridge-card">
+          <div class="bridge-status-row">
+            <span class="live-dot-pulse"></span>
+            <span class="bridge-status-text">GyanSetu Integration Active</span>
+          </div>
+          <h3 class="bridge-title">Evaluate Your Learning</h3>
+          <p class="bridge-desc">
+            Take the official 15-question adaptive assessment directly based on this video module.
+            Your score will dynamically update your competency profile and report ledger.
+          </p>
+          <button id="sidebar-launch-assessment-btn" class="btn-bridge-launch">
+            <span>Launch 15-MCQ Assessment</span>
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Course Curriculum Playlist (Coursera/iGOT Style) -->
+        <div class="curriculum-card">
+          <div class="curriculum-header">
+            <div>
+              <h4 class="curr-title">Course Curriculum</h4>
+              <span class="curr-sub">5 Modules • 2 hrs 10 mins total</span>
+            </div>
+            <span class="curr-progress-pill">20% Done</span>
+          </div>
+
+          <div class="playlist-container" id="course-playlist">
+            <!-- Module 1 (Active) -->
+            <div class="playlist-item active" data-mod-idx="0">
+              <div class="item-icon-col">
+                <div class="active-play-badge">
+                  <svg class="icon-xs" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="item-text-col">
+                <p class="item-title">1. Introduction to Statistics and Data Analysis</p>
+                <p class="item-meta">Prof. Steve Brunton • 32:45</p>
+              </div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="playlist-item" data-mod-idx="1">
+              <div class="item-icon-col">
+                <div class="num-badge">2</div>
+              </div>
+              <div class="item-text-col">
+                <p class="item-title">2. Descriptive Statistics, Probability & Distributions</p>
+                <p class="item-meta">Prof. Steve Brunton • 18:20</p>
+              </div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="playlist-item" data-mod-idx="2">
+              <div class="item-icon-col">
+                <div class="num-badge">3</div>
+              </div>
+              <div class="item-text-col">
+                <p class="item-title">3. Inferential Frameworks, Sampling & Variance Estimation</p>
+                <p class="item-meta">Prof. Steve Brunton • 24:15</p>
+              </div>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="playlist-item" data-mod-idx="3">
+              <div class="item-icon-col">
+                <div class="num-badge">4</div>
+              </div>
+              <div class="item-text-col">
+                <p class="item-title">4. Dimensionality Reduction, SVD & Predictive Analytics</p>
+                <p class="item-meta">Prof. Steve Brunton • 28:50</p>
+              </div>
+            </div>
+
+            <!-- Module 5 -->
+            <div class="playlist-item" data-mod-idx="4">
+              <div class="item-icon-col">
+                <div class="num-badge">5</div>
+              </div>
+              <div class="item-text-col">
+                <p class="item-title">5. MoSPI Statistical Cadre Harmonization Protocol</p>
+                <p class="item-meta">NSSTA Faculty Directorate • 15:10</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official Accreditation Card -->
+        <div class="accreditation-card">
+          <p class="acc-title">National Statistical Systems Training Academy</p>
+          <p class="acc-sub">iGOT Karmayogi Bharat • Official Cadre Competency Portal</p>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- 4. EMBEDDED 15-MCQ DIAGNOSTIC ASSESSMENT MODAL (GYANSETU ENGINE)          -->
+  <!-- ========================================================================= -->
+  <div id="assessment-modal" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <div class="diag-tag-row">
+            <span class="diag-tag">GyanSetu Assessment Engine</span>
+            <span class="diag-tag tier-tag" id="modal-tier-tag">Tier 1: Foundation</span>
+          </div>
+          <h2 class="modal-title" id="modal-assessment-title">MoSPI Diagnostic Assessment: Statistics & Data Analysis</h2>
+          <span class="modal-sub">15 Calibrated Questions • Passing Benchmark: 70%</span>
+        </div>
+        <button id="close-modal-btn" class="btn-close-modal" title="Close Assessment">✕</button>
+      </div>
+
+      <!-- Assessment Question Body (While Taking Test) -->
+      <div id="assessment-body-active" class="modal-body">
+        <!-- Progress Bar & Question Counter -->
+        <div class="q-progress-bar-wrap">
+          <div class="q-progress-meta">
+            <span id="question-progress-label">Question 1 of 15</span>
+            <span id="question-score-counter">Score: 0 / 0</span>
+          </div>
+          <div class="q-progress-track">
+            <div id="q-progress-fill" class="q-progress-fill" style="width: 6.66%;"></div>
+          </div>
+        </div>
+
+        <!-- Question Box -->
+        <div class="question-container">
+          <span class="subskill-pill" id="q-subskill-pill">Sub-Skill: Descriptive Statistics</span>
+          <h3 class="question-prompt" id="q-prompt-text">Loading question prompt...</h3>
+
+          <!-- Options Container -->
+          <div class="options-container" id="options-container">
+            <!-- Injected via JavaScript -->
+          </div>
+
+          <!-- Misconception Diagnostic Feedback Box -->
+          <div id="feedback-box" class="feedback-box hidden">
+            <div class="feedback-title" id="feedback-title">Result</div>
+            <p class="feedback-text" id="feedback-explanation">Explanation</p>
+            <div id="misconception-callout" class="misconception-callout hidden">
+              <strong>Diagnosed Cognitive Misconception:</strong>
+              <p id="misconception-text">Misconception hint</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assessment Results Body (After Test Completion) -->
+      <div id="assessment-body-results" class="modal-body hidden">
+        <div class="results-summary-card" id="results-card">
+          <div class="results-score-circle" id="results-score-circle">
+            <span class="results-pct" id="results-pct">0%</span>
+            <span class="results-label">Final Score</span>
+          </div>
+
+          <h3 class="results-headline" id="results-headline">Assessment Complete</h3>
+          <p class="results-subtext" id="results-subtext">Evaluating qualification status against the official 70% MoSPI benchmark.</p>
+
+          <div class="results-kpi-grid">
+            <div class="kpi-mini-card">
+              <span class="kpi-mini-title">Correct Answers</span>
+              <span class="kpi-mini-val" id="kpi-correct-count">0 / 15</span>
+            </div>
+            <div class="kpi-mini-card">
+              <span class="kpi-mini-title">Qualification Benchmark</span>
+              <span class="kpi-mini-val">70% Required</span>
+            </div>
+            <div class="kpi-mini-card">
+              <span class="kpi-mini-title">Tier Progression</span>
+              <span class="kpi-mini-val" id="kpi-progression-status">Locked</span>
+            </div>
+          </div>
+
+          <div class="results-actions">
+            <button id="btn-restart-assessment" class="btn-secondary">Retake Assessment</button>
+            <button id="btn-finish-modal" class="btn-primary">Return to Study Studio</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer Controls -->
+      <div class="modal-footer" id="modal-active-footer">
+        <span class="footer-tip">Select an option to evaluate your answer with instant misconception diagnostics.</span>
+        <button id="btn-next-question" class="btn-next-q disabled" disabled>Next Question →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 5. FOOTER                                                                 -->
+  <!-- ========================================================================= -->
+  <footer class="igot-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <p class="footer-copy">© 2026 iGOT Karmayogi Bharat • Department of Personnel and Training (DoPT) • MoSPI Training Directorate</p>
+        <p class="footer-sub">National Statistical Systems Training Academy (NSSTA) • Official Civil Services Capacity Building Framework</p>
+      </div>
+      <div class="footer-right">
+        <span class="footer-tag">Portal Version 4.2 • Prototype Port 3003</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

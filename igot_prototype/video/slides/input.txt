@@ -1,0 +1,13 @@
+file '/Users/utkarshsingh/Desktop/GyanSetu/igot_prototype/video/slides/slide_0.png'
+duration 10
+file '/Users/utkarshsingh/Desktop/GyanSetu/igot_prototype/video/slides/slide_1.png'
+duration 10
+file '/Users/utkarshsingh/Desktop/GyanSetu/igot_prototype/video/slides/slide_2.png'
+duration 10
+file '/Users/utkarshsingh/Desktop/GyanSetu/igot_prototype/video/slides/slide_3.png'
+duration 10
+file '/Users/utkarshsingh/Desktop/GyanSetu/igot_prototype/video/slides/slide_4.png'
+duration 10
+file '/Users/utkarshsingh/Desktop/GyanSetu/igot_prototype/video/slides/slide_5.png'
+duration 10
+file '/Users/utkarshsingh/Desktop/GyanSetu/igot_prototype/video/slides/slide_5.png'

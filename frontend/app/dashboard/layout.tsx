@@ -16,6 +16,7 @@ import {
   LogOut,
   UploadCloud,
   BookOpen,
+  FileSpreadsheet,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
@@ -123,6 +124,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       active: pathname?.startsWith("/dashboard/assessments"),
     },
     {
+      name: "Report Ledger",
+      href: "/dashboard/ledger",
+      icon: FileSpreadsheet,
+      active: pathname?.startsWith("/dashboard/ledger"),
+    },
+    {
       name: "Tasks",
       href: "/dashboard/tasks",
       icon: ListChecks,
@@ -162,6 +169,9 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     }
     if (pathname?.startsWith("/dashboard/assessments")) {
       return { title: "Assessments", subtitle: "Adaptive multi-tier diagnostic evaluations" };
+    }
+    if (pathname?.startsWith("/dashboard/ledger")) {
+      return { title: "Test Report Ledger", subtitle: "Chronological evaluation records, KPI diagnostics & official MoSPI DOCX reports" };
     }
     if (pathname?.startsWith("/dashboard/tasks")) {
       return { title: "Practical Tasks", subtitle: "Workplace assignments & evidence records" };

@@ -1,0 +1,12 @@
+{
+  "name": "igot-karmayogi-prototype",
+  "version": "1.0.0",
+  "description": "Standalone iGOT Karmayogi Bharat Course Simulation Prototype on Port 3003",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["igot", "karmayogi", "mospi", "nssta", "prototype"],
+  "author": "GyanSetu Team",
+  "license": "MIT"
+}
