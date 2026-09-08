@@ -81,6 +81,8 @@ export default function StudyLibraryPage() {
       const fullDoc = await client.get<any>(`/api/content/library/${doc.id}`);
       if (fullDoc && Array.isArray(fullDoc.questions) && fullDoc.questions.length > 0) {
         localStorage.setItem("active_assessment_questions", JSON.stringify(fullDoc.questions));
+        localStorage.setItem("active_source_title", doc.title);
+        localStorage.setItem("active_session_id", `lib_${doc.id}`);
         router.push(`/dashboard/assessments?session_id=lib_${doc.id}`);
       } else {
         router.push("/dashboard/assessments");

@@ -18,6 +18,7 @@ interface AssessmentRunnerProps {
 
 export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerProps) {
   const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
+  const [sourceTitle, setSourceTitle] = useState<string | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,10 +29,15 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
     async function loadQuestions() {
       // 1. Check if dynamically generated questions exist (from YouTube or document ingestion)
       const cached = typeof window !== "undefined" ? localStorage.getItem("active_assessment_questions") : null;
+      const storedTitle = typeof window !== "undefined" ? localStorage.getItem("active_source_title") : null;
+      if (storedTitle) {
+        setSourceTitle(storedTitle);
+      }
+
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed) && parsed.length >= 5) {
+          if (Array.isArray(parsed) && parsed.length > 0) {
             setQuestions(parsed);
             return;
           }
@@ -279,10 +285,15 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
       <div className="bg-slate-50 p-5 sm:p-6 border-b border-slate-100">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-blue-100 text-blue-800 rounded">
                 {tier} Tier
               </span>
+              {sourceTitle && (
+                <span className="text-xs font-semibold text-blue-900 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-200 truncate max-w-xs sm:max-w-md">
+                  {sourceTitle}
+                </span>
+              )}
               <span className="text-xs text-slate-500 font-medium">
                 {questions.length} Questions Total • 70% Pass Standard
               </span>

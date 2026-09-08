@@ -150,7 +150,7 @@ export function IngestionHub() {
         setCurrentStep(1); // Segmenting content
         const ytRes: any = await client.post("/api/content/youtube-ingest", {
           url: youtubeUrl.trim(),
-          num_questions: 4,
+          num_questions: 15,
         });
 
         setCurrentStep(2); // Removing duplicates
