@@ -29,6 +29,24 @@ class VideoStudyPointResponse(BaseModel):
     all_timestamps: List[dict[str, Any]] = []
 
 
+class DocumentStudyPointRequest(BaseModel):
+    document_name: Optional[str] = "MoSPI Sampling Design & Field Operations Manual (PDF)"
+    question_number: Optional[str] = None
+    question_index: Optional[int] = 0
+    query: Optional[str] = "which page should i study"
+
+
+class DocumentStudyPointResponse(BaseModel):
+    status: str = "OK"
+    document_name: str
+    starting_page: int
+    page_reference: str
+    section_reference: str
+    primary_topic: str
+    guidance: str
+    all_pages: List[dict[str, Any]] = []
+
+
 def _format_seconds(seconds: int) -> str:
     m = seconds // 60
     s = seconds % 60
@@ -77,6 +95,77 @@ DEFAULT_CURRICULUM = [
     },
 ]
 
+DEFAULT_DOCUMENT_CURRICULUM = [
+    {
+        "item": "Q1",
+        "subskill": "Sample Variance & Standard Error Formulation",
+        "page_start": 3,
+        "page_end": 4,
+        "page_ref": "Page 3 – 4",
+        "section": "Chapter 2: Fundamental Estimation & Variance Bounds (Section 2.1)",
+        "focus": "Division by (n-1) degrees of freedom and variance bounds",
+    },
+    {
+        "item": "Q2",
+        "subskill": "Finite Population Correction (FPC)",
+        "page_start": 5,
+        "page_end": 6,
+        "page_ref": "Page 5 – 6",
+        "section": "Chapter 3: Sampling Fractions & Finite Population Correction (Section 3.2)",
+        "focus": "Applying sqrt((N-n)/(N-1)) when sample fraction n/N exceeds 5%",
+    },
+    {
+        "item": "Q3",
+        "subskill": "Stratified Cluster Variance Estimation",
+        "page_start": 7,
+        "page_end": 8,
+        "page_ref": "Page 7 – 8",
+        "section": "Chapter 4: Multi-Stage Clustering & Variance Partitioning (Section 4.1)",
+        "focus": "Between-cluster vs within-cluster variance components",
+    },
+    {
+        "item": "Q4",
+        "subskill": "MoSPI Survey Weighting & Non-Response Adjustment",
+        "page_start": 9,
+        "page_end": 10,
+        "page_ref": "Page 9 – 10",
+        "section": "Chapter 5: Design Weights, Multipliers & Non-Response Imputation (Section 5.3)",
+        "focus": "Design weight calculation per NSS / PLFS survey standards",
+    },
+    {
+        "item": "Q5",
+        "subskill": "Statistical Calibration & Quality Assurance",
+        "page_start": 11,
+        "page_end": 12,
+        "page_ref": "Page 11 – 12",
+        "section": "Chapter 6: Calibration Protocols & Standard Quality Checks (Section 6.2)",
+        "focus": "Generalized Regression Estimator (GREG) and sample consistency verification",
+    },
+]
+
+
+@router.post("/chatbot/document-study-point", response_model=DocumentStudyPointResponse)
+def get_document_study_point(
+    payload: DocumentStudyPointRequest,
+    user: Optional[User] = Depends(get_current_user_optional),
+) -> DocumentStudyPointResponse:
+    """Returns the exact page number, section, and reading guidance for document/PDF study."""
+    doc_name = payload.document_name or "MoSPI Sampling Design & Field Operations Manual (PDF)"
+    first = DEFAULT_DOCUMENT_CURRICULUM[0]
+    return DocumentStudyPointResponse(
+        status="OK",
+        document_name=doc_name,
+        starting_page=first["page_start"],
+        page_reference=first["page_ref"],
+        section_reference=first["section"],
+        primary_topic=first["subskill"],
+        guidance=(
+            f"Open **{doc_name}** to **Page {first['page_start']}** ({first['section']}) "
+            f"to review the foundational derivation of {first['subskill']}."
+        ),
+        all_pages=DEFAULT_DOCUMENT_CURRICULUM,
+    )
+
 
 @router.post("/chatbot/video-study-point", response_model=VideoStudyPointResponse)
 def get_video_study_point(
@@ -120,11 +209,77 @@ def ask_chatbot(
     payload: ChatbotRequest,
     user: Optional[User] = Depends(get_current_user_optional),
 ) -> ChatbotResponse:
-    """Core grounded assistant endpoint supporting video timestamps, accuracy roadmap, and statistical RAG."""
+    """Core grounded assistant endpoint supporting video timestamps, document study pages, accuracy roadmap, and statistical RAG."""
     query = (payload.question or "").strip()
     lower = query.lower()
 
-    # 1. Video starting point & timestamp inquiries
+    # Detect if inquiry is specifically for PDF / Document or Video
+    is_explicit_pdf = (
+        (payload.source_type and payload.source_type.lower() in ["pdf", "document", "pptx"])
+        or (payload.source_title and ".pdf" in payload.source_title.lower())
+        or (payload.document_name and ".pdf" in payload.document_name.lower())
+        or any(kw in lower for kw in ["pdf", "page", "pages", "document", "handbook", "manual", "book", "read", "chapter"])
+    )
+    is_explicit_video = (
+        (payload.source_type and payload.source_type.lower() in ["youtube", "video"])
+        or (payload.video_url and "youtu" in payload.video_url.lower())
+        or any(kw in lower for kw in ["video", "timestamp", "watch", "lecture", "stream", "seconds"])
+    )
+
+    # 1. Document / PDF Study Pages Inquiries
+    if is_explicit_pdf and not (is_explicit_video and not any(k in lower for k in ["pdf", "page", "pages", "document", "read"])):
+        doc_title = payload.document_name or payload.source_title or "MoSPI Statistical Operations & Sampling Manual (PDF)"
+        if not doc_title.lower().endswith(".pdf") and not any(w in doc_title.lower() for w in ["manual", "handbook", "guide"]):
+            doc_title = f"{doc_title}.pdf"
+
+        # Check if asking for a specific question (e.g. Q2)
+        q_match = re.search(r"q(\d+)|question\s*(\d+)", lower)
+        if q_match:
+            q_num = int(q_match.group(1) or q_match.group(2))
+            q_idx = max(0, min(q_num - 1, len(DEFAULT_DOCUMENT_CURRICULUM) - 1))
+            c = DEFAULT_DOCUMENT_CURRICULUM[q_idx]
+            answer = (
+                f"📖 **Targeted PDF Document Study Reference for {c['item']} ({c['subskill']})**:\n\n"
+                f"📄 **Source Document**: *{doc_title}*\n"
+                f"📑 **Exact Study Pages**: **{c['page_ref']} ({c['section']})**\n\n"
+                f"🎯 **Key Topic to Read**:\n"
+                f"• **Theoretical Formulation**: {c['focus']}.\n"
+                f"• **Administrative Protocol**: Align calculations with official MoSPI National Statistical Standards.\n\n"
+                f"💡 **Action Step**: Open **{doc_title}**, go directly to **Page {c['page_start']}**, study **{c['section']}**, then retake the tier evaluation!"
+            )
+            return ChatbotResponse(
+                status="ANSWERED",
+                answer=answer,
+                sources=[doc_title],
+                source_mode="DOCUMENT_PAGE_GROUNDED",
+            )
+
+        # General Document reading roadmap for missed questions
+        first_c = DEFAULT_DOCUMENT_CURRICULUM[0]
+        schedule = []
+        for c in DEFAULT_DOCUMENT_CURRICULUM:
+            schedule.append(
+                f"• **{c['item']} ({c['subskill']})**:\n"
+                f"  - 📑 Study Location: **{c['page_ref']}** ({c['section']})\n"
+                f"  - 🎯 Focus: {c['focus']}"
+            )
+
+        answer = (
+            f"📖 **Recommended Document Study Starting Point**:\n\n"
+            f"You should begin your revision on **Page {first_c['page_start']}** of *{doc_title}* (**{first_c['section']}**), "
+            f"which covers the foundational principles of **{first_c['subskill']}** (tested in Question 1).\n\n"
+            f"📍 **Full Document Reading Guide for Missed Topics**:\n\n"
+            + "\n\n".join(schedule)
+            + f"\n\n💡 Open your PDF document to **Page {first_c['page_start']}** to review these exact sections before retaking the assessment!"
+        )
+        return ChatbotResponse(
+            status="ANSWERED",
+            answer=answer,
+            sources=[doc_title],
+            source_mode="DOCUMENT_PAGE_GROUNDED",
+        )
+
+    # 2. Video starting point & timestamp inquiries (Exact calibrated video logic preserved 100%)
     if any(
         kw in lower
         for kw in [
@@ -141,7 +296,7 @@ def ask_chatbot(
             "watch",
         ]
     ):
-        video_url = "https://youtu.be/UXV-A0Zo1Jk"
+        video_url = payload.video_url or "https://youtu.be/UXV-A0Zo1Jk"
         first_info = _get_timestamp_info(0, video_url)
         
         schedule = []

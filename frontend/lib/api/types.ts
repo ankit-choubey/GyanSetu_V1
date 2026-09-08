@@ -168,6 +168,9 @@ export interface TestQuestionDetail {
   is_correct: boolean;
   misconception_hint?: string;
   remediation_steps?: string;
+  page_number?: number;
+  page_reference?: string;
+  section_reference?: string;
 }
 
 export interface TestLedgerItem {
@@ -205,6 +208,12 @@ export interface TestLedgerItem {
   provenance: string;
   evidence_type: string;
   weight: number;
+  // Media / Document metadata
+  source_type?: "pdf" | "pptx" | "youtube" | "document" | string;
+  source_title?: string;
+  document_url?: string;
+  total_pages?: number;
+  video_duration?: number;
   // Question-by-question breakdown
   items?: TestQuestionDetail[];
 }

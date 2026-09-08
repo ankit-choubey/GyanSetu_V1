@@ -172,6 +172,8 @@ export function IngestionHub() {
           localStorage.setItem("active_assessment_questions", JSON.stringify(ytRes.questions));
           localStorage.setItem("active_session_id", ytRes.session_id);
           localStorage.setItem("active_source_title", sourceTitle);
+          localStorage.setItem("active_source_type", "youtube");
+          localStorage.setItem("active_youtube_url", youtubeUrl.trim());
         }
       } catch (err) {
         console.warn("Backend YouTube ingestion error, falling back:", err);
@@ -196,6 +198,8 @@ export function IngestionHub() {
           localStorage.setItem("active_assessment_questions", JSON.stringify(docRes.questions));
           localStorage.setItem("active_session_id", docRes.session_id);
           localStorage.setItem("active_source_title", sourceTitle);
+          localStorage.setItem("active_source_type", "pdf");
+          localStorage.setItem("active_document_name", docRes.filename || sourceTitle);
         }
       } catch (err) {
         console.warn("Backend live document ingestion error, falling back:", err);

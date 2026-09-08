@@ -4,6 +4,10 @@ from pydantic import BaseModel, Field
 class ChatbotRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
     competency_id: int | None = None
+    source_type: str | None = None
+    source_title: str | None = None
+    document_name: str | None = None
+    video_url: str | None = None
 
 
 class ChatbotResponse(BaseModel):

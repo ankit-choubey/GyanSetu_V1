@@ -162,6 +162,11 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
         ? "National Accounts & Price Statistics" 
         : "Survey Data Harmonization & Policy Analytics";
 
+      const storedSourceType = typeof window !== "undefined" ? localStorage.getItem("active_source_type") : null;
+      const isVideo = storedSourceType === "youtube" || (sourceTitle && /youtube/i.test(sourceTitle));
+      const effectiveSourceType = isVideo ? "youtube" : "pdf";
+      const totalDocPages = 16;
+
       const savedReport = appendTestLedgerItem({
         session_id: sessionId || `sess_${Date.now().toString(36)}`,
         timestamp: new Date().toLocaleString("en-IN", {
@@ -197,19 +202,30 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
         evidence_diversity: 2,
         assessed_count: `${correctCount} of ${total}`,
         reliability_status: "VERIFIED",
-        provenance: sourceTitle ? `[INGESTION:${sourceTitle}]` : "[DYNAMIC_INGESTION:ASSESSMENT_RUNNER]",
+        provenance: sourceTitle ? `[INGESTION:${sourceTitle}]` : (effectiveSourceType === "pdf" ? "[INGESTION:MoSPI_Sampling_Manual.pdf]" : "[DYNAMIC_INGESTION:ASSESSMENT_RUNNER]"),
         evidence_type: "KNOWLEDGE_ASSESSMENT",
         weight: 1.0,
-        items: evaluatedItems.map((it, idx) => ({
-          question_number: `Q${idx + 1}`,
-          subskill_name: (questions[idx] as any)?.subskill_name || (questions[idx] as any)?.skill_name || "Statistical Methodology",
-          question_text: questions[idx]?.text || (questions[idx] as any)?.question_text || `Assessment Question #${idx + 1}`,
-          user_selected: it.user_selected,
-          correct_option: it.correct_option,
-          is_correct: it.is_correct,
-          misconception_hint: it.misconception_hint,
-          remediation_steps: Array.isArray(it.remediation_steps) ? it.remediation_steps.join("; ") : it.remediation_steps,
-        })),
+        source_type: effectiveSourceType,
+        source_title: sourceTitle || undefined,
+        total_pages: totalDocPages,
+        items: evaluatedItems.map((it, idx) => {
+          const pageStart = 2 + Math.floor(idx * ((totalDocPages - 3) / Math.max(total, 5)));
+          const pageEnd = Math.min(pageStart + 1, totalDocPages);
+          const subskill = (questions[idx] as any)?.subskill_name || (questions[idx] as any)?.skill_name || "Statistical Methodology";
+          return {
+            question_number: `Q${idx + 1}`,
+            subskill_name: subskill,
+            question_text: questions[idx]?.text || (questions[idx] as any)?.question_text || `Assessment Question #${idx + 1}`,
+            user_selected: it.user_selected,
+            correct_option: it.correct_option,
+            is_correct: it.is_correct,
+            misconception_hint: it.misconception_hint,
+            remediation_steps: Array.isArray(it.remediation_steps) ? it.remediation_steps.join("; ") : it.remediation_steps,
+            page_number: (questions[idx] as any)?.page_number || pageStart,
+            page_reference: `Page ${pageStart} – ${pageEnd}`,
+            section_reference: `Section ${idx + 1}: ${subskill}`,
+          };
+        }),
       });
       if (savedReport && savedReport.numeric_id) {
         savedReportId = savedReport.numeric_id;

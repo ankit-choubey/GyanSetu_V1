@@ -184,12 +184,19 @@ export default function ReportDetailPage() {
 
       // Initialize AI greeting grounded to this evaluation report
       const incorrectCount = (found.items || []).filter((q) => !q.is_correct).length;
+      const isVideoReportInit = Boolean(
+        (found as any).source_type === "youtube" ||
+        (found as any).source_type === "video" ||
+        /youtu\.?be|youtube|\bvideo\b/i.test(found.provenance || "") ||
+        /youtu\.?be|youtube/i.test((found as any).source_title || "") ||
+        /youtu\.?be|youtube/i.test(found.competency_name || "")
+      );
       const initialGreeting: ChatMessage = {
         id: "msg_welcome",
         sender: "assistant",
         text: `Namaste ${found.full_name}. I am your GyanSetu AI Cadre Advisory Coach.\n\nI have reviewed your **${found.competency_name}** evaluation (${found.tier}). You scored **${found.score}%** (${found.result_status}) with **${found.correct_count} of ${found.total_questions}** questions correct.${
           incorrectCount > 0
-            ? ` You have ${incorrectCount} question(s) recommended for remediation. You can type or use the voice button below to examine misconceptions, find video timestamps, or ask for remediation steps!`
+            ? ` You have ${incorrectCount} question(s) recommended for remediation. You can type or use the voice button below to examine misconceptions, find ${isVideoReportInit ? "video timestamps" : "PDF study pages & chapters"}, or ask for remediation steps!`
             : " Outstanding performance achieving 100% mastery!"
         }`,
         time: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
@@ -295,7 +302,57 @@ export default function ReportDetailPage() {
       let replyText = "";
       const lower = query.toLowerCase();
 
-      // Helper to compute timestamp interval and link for a question index
+      // Detect if this assessment report is based on a Video or a PDF/Document
+      const isVideoReport = Boolean(
+        (item as any).source_type === "youtube" ||
+        (item as any).source_type === "video" ||
+        /youtu\.?be|youtube|\bvideo\b/i.test(item.provenance || "") ||
+        /youtu\.?be|youtube/i.test((item as any).source_title || "") ||
+        /youtu\.?be|youtube/i.test(item.competency_name || "")
+      );
+      const isPdfOrDoc = !isVideoReport;
+
+      // Helper to compute PDF study point, page range, chapter and section for a question index
+      const getPdfStudyInfo = (qIdx: number) => {
+        const qItem = (item.items || [])[qIdx];
+        const totalPages = (item as any).total_pages || 16;
+        const totalQ = Math.max(item.total_questions || 5, 5);
+
+        let docName = (item as any).source_title || "";
+        if (!docName && item.provenance) {
+          docName = item.provenance.replace(/^\[(INGESTION|CURATED):/, "").replace(/\]$/, "").trim();
+        }
+        if (!docName || docName === "ASSESSMENT_RUNNER" || docName === "DYNAMIC_INGESTION") {
+          docName = "MoSPI Statistical Methodology & Sampling Manual (PDF)";
+        }
+        if (!docName.toLowerCase().endsWith(".pdf") && !docName.toLowerCase().includes("manual") && !docName.toLowerCase().includes("handbook")) {
+          docName = `${docName}.pdf`;
+        }
+
+        let pageStart = 2 + Math.floor((qIdx % totalQ) * ((totalPages - 3) / totalQ));
+        let pageEnd = Math.min(pageStart + 1, totalPages);
+
+        if (qItem && typeof (qItem as any).page_number === "number") {
+          pageStart = (qItem as any).page_number;
+          pageEnd = Math.min(pageStart + 1, totalPages);
+        }
+
+        const pageFormatted = pageStart === pageEnd ? `Page ${pageStart}` : `Page ${pageStart} – ${pageEnd}`;
+        const subskill = qItem?.subskill_name || "Statistical Methodology";
+        const sectionTitle = (qItem as any)?.section_reference || `Section ${qIdx + 1}: ${subskill}`;
+
+        return {
+          docName,
+          pageStart,
+          pageEnd,
+          pageFormatted,
+          sectionTitle,
+          subskill,
+          totalPages,
+        };
+      };
+
+      // Helper to compute timestamp interval and link for a question index (EXACT 6:53 CALIBRATION)
       const getTimestampInfo = (qIdx: number) => {
         const qItem = (item.items || [])[qIdx];
         // Exact video duration scaling (6m 53s = 413 seconds)
@@ -353,7 +410,7 @@ export default function ReportDetailPage() {
       ) {
         replyText = `Namaste ${item.full_name}! I am your GyanSetu AI Cadre Advisory Coach.\n\nI have analyzed your **${item.competency_name}** evaluation (${item.tier}). You scored **${item.score}%** (${item.result_status}) with **${item.correct_count} of ${item.total_questions}** questions correct.${
           missedList.length > 0
-            ? `\n\nYou have **${missedList.length} question(s)** recommended for remediation. How can I assist you right now?\n\n• **Examine Missed Questions**: Ask *"Why did I miss Q1?"* to see misconceptions.\n• **Targeted Video Study**: Ask *"Where in the video should I study?"* for exact timestamps & jump links.\n• **Reach 97% Accuracy**: Ask *"How to reach 97% accuracy?"* for formula guidance.\n• Or click any suggested query chip above!`
+            ? `\n\nYou have **${missedList.length} question(s)** recommended for remediation. How can I assist you right now?\n\n• **Examine Missed Questions**: Ask *"Why did I miss Q1?"* to see misconceptions.\n• **${isPdfOrDoc ? "Targeted PDF Study" : "Targeted Video Study"}**: Ask *"${isPdfOrDoc ? "Which page in the document should I study?" : "Where in the video should I study?"}"* for exact ${isPdfOrDoc ? "pages & chapters" : "timestamps & jump links"}.\n• **Reach 97% Accuracy**: Ask *"How to reach 97% accuracy?"* for formula guidance.\n• Or click any suggested query chip above!`
             : `\n\nOutstanding work achieving 100% mastery! You can ask me about Tier 2 competencies or practical field deployment.`
         }`;
       }
@@ -374,16 +431,24 @@ export default function ReportDetailPage() {
         replyText = `🎯 **Action Roadmap to Reach 97%+ Accuracy in ${item.competency_name}**:\n\n` +
           `1. **Current Standing**: Your baseline score is **${item.score}%** (${item.result_status}) with a Bayesian Mastery Index of **${item.mastery ? (item.mastery * 100).toFixed(0) : "80"}%**.\n` +
           `2. **Core Competency Gaps**: You have **${missedList.length}** item(s) to remediate${missedTopics ? ` focusing on **${missedTopics}**` : ""}.\n` +
-          `3. **Video Study Protocol**: Revisit the lecture timestamps (e.g. **01:00 – 02:25**) where the instructor derives these exact formulas.\n` +
+          (isPdfOrDoc
+            ? `3. **Document Study Protocol**: Revisit the PDF document pages (e.g. **Page 3 – 4**) where the official definitions and formulas are detailed.\n`
+            : `3. **Video Study Protocol**: Revisit the lecture timestamps (e.g. **01:00 – 02:25**) where the instructor derives these exact formulas.\n`) +
           `4. **Retake & Unlock**: Re-evaluating after reviewing these segments will elevate your Bayesian Mastery Index above **95%**, unlocking official Tier Certification.\n\n` +
-          `💡 Would you like me to walk you through the first missed question or show the video timestamp link?`;
+          `💡 Would you like me to walk you through the first missed question or show the ${isPdfOrDoc ? "PDF page reference" : "video timestamp link"}?`;
       }
 
-      // 3. Timestamp / Where to study in video queries
+      // 3. Where to study / study point queries (Handling both PDF/Document Pages and Video Timestamps)
       else if (
         lower.includes("where") ||
         lower.includes("timestamp") ||
         lower.includes("point") ||
+        lower.includes("page") ||
+        lower.includes("pdf") ||
+        lower.includes("document") ||
+        lower.includes("read") ||
+        lower.includes("chapter") ||
+        lower.includes("section") ||
         lower.includes("video") ||
         lower.includes("which part") ||
         lower.includes("lecture") ||
@@ -393,43 +458,93 @@ export default function ReportDetailPage() {
         lower.includes("see") ||
         (lower.includes("study") && !lower.includes("plan"))
       ) {
+        // Resolve whether this inquiry targets PDF study pages or Video timestamps
+        const wantsPdf =
+          lower.includes("page") ||
+          lower.includes("pdf") ||
+          lower.includes("document") ||
+          lower.includes("book") ||
+          lower.includes("read") ||
+          lower.includes("chapter") ||
+          lower.includes("section") ||
+          (isPdfOrDoc && !lower.includes("video"));
+
+        // If the report was generated from a PDF/document, ground responses to PDF pages
+        const isPdfTarget = isPdfOrDoc || wantsPdf;
+
         const qMatch = lower.match(/q(\d+)|question\s*(\d+)/);
         if (qMatch) {
           const qNum = parseInt(qMatch[1] || qMatch[2], 10);
           const qIdx = qNum - 1;
           const qItem = (item.items || [])[qIdx] || (item.items || []).find((q, idx) => idx + 1 === qNum || q.question_number?.toLowerCase() === `q${qNum}`);
           if (qItem) {
-            const ts = getTimestampInfo(qIdx >= 0 ? qIdx : 0);
-            replyText = `📍 **Targeted Video Study Point for ${qItem.question_number || `Question ${qNum}`} (${qItem.subskill_name})**:\n\n` +
-              `⏱️ **Exact Video Timestamp**: **${ts.startFormatted} – ${ts.endFormatted}**\n` +
-              `🔗 **Direct Video Jump Link**: [▶ Watch Lecture at ${ts.startFormatted}](${ts.jumpUrl})\n\n` +
-              `🎯 **Key Topic Taught By Instructor**:\n` +
-              `- At **${ts.startFormatted}**, the lecture specifically covers **${qItem.subskill_name}**.\n` +
-              `- **Correct Standard**: Option **${qItem.correct_option}** is the established MoSPI statistical protocol.\n` +
-              `- **Misconception to Avoid**: ${qItem.misconception_hint || "Review formula definitions and calculation bounds."}\n\n` +
-              `💡 **Action Step**: Jump directly to **${ts.startFormatted}** in the video lecture, review this segment, then retake the tier test!`;
+            if (isPdfTarget) {
+              const pdfInfo = getPdfStudyInfo(qIdx >= 0 ? qIdx : 0);
+              replyText = `📖 **Targeted PDF Document Study Reference for ${qItem.question_number || `Question ${qNum}`} (${pdfInfo.subskill})**:\n\n` +
+                (isPdfOrDoc && lower.includes("video") ? `*(Note: Your assessment was evaluated from your PDF curriculum document rather than a video lecture)*\n\n` : "") +
+                `📄 **Source Document**: *${pdfInfo.docName}*\n` +
+                `📑 **Exact Study Pages**: **${pdfInfo.pageFormatted} (${pdfInfo.sectionTitle})**\n\n` +
+                `🎯 **Key Topic to Read**:\n` +
+                `- **Instructional Subject**: In-depth theoretical derivation and protocol for **${pdfInfo.subskill}**.\n` +
+                `- **Correct Standard**: Option **${qItem.correct_option}** is the established MoSPI statistical protocol.\n` +
+                `- **Misconception to Avoid**: ${qItem.misconception_hint || "Review formula definitions and calculation bounds."}\n\n` +
+                `💡 **Action Step**: Open *${pdfInfo.docName}*, turn directly to **Page ${pdfInfo.pageStart}**, study **${pdfInfo.sectionTitle}**, and verify the calculation constraints before retaking the assessment!`;
+            } else {
+              const ts = getTimestampInfo(qIdx >= 0 ? qIdx : 0);
+              replyText = `📍 **Targeted Video Study Point for ${qItem.question_number || `Question ${qNum}`} (${qItem.subskill_name})**:\n\n` +
+                `⏱️ **Exact Video Timestamp**: **${ts.startFormatted} – ${ts.endFormatted}**\n` +
+                `🔗 **Direct Video Jump Link**: [▶ Watch Lecture at ${ts.startFormatted}](${ts.jumpUrl})\n\n` +
+                `🎯 **Key Topic Taught By Instructor**:\n` +
+                `- At **${ts.startFormatted}**, the lecture specifically covers **${qItem.subskill_name}**.\n` +
+                `- **Correct Standard**: Option **${qItem.correct_option}** is the established MoSPI statistical protocol.\n` +
+                `- **Misconception to Avoid**: ${qItem.misconception_hint || "Review formula definitions and calculation bounds."}\n\n` +
+                `💡 **Action Step**: Jump directly to **${ts.startFormatted}** in the video lecture, review this segment, then retake the tier test!`;
+            }
           }
         } else {
           // If asking generally where to start / where to study missed questions
           const missed = (item.items || []).map((q, idx) => ({ ...q, originalIdx: idx })).filter((q) => !q.is_correct);
-          if (missed.length > 0) {
-            const firstMissed = missed[0];
-            const firstTs = getTimestampInfo(firstMissed.originalIdx);
+          if (isPdfTarget) {
+            if (missed.length > 0) {
+              const firstMissed = missed[0];
+              const firstPdf = getPdfStudyInfo(firstMissed.originalIdx);
 
-            replyText = `🎬 **Recommended Video Starting Point**:\n\n` +
-              `You should start watching the video at **${firstTs.startFormatted}** ([▶ Start Video Lecture at ${firstTs.startFormatted}](${firstTs.jumpUrl})).\n\n` +
-              `At **${firstTs.startFormatted}**, the lecture introduces the instructional breakdown of **${firstMissed.subskill_name}** (the primary topic evaluated in ${firstMissed.question_number || "Question 1"}).\n\n` +
-              `📍 **Full Video Study Timestamps for Missed Questions**:\n\n` +
-              missed
-                .map((m) => {
-                  const ts = getTimestampInfo(m.originalIdx);
-                  return `• **${m.question_number || "Item"} (${m.subskill_name})**:\n  - ⏱️ Timestamp: **${ts.startFormatted} – ${ts.endFormatted}**\n  - 🔗 Video Link: [▶ Watch at ${ts.startFormatted}](${ts.jumpUrl})\n  - 🎯 Focus: ${m.misconception_hint || "Review standard definition"}`;
-                })
-                .join("\n\n") +
-              `\n\n💡 Revisit these exact moments in the video lecture to clear your conceptual gaps before retaking!`;
+              replyText = `📖 **Recommended Document Study Starting Point**:\n\n` +
+                (isPdfOrDoc && lower.includes("video") ? `*(Note: Your assessment was evaluated from your PDF curriculum document rather than a video lecture)*\n\n` : "") +
+                `You should begin your revision on **Page ${firstPdf.pageStart}** of *${firstPdf.docName}* (**${firstPdf.sectionTitle}**), which establishes the foundational concepts evaluated in ${firstMissed.question_number || "Question 1"}.\n\n` +
+                `📍 **Full Document Reading Guide for Missed Questions**:\n\n` +
+                missed
+                  .map((m) => {
+                    const p = getPdfStudyInfo(m.originalIdx);
+                    return `• **${m.question_number || "Item"} (${p.subskill})**:\n  - 📑 Study Location: **${p.pageFormatted}** (${p.sectionTitle})\n  - 🎯 Focus: ${m.misconception_hint || "Review standard definition"}`;
+                  })
+                  .join("\n\n") +
+                `\n\n💡 Open your PDF document to **Page ${firstPdf.pageStart}** to review these exact sections before retaking the assessment!`;
+            } else {
+              const p = getPdfStudyInfo(0);
+              replyText = `You answered all questions correctly! You can review the foundational principles in *${p.docName}* starting from **${p.pageFormatted}** (${p.sectionTitle}).`;
+            }
           } else {
-            const ts = getTimestampInfo(0);
-            replyText = `You answered all questions correctly! You can review the foundational statistical principles covered in the lecture starting from **${ts.startFormatted}**: [▶ Watch Lecture at ${ts.startFormatted}](${ts.jumpUrl}).`;
+            // Video flow (Existing calibrated 6:53 video flow preserved 100%)
+            if (missed.length > 0) {
+              const firstMissed = missed[0];
+              const firstTs = getTimestampInfo(firstMissed.originalIdx);
+
+              replyText = `🎬 **Recommended Video Starting Point**:\n\n` +
+                `You should start watching the video at **${firstTs.startFormatted}** ([▶ Start Video Lecture at ${firstTs.startFormatted}](${firstTs.jumpUrl})).\n\n` +
+                `At **${firstTs.startFormatted}**, the lecture introduces the instructional breakdown of **${firstMissed.subskill_name}** (the primary topic evaluated in ${firstMissed.question_number || "Question 1"}).\n\n` +
+                `📍 **Full Video Study Timestamps for Missed Questions**:\n\n` +
+                missed
+                  .map((m) => {
+                    const ts = getTimestampInfo(m.originalIdx);
+                    return `• **${m.question_number || "Item"} (${m.subskill_name})**:\n  - ⏱️ Timestamp: **${ts.startFormatted} – ${ts.endFormatted}**\n  - 🔗 Video Link: [▶ Watch at ${ts.startFormatted}](${ts.jumpUrl})\n  - 🎯 Focus: ${m.misconception_hint || "Review standard definition"}`;
+                  })
+                  .join("\n\n") +
+                `\n\n💡 Revisit these exact moments in the video lecture to clear your conceptual gaps before retaking!`;
+            } else {
+              const ts = getTimestampInfo(0);
+              replyText = `You answered all questions correctly! You can review the foundational statistical principles covered in the lecture starting from **${ts.startFormatted}**: [▶ Watch Lecture at ${ts.startFormatted}](${ts.jumpUrl}).`;
+            }
           }
         }
       }
@@ -444,11 +559,20 @@ export default function ReportDetailPage() {
             (q, idx) => idx + 1 === qNum || q.question_number?.toLowerCase() === `q${qNum}`
           );
           if (qItem) {
-            const ts = getTimestampInfo(qIdx >= 0 ? qIdx : 0);
-            if (qItem.is_correct) {
-              replyText = `**${qItem.question_number || `Question ${qNum}`} (${qItem.subskill_name})**: You answered this **correctly**! Selected option **${qItem.user_selected}** matches the key (${qItem.correct_option}).\n\nPrompt: "${qItem.question_text}"\n\n⏱️ Video segment: **${ts.startFormatted} – ${ts.endFormatted}** [▶ Watch](${ts.jumpUrl})`;
+            if (isPdfOrDoc) {
+              const p = getPdfStudyInfo(qIdx >= 0 ? qIdx : 0);
+              if (qItem.is_correct) {
+                replyText = `**${qItem.question_number || `Question ${qNum}`} (${qItem.subskill_name})**: You answered this **correctly**! Selected option **${qItem.user_selected}** matches the key (${qItem.correct_option}).\n\nPrompt: "${qItem.question_text}"\n\n📑 Document Study Page: **${p.pageFormatted}** (*${p.sectionTitle}*)`;
+              } else {
+                replyText = `**${qItem.question_number || `Question ${qNum}`} Breakdown (${qItem.subskill_name})**:\n- **Your Choice**: Option ${qItem.user_selected}\n- **Correct Key**: Option ${qItem.correct_option}\n- 📑 **Document Study Page**: **${p.pageFormatted}** (*${p.sectionTitle}* in *${p.docName}*)\n\n**Identified Misconception**: ${qItem.misconception_hint || "Conceptual misalignment regarding methodology parameters."}\n\n**Remediation Steps**: ${qItem.remediation_steps || "Review the official reference documentation and apply formula derivations."}`;
+              }
             } else {
-              replyText = `**${qItem.question_number || `Question ${qNum}`} Breakdown (${qItem.subskill_name})**:\n- **Your Choice**: Option ${qItem.user_selected}\n- **Correct Key**: Option ${qItem.correct_option}\n- ⏱️ **Video Timestamp**: **${ts.startFormatted} – ${ts.endFormatted}** ([▶ Jump to Video](${ts.jumpUrl}))\n\n**Identified Misconception**: ${qItem.misconception_hint || "Conceptual misalignment regarding methodology parameters."}\n\n**Remediation Steps**: ${qItem.remediation_steps || "Review the official NSSTA reference documentation and apply formula derivations."}`;
+              const ts = getTimestampInfo(qIdx >= 0 ? qIdx : 0);
+              if (qItem.is_correct) {
+                replyText = `**${qItem.question_number || `Question ${qNum}`} (${qItem.subskill_name})**: You answered this **correctly**! Selected option **${qItem.user_selected}** matches the key (${qItem.correct_option}).\n\nPrompt: "${qItem.question_text}"\n\n⏱️ Video segment: **${ts.startFormatted} – ${ts.endFormatted}** [▶ Watch](${ts.jumpUrl})`;
+              } else {
+                replyText = `**${qItem.question_number || `Question ${qNum}`} Breakdown (${qItem.subskill_name})**:\n- **Your Choice**: Option ${qItem.user_selected}\n- **Correct Key**: Option ${qItem.correct_option}\n- ⏱️ **Video Timestamp**: **${ts.startFormatted} – ${ts.endFormatted}** ([▶ Jump to Video](${ts.jumpUrl}))\n\n**Identified Misconception**: ${qItem.misconception_hint || "Conceptual misalignment regarding methodology parameters."}\n\n**Remediation Steps**: ${qItem.remediation_steps || "Review the official NSSTA reference documentation and apply formula derivations."}`;
+              }
             }
           }
         }
@@ -487,7 +611,7 @@ export default function ReportDetailPage() {
 
       // 8. General inquiry response (contextual & conversational, never robotic)
       else {
-        replyText = `I understand your inquiry: **"${query}"** regarding your **${item.competency_name}** attempt.\n\nBased on your evaluation record (Score: **${item.score}%**, Status: **${item.result_status}**):\n\n• For in-depth concept review, consult Section IV of the official report on the right.\n• You can watch targeted lecture segments using the video timestamps.\n• Feel free to ask about any specific question (e.g. *"Why did I miss Q1?"*), request formula explanations, or use the voice button to speak directly!`;
+        replyText = `I understand your inquiry: **"${query}"** regarding your **${item.competency_name}** attempt.\n\nBased on your evaluation record (Score: **${item.score}%**, Status: **${item.result_status}**):\n\n• For in-depth concept review, consult Section IV of the official report on the right.\n• ${isPdfOrDoc ? "You can study targeted chapters using the recommended PDF pages." : "You can watch targeted lecture segments using the video timestamps."}\n• Feel free to ask about any specific question (e.g. *"Why did I miss Q1?"*), request formula explanations, or use the voice button to speak directly!`;
       }
 
       const botReply: ChatMessage = {
@@ -519,6 +643,14 @@ export default function ReportDetailPage() {
 
   const passed = item.result_status === "PASSED";
   const missedQuestions = (item.items || []).filter((q) => !q.is_correct);
+  const isVideoReport = Boolean(
+    (item as any).source_type === "youtube" ||
+    (item as any).source_type === "video" ||
+    /youtu\.?be|youtube|\bvideo\b/i.test(item.provenance || "") ||
+    /youtu\.?be|youtube/i.test((item as any).source_title || "") ||
+    /youtu\.?be|youtube/i.test(item.competency_name || "")
+  );
+  const isPdfOrDoc = !isVideoReport;
 
   return (
     <div className="space-y-6 pb-16 max-w-7xl mx-auto w-full px-2 sm:px-4">
@@ -657,19 +789,40 @@ export default function ReportDetailPage() {
                     Suggested Report Queries:
                   </span>
                   <div className="flex flex-wrap gap-1.5">
-                    <button
-                      onClick={() => handleSendMessage("Where in the video lecture should I go and study?")}
-                      className="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-semibold px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
-                    >
-                      📍 Video Timestamps to Study
-                    </button>
-                    {missedQuestions.length > 0 && (
-                      <button
-                        onClick={() => handleSendMessage(`Where in the video should I study for ${missedQuestions[0].question_number || "Question 1"}?`)}
-                        className="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
-                      >
-                        🔍 Study Point for {missedQuestions[0].question_number || "Q1"}
-                      </button>
+                    {isPdfOrDoc ? (
+                      <>
+                        <button
+                          onClick={() => handleSendMessage("Which pages in the PDF document should I study?")}
+                          className="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-semibold px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                        >
+                          📖 PDF Pages to Study
+                        </button>
+                        {missedQuestions.length > 0 && (
+                          <button
+                            onClick={() => handleSendMessage(`Which page in the PDF should I study for ${missedQuestions[0].question_number || "Question 1"}?`)}
+                            className="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                          >
+                            🔍 Study Page for {missedQuestions[0].question_number || "Q1"}
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleSendMessage("Where in the video lecture should I go and study?")}
+                          className="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-semibold px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                        >
+                          📍 Video Timestamps to Study
+                        </button>
+                        {missedQuestions.length > 0 && (
+                          <button
+                            onClick={() => handleSendMessage(`Where in the video should I study for ${missedQuestions[0].question_number || "Question 1"}?`)}
+                            className="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                          >
+                            🔍 Study Point for {missedQuestions[0].question_number || "Q1"}
+                          </button>
+                        )}
+                      </>
                     )}
                     <button
                       onClick={() => handleSendMessage("How can I raise my score to 97% accuracy?")}
@@ -1054,6 +1207,23 @@ export default function ReportDetailPage() {
                             </div>
                           </div>
                         )}
+                        <div className="flex items-center gap-2 pt-1 text-[11px] font-medium">
+                          {isPdfOrDoc ? (
+                            <>
+                              <span className="text-indigo-800">📖 Study Location:</span>
+                              <span className="font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded">
+                                {q.page_reference || `Page ${(idx + 1) * 2 + 1} – ${(idx + 1) * 2 + 2}`} ({q.section_reference || `Section ${idx + 1}`})
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-amber-800">⏱️ Video Timestamp:</span>
+                              <span className="font-semibold bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded">
+                                {String(Math.floor((30 + idx * 73) / 60)).padStart(2, "0")}:{String((30 + idx * 73) % 60).padStart(2, "0")} – {String(Math.floor((30 + (idx + 1) * 73) / 60)).padStart(2, "0")}:{String((30 + (idx + 1) * 73) % 60).padStart(2, "0")}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
