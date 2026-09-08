@@ -10,6 +10,7 @@ import { StatusDistributionDonut } from "@/components/ui/workforce/StatusDistrib
 import { CompetencyComparisonChart } from "@/components/ui/workforce/CompetencyComparisonChart";
 import { CompetencyAnalyticsTable } from "@/components/ui/workforce/CompetencyAnalyticsTable";
 import { WorkforceGapTriage } from "@/components/ui/workforce/WorkforceGapTriage";
+import { WorkplaceSignalsHub } from "@/components/ui/workforce/WorkplaceSignalsHub";
 import { SandboxBadge } from "@/components/ui/dashboard/SandboxBadge";
 import { ShieldCheck } from "lucide-react";
 
@@ -142,6 +143,14 @@ export default function WorkforcePage() {
           Workforce Gap Triage & Small Cell Governance
         </h2>
         <WorkforceGapTriage className="mt-4" />
+      </motion.section>
+
+      {/* ROW 5: WORKPLACE SIGNALS & EVIDENCE EVALUATION HUB */}
+      <motion.section variants={itemVariants} aria-labelledby="signals-hub-heading">
+        <h2 id="signals-hub-heading" className="sr-only">
+          Workplace Signals & Evidence Evaluation Hub
+        </h2>
+        <WorkplaceSignalsHub className="mt-4" />
       </motion.section>
     </motion.div>
   );
