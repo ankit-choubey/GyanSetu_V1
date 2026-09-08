@@ -12,6 +12,7 @@ import { TaskListTable } from "@/components/ui/tasks/TaskListTable";
 export default function TasksPage() {
   const [data, setData] = useState<TasksResponse>(tasksData as TasksResponse);
   const [loading, setLoading] = useState(true);
+  const [isLiveSync, setIsLiveSync] = useState(false);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -20,6 +21,7 @@ export default function TasksPage() {
       .then((res) => {
         if (isSubscribed && res && res.tasks && res.tasks.length > 0) {
           setData(res);
+          setIsLiveSync(true);
         }
       })
       .catch((err) => {
@@ -37,13 +39,31 @@ export default function TasksPage() {
   return (
     <div className="space-y-8 pb-12">
       {/* Header */}
-      <div>
-        <h2 className="font-heading text-2xl sm:text-3xl text-slate-900 tracking-normal">
-          Tasks
-        </h2>
-        <p className="text-sm text-slate-500 font-sans mt-1">
-          Practical tasks, drills, and curriculum assignments
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            <h2 className="font-heading text-2xl sm:text-3xl text-slate-900 tracking-normal">
+              Tasks
+            </h2>
+            <span
+              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wider border ${
+                isLiveSync
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  : "bg-slate-100 text-slate-600 border-slate-200"
+              }`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  isLiveSync ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
+                }`}
+              />
+              {isLiveSync ? "Live Practical Sync" : "Curriculum View (Demonstration)"}
+            </span>
+          </div>
+          <p className="text-sm text-slate-500 font-sans mt-1">
+            Practical tasks, drills, and curriculum assignments
+          </p>
+        </div>
       </div>
 
       {/* ROW 1: STAT CARDS */}

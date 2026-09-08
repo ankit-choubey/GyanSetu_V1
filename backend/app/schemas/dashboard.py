@@ -21,3 +21,4 @@ class DashboardResponse(BaseModel):
     total_competencies: int = 0
     evaluations_completed: int = 0
     total_evidence_records: int = 0
+    next_best_action: dict | None = None

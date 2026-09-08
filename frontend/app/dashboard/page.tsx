@@ -30,7 +30,10 @@ import {
   UploadCloud,
 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
+import { LearningTimeline } from "@/components/ui/dashboard/LearningTimeline";
+import { CompetencyEvidenceModal } from "@/components/ui/competencies/CompetencyEvidenceModal";
 
 export default function DashboardPage() {
   const { persona, setUserInfo, refreshCount, refreshDashboard } = useDashboard();
@@ -48,6 +51,32 @@ export default function DashboardPage() {
 
   const handleCloseDiagnosticModal = useCallback(() => {
     setActiveDiagnosticModal(false);
+  }, []);
+
+  const searchParams = useSearchParams();
+  const [assessmentFlash, setAssessmentFlash] = useState<string | null>(null);
+
+  useEffect(() => {
+    const updatedParam = searchParams?.get("updated");
+    if (updatedParam) {
+      setAssessmentFlash(
+        `Evidence Calibrated: Assessment results for "${updatedParam}" ingested into Bayesian competency engine. Updated mastery and confidence scores applied.`
+      );
+      const timer = setTimeout(() => setAssessmentFlash(null), 7000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const handleUpdated = (e: any) => {
+      const detail = e.detail;
+      setAssessmentFlash(
+        `Evidence Calibrated: ${detail?.title || "Assessment"} scored at ${detail?.score || 70}%. Ingested into Bayesian competency engine.`
+      );
+      setTimeout(() => setAssessmentFlash(null), 7000);
+    };
+    window.addEventListener("gyansetu:assessment_updated", handleUpdated);
+    return () => window.removeEventListener("gyansetu:assessment_updated", handleUpdated);
   }, []);
 
   const handleSelectCompetency = useCallback((c: BackendCompetency) => {
@@ -147,6 +176,26 @@ export default function DashboardPage() {
       initial="hidden"
       animate="visible"
     >
+      {/* Post-Assessment Calibration Flash Banner */}
+      {assessmentFlash && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center justify-between gap-3 text-xs text-emerald-900 shadow-xs"
+        >
+          <div className="flex items-center gap-2 font-medium">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{assessmentFlash}</span>
+          </div>
+          <button
+            onClick={() => setAssessmentFlash(null)}
+            className="text-emerald-700 hover:text-emerald-900 p-1"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </motion.div>
+      )}
+
       {/* Dynamic Diagnostic Session Status Bar */}
       <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -398,6 +447,11 @@ export default function DashboardPage() {
         </div>
       </motion.section>
 
+      {/* ROW 5: LONGITUDINAL PROGRESSION TIMELINE */}
+      <motion.section variants={itemVariants}>
+        <LearningTimeline />
+      </motion.section>
+
       {/* START ASSESSMENT MODAL */}
       {activeDiagnosticModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
@@ -471,66 +525,12 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* SELECTED COMPETENCY DETAIL MODAL */}
-      {selectedCompetency && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full border border-slate-200 shadow-xl p-6 relative">
-            <button
-              type="button"
-              onClick={handleCloseCompetencyModal}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h4 className="font-heading text-xl text-slate-900 mb-1">
-              {selectedCompetency.competency_name}
-            </h4>
-            <p className="text-xs text-slate-500 mb-4">
-              Status: {selectedCompetency.status.replace("_", " ")}
-            </p>
-
-            <div className="space-y-3 text-xs">
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Mastery:</span>
-                <span className="font-semibold text-slate-900">
-                  {selectedCompetency.mastery !== null
-                    ? `${(selectedCompetency.mastery * 100).toFixed(0)}%`
-                    : "Unassessed"}
-                </span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Confidence:</span>
-                <span className="font-semibold text-slate-900">
-                  {(selectedCompetency.confidence * 100).toFixed(0)}%
-                </span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Coverage:</span>
-                <span className="font-semibold text-slate-900">
-                  {(selectedCompetency.coverage * 100).toFixed(0)}%
-                </span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Evidence Records:</span>
-                <span className="font-semibold text-slate-900">
-                  {selectedCompetency.evidence_count} items
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={handleCloseCompetencyModal}
-                className="px-4 py-2 text-xs font-medium bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* SELECTED COMPETENCY EVIDENCE MODAL (PYRAMID LEVEL & AUDIT TRAIL) */}
+      <CompetencyEvidenceModal
+        competency={selectedCompetency}
+        isOpen={!!selectedCompetency}
+        onClose={handleCloseCompetencyModal}
+      />
     </motion.div>
   );
 }

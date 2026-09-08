@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -9,8 +10,10 @@ from app.models.assessment import AssessmentAttempt
 from app.models.competency import Competency, Role, RoleCompetency
 from app.models.competency_state import CompetencyState
 from app.models.evidence import Evidence
+from app.models.intervention import Intervention
 from app.models.user import User
 from app.schemas.dashboard import DashboardResponse
+from app.services.next_best_action_service import NextBestActionService
 
 router = APIRouter(tags=["dashboard"])
 
@@ -74,6 +77,32 @@ def get_learner_dashboard(
 
     is_admin = (role and "admin" in role.name.lower()) or user.role_id == 9
 
+    nba_payload: dict[str, Any] | None = None
+    try:
+        nba_service = NextBestActionService()
+        rec = nba_service.get_next_best_action(db, user)
+        if rec and rec.selected_intervention_id:
+            sel_int = db.get(Intervention, rec.selected_intervention_id)
+            expl_data = json.loads(rec.explanation_json) if rec.explanation_json else {}
+            reason_str = expl_data.get("why") or expl_data.get("reason") or "Targeted skill calibration recommended."
+            int_type = "PRACTICE"
+            if sel_int and hasattr(sel_int, "intervention_type"):
+                int_type = str(sel_int.intervention_type.value if hasattr(sel_int.intervention_type, "value") else sel_int.intervention_type)
+            nba_payload = {
+                "target_subskill_id": rec.target_subskill_id,
+                "gap_reason": rec.objective or "Targeted skill gap identified",
+                "selected_intervention": {
+                    "id": sel_int.id if sel_int else rec.selected_intervention_id,
+                    "title": sel_int.title if sel_int else "Core Statistical Practice",
+                    "type": int_type,
+                    "reason": reason_str,
+                },
+                "explanation": reason_str,
+                "uncertainty": round(1.0 - (rec.confidence or 0.7), 2),
+            }
+    except Exception:
+        pass
+
     return DashboardResponse(
         user_id=user.id,
         full_name=user.full_name,
@@ -84,4 +113,5 @@ def get_learner_dashboard(
         total_competencies=len(competency_summaries),
         evaluations_completed=evaluations_completed,
         total_evidence_records=total_evidence,
+        next_best_action=nba_payload,
     )

@@ -196,7 +196,15 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
           localStorage.setItem(k, JSON.stringify(list));
         });
 
-        window.dispatchEvent(new Event("gyansetu:assessment_updated"));
+        window.dispatchEvent(
+          new CustomEvent("gyansetu:assessment_updated", {
+            detail: {
+              title: `${tier === "easy" ? "Tier 1: Foundation" : tier === "medium" ? "Tier 2: Application" : "Tier 3: Analysis"}`,
+              score,
+              passed,
+            },
+          })
+        );
       } catch (tierErr) {
         console.warn("Failed saving tier update from AssessmentRunner:", tierErr);
       }

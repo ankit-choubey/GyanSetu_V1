@@ -1,20 +1,41 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import workforceData from "@/lib/mock/workforce-mock.json";
 import { AdminAnalyticsResponse } from "@/lib/api/types";
+import { client } from "@/lib/api/client";
 import { WorkforceStatCards } from "@/components/ui/workforce/WorkforceStatCards";
 import { StatusDistributionDonut } from "@/components/ui/workforce/StatusDistributionDonut";
 import { CompetencyComparisonChart } from "@/components/ui/workforce/CompetencyComparisonChart";
 import { CompetencyAnalyticsTable } from "@/components/ui/workforce/CompetencyAnalyticsTable";
+import { WorkforceGapTriage } from "@/components/ui/workforce/WorkforceGapTriage";
 import { SandboxBadge } from "@/components/ui/dashboard/SandboxBadge";
 import { ShieldCheck } from "lucide-react";
 
 export default function WorkforcePage() {
-  const [data] = useState<AdminAnalyticsResponse>(
+  const [data, setData] = useState<AdminAnalyticsResponse>(
     workforceData as AdminAnalyticsResponse
   );
+  const [isLiveSync, setIsLiveSync] = useState(false);
+
+  useEffect(() => {
+    let isSubscribed = true;
+    client
+      .get<AdminAnalyticsResponse>("/api/workforce/competencies")
+      .then((res) => {
+        if (isSubscribed && res && res.competencies && res.competencies.length > 0) {
+          setData(res);
+          setIsLiveSync(true);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using baseline workforce analytics due to API status:", err?.message || err);
+      });
+    return () => {
+      isSubscribed = false;
+    };
+  }, []);
 
   const stats = useMemo(() => {
     const competencies = data.competencies || [];
@@ -72,7 +93,7 @@ export default function WorkforcePage() {
               <ShieldCheck className="w-3 h-3 text-indigo-600" />
               Admin View
             </span>
-            <SandboxBadge label="LIVE WORKFORCE SYNC" />
+            <SandboxBadge label={isLiveSync ? "LIVE WORKFORCE SYNC" : "DEMO CADRE BASELINE"} />
           </div>
           <p className="text-sm text-slate-500 font-sans">
             Aggregate competency calibration and syllabus progress across cadre officers
@@ -113,6 +134,14 @@ export default function WorkforcePage() {
           Competency Analytics Table
         </h2>
         <CompetencyAnalyticsTable competencies={data.competencies} />
+      </motion.section>
+
+      {/* ROW 4: WORKFORCE GAP TRIAGE & SMALL CELL GOVERNANCE */}
+      <motion.section variants={itemVariants} aria-labelledby="gap-triage-heading">
+        <h2 id="gap-triage-heading" className="sr-only">
+          Workforce Gap Triage & Small Cell Governance
+        </h2>
+        <WorkforceGapTriage className="mt-4" />
       </motion.section>
     </motion.div>
   );

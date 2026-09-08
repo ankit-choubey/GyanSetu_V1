@@ -11,7 +11,11 @@ import {
   Clock,
   HelpCircle,
   Lightbulb,
+  Sparkles,
+  Bot,
+  MessageSquare,
 } from "lucide-react";
+import Script from "next/script";
 import { TestLedgerItem } from "@/lib/api/types";
 import { getLocalLedgerItems } from "@/lib/api/ledger";
 import { generateTestReportDocx } from "@/lib/docx/reportGenerator";
@@ -30,6 +34,15 @@ export default function ReportDetailPage() {
     );
     if (found) {
       setItem(found);
+    }
+
+    // Ensure OmniDimension widget script is dynamically appended if not already present
+    if (typeof window !== "undefined" && !document.getElementById("omnidimension-web-widget")) {
+      const script = document.createElement("script");
+      script.id = "omnidimension-web-widget";
+      script.src = "https://omnidim.io/web_widget.js?secret_key=2d39775642b445f9974532e7e04acd6e";
+      script.async = true;
+      document.body.appendChild(script);
     }
   }, [rawId]);
 
@@ -74,14 +87,28 @@ export default function ReportDetailPage() {
           <span>Back to Report Ledger</span>
         </Link>
 
-        <button
-          onClick={handleDownload}
-          disabled={isExporting}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm disabled:opacity-50"
-        >
-          <Download className="w-4 h-4" />
-          <span>{isExporting ? "Generating DOCX..." : "Download Official DOCX"}</span>
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => {
+              const btn = document.getElementById("omni-open-widget-btn");
+              if (btn) btn.click();
+            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition shadow-xs"
+            title="Ask AI Remediation Coach"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Ask AI Coach</span>
+          </button>
+
+          <button
+            onClick={handleDownload}
+            disabled={isExporting}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm disabled:opacity-50"
+          >
+            <Download className="w-4 h-4" />
+            <span>{isExporting ? "Generating DOCX..." : "Download Official DOCX"}</span>
+          </button>
+        </div>
       </div>
 
       {/* EXECUTIVE BANNER */}
@@ -295,6 +322,84 @@ export default function ReportDetailPage() {
             ))}
           </div>
         </div>
+
+        {/* SECTION V: INTERACTIVE AI DIAGNOSTIC COACH & REMEDIATION ASSISTANT */}
+        <div className="mt-8 pt-8 border-t border-slate-200">
+          <div className="bg-gradient-to-br from-indigo-50/90 via-blue-50/50 to-slate-50 border border-indigo-100 rounded-2xl p-6 sm:p-7 relative overflow-hidden shadow-xs">
+            {/* Ambient background glow */}
+            <div className="absolute -top-12 -right-12 w-44 h-44 bg-blue-400/10 rounded-full blur-2xl pointer-events-none" />
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-600 flex items-center justify-center text-white shadow-sm shrink-0">
+                  <Bot className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
+                      Section V: AI Performance & Remediation Coach
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Live Chatbot
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-slate-900 mt-0.5">
+                    Interactive Cadre Advisory & Remediation Chatbot
+                  </h3>
+                </div>
+              </div>
+
+              {/* Exact OmniDimension Web Widget Trigger Button */}
+              <button
+                id="omni-open-widget-btn"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-700 hover:from-indigo-700 hover:to-blue-700 transition shadow-md hover:shadow-lg active:scale-95 transform shrink-0"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Open Widget</span>
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed max-w-3xl mb-4">
+              Discuss this evaluation report directly with GyanSetu&apos;s grounded AI assistant. Ask questions regarding 
+              identified misconceptions, request formula step-by-step derivations, or get tailored guidance on practical 
+              workplace exercises to boost your competency mastery index ({item.score}%).
+            </p>
+
+            {/* Suggested inquiries */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">
+                Suggested Inquiries for This Evaluation Report:
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Why did I miss questions on this evaluation?",
+                  "What practical tasks should I take to improve?",
+                  "Explain Neyman Allocation and sampling variance in survey design",
+                  `How can I raise my confidence from ${Math.round(item.confidence * 100)}% to 85%?`,
+                ].map((promptText, pIdx) => (
+                  <button
+                    key={pIdx}
+                    onClick={() => {
+                      const btn = document.getElementById("omni-open-widget-btn");
+                      if (btn) btn.click();
+                    }}
+                    className="text-xs bg-white/95 hover:bg-white text-slate-700 hover:text-indigo-700 border border-indigo-100 hover:border-indigo-300 px-3 py-1.5 rounded-lg shadow-xs transition text-left"
+                  >
+                    💬 &ldquo;{promptText}&rdquo;
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* OmniDimension Web Widget Script */}
+        <Script
+          id="omnidimension-web-widget"
+          src="https://omnidim.io/web_widget.js?secret_key=2d39775642b445f9974532e7e04acd6e"
+          strategy="afterInteractive"
+        />
       </div>
     </div>
   );
