@@ -37,6 +37,120 @@ interface ChatMessage {
   time: string;
 }
 
+function renderInlineMarkdown(content: string, isUser: boolean = false): React.ReactNode[] {
+  const regex = /(\[.*?\]\(.*?\)|\*\*.*?\*\*|\*.*?\*|`.*?`)/g;
+  const parts = content.split(regex);
+
+  return parts.map((part, idx) => {
+    if (!part) return null;
+
+    // Link: [link text](url)
+    if (part.startsWith("[") && part.includes("](") && part.endsWith(")")) {
+      const match = part.match(/^\[(.*?)\]\((.*?)\)$/);
+      if (match) {
+        const [, linkText, url] = match;
+        return (
+          <a
+            key={idx}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "font-semibold underline underline-offset-2 transition inline-flex items-center gap-1",
+              isUser
+                ? "text-blue-100 hover:text-white decoration-blue-200"
+                : "text-blue-600 hover:text-blue-800 decoration-blue-400"
+            )}
+          >
+            {linkText}
+          </a>
+        );
+      }
+    }
+
+    // Bold: **text**
+    if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
+      return (
+        <strong
+          key={idx}
+          className={cn("font-bold", isUser ? "text-white" : "text-slate-900")}
+        >
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    // Italic: *text*
+    if (part.startsWith("*") && part.endsWith("*") && part.length >= 2) {
+      return (
+        <em
+          key={idx}
+          className={cn("italic", isUser ? "text-blue-100" : "text-slate-700")}
+        >
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+
+    // Inline Code: `code`
+    if (part.startsWith("`") && part.endsWith("`") && part.length >= 2) {
+      return (
+        <code
+          key={idx}
+          className={cn(
+            "px-1.5 py-0.5 rounded font-mono text-[11px]",
+            isUser
+              ? "bg-blue-700 text-white"
+              : "bg-slate-100 text-indigo-700 border border-slate-200"
+          )}
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+
+    return <span key={idx}>{part}</span>;
+  });
+}
+
+function FormattedChatMessage({ text, isUser }: { text: string; isUser: boolean }) {
+  const lines = text.split("\n");
+
+  return (
+    <div className="space-y-1.5 leading-relaxed">
+      {lines.map((line, lIdx) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          return <div key={lIdx} className="h-1.5" />;
+        }
+
+        const isBullet = trimmed.startsWith("• ") || trimmed.startsWith("- ");
+        const bulletContent = isBullet ? trimmed.slice(2) : line;
+
+        if (isBullet) {
+          return (
+            <div key={lIdx} className="flex items-start gap-2 pl-0.5">
+              <span
+                className={cn(
+                  "font-bold shrink-0 text-xs mt-0.5",
+                  isUser ? "text-blue-200" : "text-indigo-600"
+                )}
+              >
+                •
+              </span>
+              <span className="flex-1">
+                {renderInlineMarkdown(bulletContent, isUser)}
+              </span>
+            </div>
+          );
+        }
+
+        return <p key={lIdx}>{renderInlineMarkdown(line, isUser)}</p>;
+      })}
+    </div>
+  );
+}
+
 export default function ReportDetailPage() {
   const params = useParams();
   const rawId = params?.id as string;
@@ -567,13 +681,13 @@ export default function ReportDetailPage() {
 
                       <div
                         className={cn(
-                          "p-3 rounded-2xl whitespace-pre-wrap leading-relaxed shadow-2xs",
+                          "p-3 rounded-2xl leading-relaxed shadow-2xs text-xs",
                           msg.sender === "user"
                             ? "bg-blue-600 text-white rounded-tr-none"
                             : "bg-white text-slate-800 border border-slate-200 rounded-tl-none"
                         )}
                       >
-                        {msg.text}
+                        <FormattedChatMessage text={msg.text} isUser={msg.sender === "user"} />
                       </div>
                     </div>
                   ))}
