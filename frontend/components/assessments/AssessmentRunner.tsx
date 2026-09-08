@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  X, AlertCircle, CheckCircle2, Loader2, Lightbulb, GraduationCap, ChevronDown, Award
+  X, AlertCircle, CheckCircle2, Loader2, Lightbulb, GraduationCap, ChevronDown, Award,
+  FileSpreadsheet, ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import confetti from "canvas-confetti";
@@ -17,6 +19,7 @@ interface AssessmentRunnerProps {
 }
 
 export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerProps) {
+  const router = useRouter();
   const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
   const [sourceTitle, setSourceTitle] = useState<string | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -145,6 +148,7 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
       console.warn("Persisting assessment attempt failed or offline:", apiErr);
     }
 
+    let savedReportId: number | null = null;
     // Automatically record to the real-time Test Report Ledger
     try {
       const { appendTestLedgerItem } = await import("@/lib/api/ledger");
@@ -152,7 +156,15 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
         ? JSON.parse(localStorage.getItem("gyansetu_user") || "{}") 
         : null;
 
-      appendTestLedgerItem({
+      const dynamicTopic = sourceTitle 
+        ? sourceTitle 
+        : tier === "easy" 
+        ? "Sampling Design & Field Methodologies" 
+        : tier === "medium" 
+        ? "National Accounts & Price Statistics" 
+        : "Survey Data Harmonization & Policy Analytics";
+
+      const savedReport = appendTestLedgerItem({
         session_id: sessionId || `sess_${Date.now().toString(36)}`,
         timestamp: new Date().toLocaleString("en-IN", {
           day: "2-digit",
@@ -170,7 +182,7 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
         designation: userProfile?.designation || "Statistical Officer",
         department: userProfile?.department || "National Accounts Division (NAD)",
         competency_id: tier === "easy" ? 1 : tier === "medium" ? 2 : 3,
-        competency_name: tier === "easy" ? "Sampling Design & Field Methodologies" : tier === "medium" ? "National Accounts & Price Statistics" : "Survey Data Harmonization & Policy Analytics",
+        competency_name: dynamicTopic,
         tier: tier === "easy" ? "Tier 1: Foundation" : tier === "medium" ? "Tier 2: Application" : "Tier 3: Analysis",
         difficulty_band: tier === "easy" ? "Recall & Definitions (Bloom L1-L2)" : tier === "medium" ? "Formulas & Calculations (Bloom L3-L4)" : "Multi-Step & Policy Analysis (Bloom L5-L6)",
         score,
@@ -183,16 +195,16 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
         confidence: 0.85,
         coverage: 0.80,
         uncertainty: 0.15,
-        evidence_count: 5,
+        evidence_count: total,
         evidence_diversity: 2,
-        assessed_count: "5 of 7",
+        assessed_count: `${correctCount} of ${total}`,
         reliability_status: "VERIFIED",
-        provenance: "[DYNAMIC_INGESTION:ASSESSMENT_RUNNER]",
+        provenance: sourceTitle ? `[INGESTION:${sourceTitle}]` : "[DYNAMIC_INGESTION:ASSESSMENT_RUNNER]",
         evidence_type: "KNOWLEDGE_ASSESSMENT",
         weight: 1.0,
         items: evaluatedItems.map((it, idx) => ({
           question_number: `Q${idx + 1}`,
-          subskill_name: (questions[idx] as any)?.subskill_name || "Statistical Methodology",
+          subskill_name: (questions[idx] as any)?.subskill_name || (questions[idx] as any)?.skill_name || "Statistical Methodology",
           question_text: questions[idx]?.text || (questions[idx] as any)?.question_text || `Assessment Question #${idx + 1}`,
           user_selected: it.user_selected,
           correct_option: it.correct_option,
@@ -201,6 +213,9 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
           remediation_steps: Array.isArray(it.remediation_steps) ? it.remediation_steps.join("; ") : it.remediation_steps,
         })),
       });
+      if (savedReport && savedReport.numeric_id) {
+        savedReportId = savedReport.numeric_id;
+      }
     } catch (ledgerErr) {
       console.warn("Failed recording to Test Report Ledger:", ledgerErr);
     }
@@ -262,6 +277,7 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
       passed,
       correctCount,
       totalCount: total,
+      reportId: savedReportId,
       next_tier_unlocked: passed ? (tier === "easy" ? "medium" : tier === "medium" ? "tough" : null) : null,
       items: evaluatedItems
     });
@@ -305,6 +321,21 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
           {results.next_tier_unlocked && (
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-800 rounded-full text-xs font-semibold border border-blue-200">
               Next Tier Unlocked: Tier '{results.next_tier_unlocked.toUpperCase()}' is now available
+            </div>
+          )}
+
+          {results.reportId && (
+            <div className="mt-4">
+              <button
+                onClick={() => {
+                  onClose(results.score, results.passed);
+                  router.push(`/dashboard/ledger/${results.reportId}`);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 hover:bg-indigo-50 rounded-xl text-xs font-bold border border-indigo-200 shadow-xs transition"
+              >
+                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                <span>Redirect to Report Ledger (Report #{String(results.reportId).padStart(3, "0")}) &rarr;</span>
+              </button>
             </div>
           )}
         </div>
@@ -397,12 +428,28 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
             })}
           </div>
 
-          <div className="mt-8 flex justify-end">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-200 pt-6">
             <button
               onClick={() => onClose(results.score, results.passed)}
-              className="px-6 py-2.5 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition shadow-sm"
+              className="w-full sm:w-auto px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl text-xs font-semibold transition"
             >
               Return to Assessments
+            </button>
+
+            <button
+              onClick={() => {
+                onClose(results.score, results.passed);
+                if (results.reportId) {
+                  router.push(`/dashboard/ledger/${results.reportId}`);
+                } else {
+                  router.push("/dashboard/ledger");
+                }
+              }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition active:scale-95"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-300" />
+              <span>Redirect to Report Ledger & Download DOCX</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

@@ -1,9 +1,10 @@
+
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ShieldAlert, CheckCircle2, Lock, PlayCircle } from "lucide-react";
+import { ShieldAlert, CheckCircle2, Lock, PlayCircle, FileSpreadsheet, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { AssessmentRunner } from "@/components/assessments/AssessmentRunner";
 import { StatusChip } from "@/components/ui/dashboard/primitives";
@@ -117,6 +118,7 @@ function getResolvedTiers(currentSessionId: string): TierStatus[] {
 }
 
 export default function AssessmentsPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const rawSessionId = searchParams?.get("session_id");
 
@@ -224,6 +226,35 @@ export default function AssessmentsPage() {
   const latestScore = latestCompletedTier?.score ?? null;
   const latestPassed = latestCompletedTier ? (latestCompletedTier.score ?? 0) >= latestCompletedTier.passing_score : false;
 
+  const matchingReports = useMemo(() => {
+    const items = getLocalLedgerItems();
+    const map: Record<string, any> = {};
+    if (Array.isArray(items)) {
+      items.forEach(item => {
+        if (!sessionId || item.session_id === sessionId) {
+          const t = (item.tier || "").toLowerCase();
+          const tierKey = t.includes("tier 1") || t.includes("foundation") ? "easy" :
+                          t.includes("tier 2") || t.includes("application") ? "medium" :
+                          t.includes("tier 3") || t.includes("analysis") ? "tough" : null;
+          if (tierKey && !map[tierKey]) {
+            map[tierKey] = item;
+          }
+        }
+      });
+    }
+    return map;
+  }, [sessionId, tiers]);
+
+  const latestReport = useMemo(() => {
+    const items = getLocalLedgerItems();
+    if (!Array.isArray(items) || items.length === 0) return null;
+    if (sessionId) {
+      const match = items.find(it => it.session_id === sessionId);
+      if (match) return match;
+    }
+    return items[0];
+  }, [sessionId, tiers]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
@@ -278,7 +309,7 @@ export default function AssessmentsPage() {
         )}
       </motion.div>
 
-      {/* REAL-TIME REVIEW PERCENTAGE & PERFORMANCE CONSISTENCY BANNER (Only displays once assessment is given) */}
+      {/* REAL-TIME REVIEW PERCENTAGE & PERFORMANCE CONSISTENCY BANNER */}
       {hasGivenAssessment && latestScore !== null && (
         <motion.div
           variants={itemVariants}
@@ -325,7 +356,7 @@ export default function AssessmentsPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-6 self-stretch md:self-auto justify-between md:justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-200/60">
+          <div className="flex items-center gap-4 self-stretch md:self-auto justify-between md:justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-200/60 flex-wrap">
             <div className="text-right">
               <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Review Percentage</div>
               <div className={cn(
@@ -338,6 +369,21 @@ export default function AssessmentsPage() {
                 {latestPassed ? "Passed Standard" : "Needs Review"}
               </div>
             </div>
+
+            <button
+              onClick={() => {
+                if (latestReport?.numeric_id) {
+                  router.push(`/dashboard/ledger/${latestReport.numeric_id}`);
+                } else {
+                  router.push(`/dashboard/ledger?session_id=${sessionId}`);
+                }
+              }}
+              className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition shrink-0"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+              <span>Report Ledger & DOCX</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </motion.div>
       )}
@@ -353,7 +399,7 @@ export default function AssessmentsPage() {
                 : "bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300"
             )}
           >
-            {/* Top color strip (thin 2px rule, semantic status only) */}
+            {/* Top color strip */}
             <div className={cn(
               "h-1 w-full",
               tier.id === "easy" ? "bg-teal-500" :
@@ -392,22 +438,61 @@ export default function AssessmentsPage() {
 
             <div className="p-5 border-t border-slate-100 bg-slate-50/50">
               {tier.unlocked ? (
-                <button
-                  onClick={() => handleStartTier(tier.id)}
-                  className={cn(
-                    "w-full py-3 px-5 rounded-xl text-sm font-bold flex items-center justify-center gap-2.5 transition shadow-sm",
-                    tier.completed 
-                      ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50" 
-                      : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
+                <div className="space-y-2">
+                  <button
+                    onClick={() => handleStartTier(tier.id)}
+                    className={cn(
+                      "w-full py-2.5 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition shadow-xs",
+                      tier.completed 
+                        ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50" 
+                        : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md"
+                    )}
+                  >
+                    <span>{tier.completed ? "Retake Assessment" : "Start Assessment"}</span>
+                    <PlayCircle className="w-4 h-4" />
+                  </button>
+
+                  {tier.completed ? (
+                    <button
+                      onClick={() => {
+                        const targetReport = matchingReports[tier.id];
+                        if (targetReport?.numeric_id) {
+                          router.push(`/dashboard/ledger/${targetReport.numeric_id}`);
+                        } else {
+                          router.push(`/dashboard/ledger?session_id=${sessionId}`);
+                        }
+                      }}
+                      className="w-full py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-indigo-700 bg-indigo-50/90 hover:bg-indigo-100 border border-indigo-200 shadow-2xs"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Redirect to Report Ledger (DOCX & Chat)</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => router.push("/dashboard/ledger")}
+                      className="w-full py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition text-slate-600 bg-white hover:bg-slate-100 border border-slate-200"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5 text-slate-400" />
+                      <span>View Report Ledger</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
                   )}
-                >
-                  <span>{tier.completed ? "Retake Assessment" : "Start Assessment"}</span>
-                  <PlayCircle className="w-4 h-4" />
-                </button>
+                </div>
               ) : (
-                <div className="w-full py-3 px-5 rounded-xl bg-slate-100 text-slate-400 text-sm font-semibold text-center flex items-center justify-center gap-2 cursor-not-allowed" title={tier.unlock_requirement}>
-                  <Lock className="w-4 h-4" />
-                  <span>Locked</span>
+                <div className="space-y-2">
+                  <div className="w-full py-2.5 px-4 rounded-xl bg-slate-100 text-slate-400 text-xs font-semibold text-center flex items-center justify-center gap-2 cursor-not-allowed" title={tier.unlock_requirement}>
+                    <Lock className="w-4 h-4" />
+                    <span>Locked ({tier.unlock_requirement || "Complete previous tier"})</span>
+                  </div>
+                  <button
+                    onClick={() => router.push("/dashboard/ledger")}
+                    className="w-full py-1.5 px-3 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition text-slate-500 bg-white hover:bg-slate-50 border border-slate-200"
+                  >
+                    <FileSpreadsheet className="w-3 h-3 text-slate-400" />
+                    <span>Check Ledger Standards</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
                 </div>
               )}
             </div>
