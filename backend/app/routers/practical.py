@@ -5,7 +5,9 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.dependencies import get_current_user
+from app.models.assessment import AssessmentAttempt
 from app.models.competency import Competency
+from app.models.competency_state import CompetencyState
 from app.models.practical import PracticalAttempt, PracticalTask
 from app.models.user import User
 from app.schemas.practical import (
@@ -28,6 +30,10 @@ def get_learner_tasks(
     attempts = db.query(PracticalAttempt).filter(PracticalAttempt.user_id == current_user.id).all()
     attempts_by_task = {a.task_id: a for a in attempts}
 
+    # Query learner competency states to inherit assessment mastery progress
+    comp_states = db.query(CompetencyState).filter(CompetencyState.user_id == current_user.id).all()
+    comp_states_by_id = {cs.competency_id: cs for cs in comp_states}
+
     task_items = []
     active_count = 0
     completed_count = 0
@@ -45,7 +51,25 @@ def get_learner_tasks(
             active_count += 1
         else:
             status_str = "active"
-            progress_pct = 0
+            comp_state = comp_states_by_id.get(task.competency_id) if task.competency_id else None
+            if comp_state and comp_state.mastery is not None:
+                progress_pct = int(round(comp_state.mastery * 100))
+            else:
+                latest_attempt = (
+                    db.query(AssessmentAttempt)
+                    .filter(
+                        AssessmentAttempt.user_id == current_user.id,
+                        AssessmentAttempt.competency_id == task.competency_id,
+                    )
+                    .order_by(AssessmentAttempt.id.desc())
+                    .first()
+                    if task.competency_id
+                    else None
+                )
+                if latest_attempt and latest_attempt.score is not None:
+                    progress_pct = int(round(latest_attempt.score * 100))
+                else:
+                    progress_pct = 0
             active_count += 1
 
         competency = db.get(Competency, task.competency_id) if task.competency_id else None
