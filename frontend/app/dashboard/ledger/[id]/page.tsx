@@ -22,6 +22,7 @@ import {
   GraduationCap,
   TrendingUp,
   RefreshCw,
+  Mic,
 } from "lucide-react";
 import Script from "next/script";
 import { TestLedgerItem } from "@/lib/api/types";
@@ -69,7 +70,7 @@ export default function ReportDetailPage() {
       const initialGreeting: ChatMessage = {
         id: "msg_welcome",
         sender: "assistant",
-        text: `Namaste ${found.full_name}. I am your OmniDimension AI Cadre Advisory Coach.\n\nI have reviewed your **${found.competency_name}** evaluation (${found.tier}). You scored **${found.score}%** (${found.result_status}) with **${found.correct_count} of ${found.total_questions}** questions correct.${
+        text: `Namaste ${found.full_name}. I am your GyanSetu AI Cadre Advisory Coach.\n\nI have reviewed your **${found.competency_name}** evaluation (${found.tier}). You scored **${found.score}%** (${found.result_status}) with **${found.correct_count} of ${found.total_questions}** questions correct.${
           incorrectCount > 0
             ? ` You have ${incorrectCount} question(s) recommended for remediation. Ask me any question below to examine misconceptions or practical steps!`
             : " Outstanding performance achieving 100% mastery!"
@@ -103,6 +104,40 @@ export default function ReportDetailPage() {
     } finally {
       setIsExporting(false);
     }
+  };
+
+  const handleLaunchVoiceWidget = () => {
+    if (typeof window === "undefined") return;
+
+    // 1. Try triggering existing OmniDimension launcher button or widget container
+    const omniElements = document.querySelectorAll(
+      "#chat-helper-button, #chat-helper-button-container, .omnidim-launcher, [id*='omni-launcher'], [id*='chat-helper']"
+    );
+    for (let i = 0; i < omniElements.length; i++) {
+      const el = omniElements[i] as HTMLElement;
+      if (el && el.id !== "omni-voice-widget-btn") {
+        el.click();
+        return;
+      }
+    }
+
+    // 2. Check if global OmniDim or web widget JS has an open function
+    const omniGlobal = (window as any).OmniDim || (window as any).omnidim || (window as any).OmniDimension;
+    if (omniGlobal && typeof omniGlobal.open === "function") {
+      omniGlobal.open();
+      return;
+    }
+
+    // 3. Make sure iframe container is visible if present
+    const iframeContainer = document.getElementById("chat-iframe-container");
+    if (iframeContainer) {
+      iframeContainer.style.display = "block";
+      iframeContainer.style.visibility = "visible";
+      iframeContainer.style.pointerEvents = "auto";
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent("gyansetu:open_voice"));
   };
 
   const handleSendMessage = (textToSend?: string) => {
@@ -329,7 +364,7 @@ export default function ReportDetailPage() {
                   <div>
                     <div className="flex items-center gap-1.5">
                       <h3 className="font-heading text-sm font-bold text-white tracking-wide">
-                        OmniDimension Cadre AI
+                        Ask GyanSetu AI
                       </h3>
                       <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 px-2 py-0.2 rounded-full border border-emerald-400/30">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -342,19 +377,16 @@ export default function ReportDetailPage() {
                   </div>
                 </div>
 
-                {/* OmniDimension / Slide-Over Drawer Trigger Button */}
+                {/* OmniDimension Voice AI Widget Button */}
                 <button
-                  id="omni-open-widget-btn"
-                  onClick={() => {
-                    if (typeof window !== "undefined") {
-                      window.dispatchEvent(new CustomEvent("gyansetu:open_chat"));
-                    }
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/10 transition shadow-2xs"
-                  title="Open Slide-Over Assistant"
+                  id="omni-voice-widget-btn"
+                  type="button"
+                  onClick={handleLaunchVoiceWidget}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-900 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 hover:from-emerald-300 hover:to-teal-200 transition shadow-sm active:scale-95 shrink-0"
+                  title="Start Voice Interaction with AI Coach"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Ask Gemini</span>
+                  <Mic className="w-3.5 h-3.5 text-slate-950 animate-pulse" />
+                  <span>Voice AI Coach</span>
                 </button>
               </div>
             </div>
@@ -416,7 +448,7 @@ export default function ReportDetailPage() {
                     {msg.sender === "assistant" ? (
                       <>
                         <Sparkles className="w-3 h-3 text-indigo-600" />
-                        <span className="font-semibold text-indigo-900">OmniDimension AI Coach</span>
+                        <span className="font-semibold text-indigo-900">Ask GyanSetu AI</span>
                       </>
                     ) : (
                       <span className="font-semibold text-slate-600">{item.full_name}</span>
@@ -440,7 +472,7 @@ export default function ReportDetailPage() {
               {isTyping && (
                 <div className="mr-auto items-start flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 text-xs">
                   <Bot className="w-4 h-4 text-indigo-600 animate-pulse" />
-                  <span>OmniDimension AI is analyzing evaluation report...</span>
+                  <span>GyanSetu AI is analyzing evaluation report...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -457,15 +489,23 @@ export default function ReportDetailPage() {
               >
                 <input
                   type="text"
-                  placeholder="Ask OmniDimension AI about questions, formulas, remediation..."
+                  placeholder="Ask GyanSetu AI about questions, formulas, remediation..."
                   value={inputQuery}
                   onChange={(e) => setInputQuery(e.target.value)}
                   className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
                 />
                 <button
+                  type="button"
+                  onClick={handleLaunchVoiceWidget}
+                  className="p-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition shadow-xs flex items-center justify-center shrink-0"
+                  title="Start Voice Interaction with AI Coach"
+                >
+                  <Mic className="w-4 h-4" />
+                </button>
+                <button
                   type="submit"
                   disabled={!inputQuery.trim() || isTyping}
-                  className="p-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl transition shadow-xs"
+                  className="p-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl transition shadow-xs shrink-0"
                   title="Send message"
                 >
                   <Send className="w-4 h-4" />
@@ -480,7 +520,7 @@ export default function ReportDetailPage() {
             <div>
               <p className="font-semibold text-indigo-950">Grounded Dynamic Evaluation Context</p>
               <p className="text-[11px] text-indigo-800 mt-0.5">
-                The OmniDimension chat assistant above is directly linked to your {item.total_questions}-question test attempt,
+                The GyanSetu AI assistant above is directly linked to your {item.total_questions}-question test attempt,
                 reflecting exact misconceptions and remediation generated by the sentence-transformer encoder.
               </p>
             </div>

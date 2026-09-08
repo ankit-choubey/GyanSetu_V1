@@ -426,18 +426,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
             <div className="w-px h-6 bg-slate-200 hidden sm:block" />
 
-            {/* Ask AI Coach Button (Opens Right-Side Assistant) */}
-            <button
-              type="button"
-              onClick={() => setIsChatOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-xs transition transform active:scale-95 shrink-0"
-              title="Open Ask GyanSetu AI Assistant"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span className="hidden sm:inline">Ask AI Coach</span>
-              <span className="sm:hidden">Ask AI</span>
-            </button>
-
             {/* User Avatar */}
             <div 
               className="flex items-center gap-2.5 p-1 rounded-lg"
