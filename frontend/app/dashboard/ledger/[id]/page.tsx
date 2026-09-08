@@ -360,6 +360,10 @@ export default function ReportDetailPage() {
         lower.includes("video") ||
         lower.includes("which part") ||
         lower.includes("lecture") ||
+        lower.includes("start") ||
+        lower.includes("begin") ||
+        lower.includes("watch") ||
+        lower.includes("see") ||
         (lower.includes("study") && !lower.includes("plan"))
       ) {
         const qMatch = lower.match(/q(\d+)|question\s*(\d+)/);
@@ -379,10 +383,16 @@ export default function ReportDetailPage() {
               `💡 **Action Step**: Jump directly to **${ts.startFormatted}** in the video lecture, review this segment, then retake the tier test!`;
           }
         } else {
-          // If asking generally where to study missed questions
+          // If asking generally where to start / where to study missed questions
           const missed = (item.items || []).map((q, idx) => ({ ...q, originalIdx: idx })).filter((q) => !q.is_correct);
           if (missed.length > 0) {
-            replyText = `📍 **Targeted Video Timestamps for Your Missed Questions**:\n\n` +
+            const firstMissed = missed[0];
+            const firstTs = getTimestampInfo(firstMissed.originalIdx);
+
+            replyText = `🎬 **Recommended Video Starting Point**:\n\n` +
+              `You should start watching the video at **${firstTs.startFormatted}** ([▶ Start Video Lecture at ${firstTs.startFormatted}](${firstTs.jumpUrl})).\n\n` +
+              `At **${firstTs.startFormatted}**, the lecture introduces the instructional breakdown of **${firstMissed.subskill_name}** (the primary topic evaluated in ${firstMissed.question_number || "Question 1"}).\n\n` +
+              `📍 **Full Video Study Timestamps for Missed Questions**:\n\n` +
               missed
                 .map((m) => {
                   const ts = getTimestampInfo(m.originalIdx);
@@ -392,7 +402,7 @@ export default function ReportDetailPage() {
               `\n\n💡 Revisit these exact moments in the video lecture to clear your conceptual gaps before retaking!`;
           } else {
             const ts = getTimestampInfo(0);
-            replyText = `You answered all questions correctly! To review the foundational statistical principles covered in the lecture, you can watch from **${ts.startFormatted}**: [▶ Watch Lecture at ${ts.startFormatted}](${ts.jumpUrl}).`;
+            replyText = `You answered all questions correctly! You can review the foundational statistical principles covered in the lecture starting from **${ts.startFormatted}**: [▶ Watch Lecture at ${ts.startFormatted}](${ts.jumpUrl}).`;
           }
         }
       }
