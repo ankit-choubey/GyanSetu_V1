@@ -62,7 +62,8 @@ const initialTiers: TierStatus[] = [
 
 export default function AssessmentsPage() {
   const searchParams = useSearchParams();
-  const sessionId = searchParams?.get("session_id") || "demo_session";
+  const rawSessionId = searchParams?.get("session_id");
+  const sessionId = rawSessionId && rawSessionId !== "demo_session" ? rawSessionId : "";
 
   const [tiers, setTiers] = useState<TierStatus[]>(initialTiers);
   const [activeTier, setActiveTier] = useState<"easy" | "medium" | "tough" | null>(null);
@@ -138,12 +139,17 @@ export default function AssessmentsPage() {
             Three levels, unlocked in order
           </p>
         </div>
-        <div className="flex items-center gap-2.5 text-sm text-slate-600 font-sans">
-          <span>Session:</span>
-          <span className="font-mono text-xs sm:text-sm bg-slate-100 px-2.5 py-1 rounded-md text-slate-800 border border-slate-200 font-semibold">
-            {sessionId}
-          </span>
-        </div>
+        {sessionId ? (
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg text-xs text-slate-700 border border-slate-200 font-medium">
+            <span className="w-2 h-2 rounded-full bg-blue-600" />
+            <span>Material: {sessionId.replace("lib_", "Library Material #").replace("doc_", "Document #")}</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg text-xs text-emerald-800 border border-emerald-200 font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Official Diagnostic Cadre</span>
+          </div>
+        )}
       </motion.div>
 
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">

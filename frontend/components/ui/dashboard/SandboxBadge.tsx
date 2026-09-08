@@ -23,9 +23,9 @@ export function SandboxBadge({
           : "bg-amber-50 text-amber-800 border border-amber-200",
         className
       )}
-      title={isLive ? "Live synchronized mode" : "Demonstration data mode"}
+      title={isLive ? "Live synchronized mode" : "Official Operational Mode"}
     >
-      <span className={cn("w-1.5 h-1.5 rounded-full", isLive ? "bg-emerald-500 animate-pulse" : "bg-amber-500")} />
+      <span className={cn("w-1.5 h-1.5 rounded-full", isLive ? "bg-emerald-500 animate-pulse" : "bg-blue-500")} />
       <span>{label}</span>
     </div>
   );
