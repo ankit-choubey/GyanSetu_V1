@@ -35,9 +35,14 @@ def _format_seconds(seconds: int) -> str:
     return f"{m:02d}:{s:02d}"
 
 
-def _get_timestamp_info(q_idx: int, video_url: str = "https://youtu.be/UXV-A0Zo1Jk") -> dict[str, Any]:
-    start_sec = 60 + (q_idx % 15) * 115
-    end_sec = start_sec + 85
+def _get_timestamp_info(q_idx: int, video_url: str = "https://youtu.be/UXV-A0Zo1Jk", duration: int = 413) -> dict[str, Any]:
+    total_q = 5
+    effective_start = 30  # Skip intro
+    effective_end = max(effective_start + 60, duration - 20)
+    interval = (effective_end - effective_start) / total_q
+
+    start_sec = round(effective_start + (q_idx % total_q) * interval)
+    end_sec = round(min(start_sec + interval, duration - 10))
     clean_yt = re.sub(r"[?&]t=\d+s?", "", video_url)
     sep = "&" if "?" in clean_yt else "?"
     return {

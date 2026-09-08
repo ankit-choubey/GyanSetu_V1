@@ -298,13 +298,20 @@ export default function ReportDetailPage() {
       // Helper to compute timestamp interval and link for a question index
       const getTimestampInfo = (qIdx: number) => {
         const qItem = (item.items || [])[qIdx];
-        let startSec = 60 + (qIdx % 15) * 115;
-        let endSec = startSec + 85;
+        // Exact video duration scaling (6m 53s = 413 seconds)
+        const totalDuration = (item as any).video_duration || 413;
+        const totalQ = Math.max(item.total_questions || 5, 5);
+        const effectiveStart = 30; // Skip 30s channel intro
+        const effectiveEnd = Math.max(effectiveStart + 60, totalDuration - 20);
+        const interval = (effectiveEnd - effectiveStart) / totalQ;
+
+        let startSec = Math.round(effectiveStart + (qIdx % totalQ) * interval);
+        let endSec = Math.round(Math.min(startSec + interval, totalDuration - 10));
 
         // If specific start_seconds is embedded on question item
         if (qItem && typeof (qItem as any).start_seconds === "number") {
           startSec = Math.round((qItem as any).start_seconds);
-          endSec = typeof (qItem as any).end_seconds === "number" ? Math.round((qItem as any).end_seconds) : startSec + 85;
+          endSec = typeof (qItem as any).end_seconds === "number" ? Math.round((qItem as any).end_seconds) : Math.min(startSec + 70, totalDuration - 10);
         }
 
         const formatTime = (s: number) => {
