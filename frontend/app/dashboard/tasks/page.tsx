@@ -1,15 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import tasksData from "@/lib/mock/tasks-mock.json";
 import { TasksResponse } from "@/lib/api/types";
+import { client } from "@/lib/api/client";
 import { TaskStatCards } from "@/components/ui/tasks/TaskStatCards";
 import { TaskProgressChart } from "@/components/ui/tasks/TaskProgressChart";
 import { TaskBreakdownCard } from "@/components/ui/tasks/TaskBreakdownCard";
 import { TaskListTable } from "@/components/ui/tasks/TaskListTable";
 
 export default function TasksPage() {
-  const [data] = useState<TasksResponse>(tasksData as TasksResponse);
+  const [data, setData] = useState<TasksResponse>(tasksData as TasksResponse);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isSubscribed = true;
+    client
+      .get<TasksResponse>("/api/practical/learner-tasks")
+      .then((res) => {
+        if (isSubscribed && res && res.tasks && res.tasks.length > 0) {
+          setData(res);
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not fetch live practical tasks, using cached view:", err);
+      })
+      .finally(() => {
+        if (isSubscribed) setLoading(false);
+      });
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-8 pb-12">

@@ -350,35 +350,42 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
           {/* Persona Switcher & User Avatar */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2.5">
-              <span className="text-xs text-slate-500 font-medium hidden md:inline font-sans">Officer Profile:</span>
-              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs sm:text-sm">
-                <button
-                  type="button"
-                  onClick={() => setPersona("jso")}
-                  className={cn(
-                    "px-2.5 sm:px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-semibold",
-                    persona === "jso"
-                      ? "bg-white text-slate-900 shadow-xs"
-                      : "text-slate-600 hover:text-slate-900"
-                  )}
-                >
-                  Sample Learner
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPersona("new")}
-                  className={cn(
-                    "px-2.5 sm:px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-semibold",
-                    persona === "new"
-                      ? "bg-white text-slate-900 shadow-xs"
-                      : "text-slate-600 hover:text-slate-900"
-                  )}
-                >
-                  New Officer
-                </button>
+            {user ? (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50/80 border border-blue-200/80 rounded-xl text-xs font-semibold text-blue-900 shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Cadre: {user.role === "admin" ? "Platform Administrator" : "Junior Statistical Officer (JSO)"}</span>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs text-slate-500 font-medium hidden md:inline font-sans">Officer Profile:</span>
+                <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs sm:text-sm">
+                  <button
+                    type="button"
+                    onClick={() => setPersona("jso")}
+                    className={cn(
+                      "px-2.5 sm:px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-semibold",
+                      persona === "jso"
+                        ? "bg-white text-slate-900 shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    )}
+                  >
+                    Sample Learner
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPersona("new")}
+                    className={cn(
+                      "px-2.5 sm:px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-semibold",
+                      persona === "new"
+                        ? "bg-white text-slate-900 shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    )}
+                  >
+                    New Officer
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="w-px h-6 bg-slate-200 hidden sm:block" />
 

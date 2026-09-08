@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.dependencies import get_current_user
+from app.models.competency import Competency
 from app.models.practical import PracticalAttempt, PracticalTask
 from app.models.user import User
 from app.schemas.practical import (
@@ -16,6 +17,64 @@ from app.schemas.practical import (
 from app.services.practical.practical_service import PracticalService
 
 router = APIRouter(prefix="/practical", tags=["practical-learning"])
+
+
+@router.get("/learner-tasks")
+def get_learner_tasks(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> dict[str, Any]:
+    tasks = db.query(PracticalTask).order_by(PracticalTask.id).all()
+    attempts = db.query(PracticalAttempt).filter(PracticalAttempt.user_id == current_user.id).all()
+    attempts_by_task = {a.task_id: a for a in attempts}
+
+    task_items = []
+    active_count = 0
+    completed_count = 0
+
+    for task in tasks:
+        attempt = attempts_by_task.get(task.id)
+        is_completed = attempt is not None and attempt.status == "COMPLETED"
+        if is_completed:
+            status_str = "completed"
+            progress_pct = int(round((attempt.score or 1.0) * 100))
+            completed_count += 1
+        elif attempt is not None and attempt.status == "IN_PROGRESS":
+            status_str = "active"
+            progress_pct = int(round((attempt.score or 0.5) * 100))
+            active_count += 1
+        else:
+            status_str = "active"
+            progress_pct = 0
+            active_count += 1
+
+        competency = db.get(Competency, task.competency_id) if task.competency_id else None
+        comp_name = competency.name if competency else "Statistical Fundamentals"
+
+        priority_map = {"hard": 1, "medium": 2, "easy": 3}
+        priority = priority_map.get((task.difficulty or "").lower(), 2)
+
+        task_items.append({
+            "id": task.id,
+            "title": task.title,
+            "description": task.scenario_context or task.instructions or "Official Cadre workplace exercise",
+            "type": task.scenario_type or "PRACTICE",
+            "competency_name": comp_name,
+            "priority": priority,
+            "status": status_str,
+            "progress_pct": progress_pct,
+            "due_date": "2026-09-28",
+        })
+
+    return {
+        "tasks": task_items,
+        "summary": {
+            "active": active_count,
+            "completed": completed_count,
+            "total": len(task_items),
+        },
+    }
+
 
 
 def _format_task_read(task: PracticalTask) -> PracticalTaskRead:

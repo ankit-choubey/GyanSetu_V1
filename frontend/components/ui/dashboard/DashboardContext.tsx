@@ -48,12 +48,15 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     setPersonaState(newPersona);
     if (typeof window !== "undefined") {
       try {
-        if (newPersona === "new") {
-          localStorage.setItem("gyansetu_auth_token", NEW_LEARNER_TOKEN);
-        } else if (newPersona === "admin") {
-          localStorage.setItem("gyansetu_auth_token", DEMO_ADMIN_TOKEN);
-        } else {
-          localStorage.setItem("gyansetu_auth_token", DEMO_LEARNER_TOKEN);
+        const hasRealUser = !!localStorage.getItem("gyansetu_user");
+        if (!hasRealUser) {
+          if (newPersona === "new") {
+            localStorage.setItem("gyansetu_auth_token", NEW_LEARNER_TOKEN);
+          } else if (newPersona === "admin") {
+            localStorage.setItem("gyansetu_auth_token", DEMO_ADMIN_TOKEN);
+          } else {
+            localStorage.setItem("gyansetu_auth_token", DEMO_LEARNER_TOKEN);
+          }
         }
       } catch {
         // Storage unavailable
