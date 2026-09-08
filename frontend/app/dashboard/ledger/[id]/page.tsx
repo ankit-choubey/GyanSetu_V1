@@ -297,15 +297,35 @@ export default function ReportDetailPage() {
 
       // Helper to compute timestamp interval and link for a question index
       const getTimestampInfo = (qIdx: number) => {
-        const startSec = 60 + (qIdx % 15) * 115;
-        const endSec = startSec + 85;
+        const qItem = (item.items || [])[qIdx];
+        let startSec = 60 + (qIdx % 15) * 115;
+        let endSec = startSec + 85;
+
+        // If specific start_seconds is embedded on question item
+        if (qItem && typeof (qItem as any).start_seconds === "number") {
+          startSec = Math.round((qItem as any).start_seconds);
+          endSec = typeof (qItem as any).end_seconds === "number" ? Math.round((qItem as any).end_seconds) : startSec + 85;
+        }
+
         const formatTime = (s: number) => {
           const m = Math.floor(s / 60);
           const rem = s % 60;
           return `${String(m).padStart(2, "0")}:${String(rem).padStart(2, "0")}`;
         };
-        const ytUrl = (typeof window !== "undefined" ? localStorage.getItem("active_youtube_url") : null) || "https://youtu.be/YMj79TfYUps";
-        const cleanYt = ytUrl.replace(/[?&]t=\d+s?/, "");
+
+        // Extract exact video URL from active session or report title (e.g. UXV-A0Zo1Jk)
+        let ytUrl = typeof window !== "undefined" ? localStorage.getItem("active_youtube_url") : null;
+        if (!ytUrl || ytUrl.includes("YMj79TfYUps")) {
+          const combinedStr = `${item.competency_name || ""} ${item.provenance || ""} ${(item as any).source_title || ""}`;
+          const ytMatch = combinedStr.match(/(?:watch\?v=|youtu\.be\/|\()([a-zA-Z0-9_-]{11})\)?/);
+          if (ytMatch && ytMatch[1]) {
+            ytUrl = `https://youtu.be/${ytMatch[1]}`;
+          } else {
+            ytUrl = "https://youtu.be/UXV-A0Zo1Jk";
+          }
+        }
+
+        const cleanYt = (ytUrl || "https://youtu.be/UXV-A0Zo1Jk").replace(/[?&]t=\d+s?/, "");
         const separator = cleanYt.includes("?") ? "&" : "?";
         return {
           startFormatted: formatTime(startSec),
