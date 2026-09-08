@@ -19,10 +19,12 @@ import {
   FileSpreadsheet,
   ChevronsLeft,
   ChevronsRight,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { StatusChip } from "@/components/ui/dashboard/primitives";
 import { DashboardProvider, useDashboard } from "@/components/ui/dashboard/DashboardContext";
+import { AskGeminiChatDrawer } from "@/components/ui/chatbot/AskGeminiChatDrawer";
 import { cn } from "@/lib/cn";
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -30,6 +32,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const { persona, setPersona, userName, roleName } = useDashboard();
   const { isAuthenticated, isLoading: isAuthLoading, user, logout } = useAuth();
 
@@ -40,6 +43,30 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       }
     }
   }, [user, persona, setPersona]);
+
+  // Global listener to open/close right-side Ask Gemini chatbot
+  useEffect(() => {
+    const handleOpenChat = () => setIsChatOpen(true);
+    const handleCloseChat = () => setIsChatOpen(false);
+    window.addEventListener("gyansetu:open_chat", handleOpenChat);
+    window.addEventListener("gyansetu:close_chat", handleCloseChat);
+
+    const handleClickDelegate = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.id === "omni-open-widget-btn" || target.closest("#omni-open-widget-btn"))) {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsChatOpen(true);
+      }
+    };
+    document.addEventListener("click", handleClickDelegate, true);
+
+    return () => {
+      window.removeEventListener("gyansetu:open_chat", handleOpenChat);
+      window.removeEventListener("gyansetu:close_chat", handleCloseChat);
+      document.removeEventListener("click", handleClickDelegate, true);
+    };
+  }, []);
 
   if (isAuthLoading) {
     return (
@@ -399,6 +426,18 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
             <div className="w-px h-6 bg-slate-200 hidden sm:block" />
 
+            {/* Ask AI Coach Button (Opens Right-Side Assistant) */}
+            <button
+              type="button"
+              onClick={() => setIsChatOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-xs transition transform active:scale-95 shrink-0"
+              title="Open Ask GyanSetu AI Assistant"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span className="hidden sm:inline">Ask AI Coach</span>
+              <span className="sm:hidden">Ask AI</span>
+            </button>
+
             {/* User Avatar */}
             <div 
               className="flex items-center gap-2.5 p-1 rounded-lg"
@@ -423,6 +462,12 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         <main className="flex-1 p-4 sm:p-8 w-full">
           {children}
         </main>
+
+        {/* Right-Side Vertical Ask Gemini / GyanSetu Chatbot Drawer */}
+        <AskGeminiChatDrawer
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+        />
       </div>
     </div>
   );

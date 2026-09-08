@@ -90,8 +90,9 @@ export default function ReportDetailPage() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => {
-              const btn = document.getElementById("omni-open-widget-btn");
-              if (btn) btn.click();
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("gyansetu:open_chat"));
+              }
             }}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition shadow-xs"
             title="Ask AI Remediation Coach"
@@ -353,10 +354,15 @@ export default function ReportDetailPage() {
               {/* Exact OmniDimension Web Widget Trigger Button */}
               <button
                 id="omni-open-widget-btn"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.dispatchEvent(new CustomEvent("gyansetu:open_chat"));
+                  }
+                }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-700 hover:from-indigo-700 hover:to-blue-700 transition shadow-md hover:shadow-lg active:scale-95 transform shrink-0"
               >
-                <MessageSquare className="w-4 h-4" />
-                <span>Open Widget</span>
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span>Open Assistant</span>
               </button>
             </div>
 
@@ -381,8 +387,9 @@ export default function ReportDetailPage() {
                   <button
                     key={pIdx}
                     onClick={() => {
-                      const btn = document.getElementById("omni-open-widget-btn");
-                      if (btn) btn.click();
+                      if (typeof window !== "undefined") {
+                        window.dispatchEvent(new CustomEvent("gyansetu:open_chat"));
+                      }
                     }}
                     className="text-xs bg-white/95 hover:bg-white text-slate-700 hover:text-indigo-700 border border-indigo-100 hover:border-indigo-300 px-3 py-1.5 rounded-lg shadow-xs transition text-left"
                   >
@@ -393,13 +400,6 @@ export default function ReportDetailPage() {
             </div>
           </div>
         </div>
-
-        {/* OmniDimension Web Widget Script */}
-        <Script
-          id="omnidimension-web-widget"
-          src="https://omnidim.io/web_widget.js?secret_key=2d39775642b445f9974532e7e04acd6e"
-          strategy="afterInteractive"
-        />
       </div>
     </div>
   );
