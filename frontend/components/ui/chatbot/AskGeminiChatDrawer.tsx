@@ -51,7 +51,7 @@ export function AskGeminiChatDrawer({
       {/* Script Tag as required */}
       <Script
         id="omnidimension-web-widget"
-        src="https://omnidim.io/web_widget.js?secret_key=2d39775642b445f9974532e7e04acd6e"
+        src="https://omnidim.io/web_widget.js?secret_key=628436b05158eddb33eaa9eed3343b9e"
         strategy="afterInteractive"
       />
 
@@ -153,7 +153,7 @@ export function AskGeminiChatDrawer({
                 */}
                 <iframe
                   key={reloadKey}
-                  src="https://www.omnidim.io/chat-widget?secret=2d39775642b445f9974532e7e04acd6e"
+                  src="https://www.omnidim.io/chat-widget?secret=628436b05158eddb33eaa9eed3343b9e"
                   title="GyanSetu AI Chat Assistant"
                   className="w-full h-full border-0"
                   allow="clipboard-write; clipboard-read"

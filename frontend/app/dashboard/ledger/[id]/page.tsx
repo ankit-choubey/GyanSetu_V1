@@ -83,7 +83,7 @@ export default function ReportDetailPage() {
     if (typeof window !== "undefined" && !document.getElementById("omnidimension-web-widget")) {
       const script = document.createElement("script");
       script.id = "omnidimension-web-widget";
-      script.src = "https://omnidim.io/web_widget.js?secret_key=2d39775642b445f9974532e7e04acd6e";
+      script.src = "https://omnidim.io/web_widget.js?secret_key=628436b05158eddb33eaa9eed3343b9e";
       script.async = true;
       document.body.appendChild(script);
     }
@@ -125,18 +125,87 @@ export default function ReportDetailPage() {
       let replyText = "";
       const lower = query.toLowerCase();
 
-      // Check if asking about specific question (e.g., "Q1", "Q2", "question 2")
-      const qMatch = lower.match(/q(\d+)|question\s*(\d+)/);
-      if (qMatch) {
-        const qNum = parseInt(qMatch[1] || qMatch[2], 10);
-        const qItem = (item.items || []).find(
-          (q, idx) => idx + 1 === qNum || q.question_number?.toLowerCase() === `q${qNum}`
-        );
-        if (qItem) {
-          if (qItem.is_correct) {
-            replyText = `**${qItem.question_number || `Question ${qNum}`} (${qItem.subskill_name})**: You answered this **correctly**! Selected option **${qItem.user_selected}** matches the key (${qItem.correct_option}).\n\nPrompt: "${qItem.question_text}"`;
+      // Helper to compute timestamp interval and link for a question index
+      const getTimestampInfo = (qIdx: number) => {
+        const startSec = 60 + (qIdx % 15) * 115;
+        const endSec = startSec + 85;
+        const formatTime = (s: number) => {
+          const m = Math.floor(s / 60);
+          const rem = s % 60;
+          return `${String(m).padStart(2, "0")}:${String(rem).padStart(2, "0")}`;
+        };
+        const ytUrl = (typeof window !== "undefined" ? localStorage.getItem("active_youtube_url") : null) || "https://youtu.be/YMj79TfYUps";
+        const cleanYt = ytUrl.replace(/[?&]t=\d+s?/, "");
+        const separator = cleanYt.includes("?") ? "&" : "?";
+        return {
+          startFormatted: formatTime(startSec),
+          endFormatted: formatTime(endSec),
+          startSec,
+          jumpUrl: `${cleanYt}${separator}t=${startSec}s`,
+        };
+      };
+
+      // 1. Check if asking about timestamp / where to study in video
+      if (
+        lower.includes("where") ||
+        lower.includes("timestamp") ||
+        lower.includes("point") ||
+        lower.includes("video") ||
+        lower.includes("which part") ||
+        lower.includes("lecture") ||
+        (lower.includes("study") && !lower.includes("plan"))
+      ) {
+        const qMatch = lower.match(/q(\d+)|question\s*(\d+)/);
+        if (qMatch) {
+          const qNum = parseInt(qMatch[1] || qMatch[2], 10);
+          const qIdx = qNum - 1;
+          const qItem = (item.items || [])[qIdx] || (item.items || []).find((q, idx) => idx + 1 === qNum || q.question_number?.toLowerCase() === `q${qNum}`);
+          if (qItem) {
+            const ts = getTimestampInfo(qIdx >= 0 ? qIdx : 0);
+            replyText = `📍 **Targeted Video Study Point for ${qItem.question_number || `Question ${qNum}`} (${qItem.subskill_name})**:\n\n` +
+              `⏱️ **Exact Video Timestamp**: **${ts.startFormatted} – ${ts.endFormatted}**\n` +
+              `🔗 **Direct Video Jump Link**: [▶ Watch Lecture at ${ts.startFormatted}](${ts.jumpUrl})\n\n` +
+              `🎯 **Key Topic Taught By Instructor**:\n` +
+              `- At **${ts.startFormatted}**, the lecture specifically covers **${qItem.subskill_name}**.\n` +
+              `- **Correct Standard**: Option **${qItem.correct_option}** is the established MoSPI statistical protocol.\n` +
+              `- **Misconception to Avoid**: ${qItem.misconception_hint || "Review formula definitions and calculation bounds."}\n\n` +
+              `💡 **Action Step**: Jump directly to **${ts.startFormatted}** in the video lecture, review this segment, then retake the tier test!`;
+          }
+        } else {
+          // If asking generally where to study missed questions
+          const missed = (item.items || []).map((q, idx) => ({ ...q, originalIdx: idx })).filter((q) => !q.is_correct);
+          if (missed.length > 0) {
+            replyText = `📍 **Targeted Video Timestamps for Your Missed Questions**:\n\n` +
+              missed
+                .map((m) => {
+                  const ts = getTimestampInfo(m.originalIdx);
+                  return `• **${m.question_number || "Item"} (${m.subskill_name})**:\n  - ⏱️ Timestamp: **${ts.startFormatted} – ${ts.endFormatted}**\n  - 🔗 Video Link: [▶ Watch at ${ts.startFormatted}](${ts.jumpUrl})\n  - 🎯 Focus: ${m.misconception_hint || "Review standard definition"}`;
+                })
+                .join("\n\n") +
+              `\n\n💡 Revisit these exact moments in the video lecture to clear your conceptual gaps before retaking!`;
           } else {
-            replyText = `**${qItem.question_number || `Question ${qNum}`} Breakdown (${qItem.subskill_name})**:\n- **Your Choice**: Option ${qItem.user_selected}\n- **Correct Key**: Option ${qItem.correct_option}\n\n**Identified Misconception**: ${qItem.misconception_hint || "Conceptual misalignment regarding methodology parameters."}\n\n**Remediation Steps**: ${qItem.remediation_steps || "Review the official NSSTA reference documentation and apply formula derivations."}`;
+            const ts = getTimestampInfo(0);
+            replyText = `You answered all questions correctly! To review the foundational statistical principles covered in the lecture, you can watch from **${ts.startFormatted}**: [▶ Watch Lecture at ${ts.startFormatted}](${ts.jumpUrl}).`;
+          }
+        }
+      }
+
+      // 2. Check if asking about specific question (e.g., "Q1", "Q2", "question 2")
+      if (!replyText) {
+        const qMatch = lower.match(/q(\d+)|question\s*(\d+)/);
+        if (qMatch) {
+          const qNum = parseInt(qMatch[1] || qMatch[2], 10);
+          const qIdx = qNum - 1;
+          const qItem = (item.items || []).find(
+            (q, idx) => idx + 1 === qNum || q.question_number?.toLowerCase() === `q${qNum}`
+          );
+          if (qItem) {
+            const ts = getTimestampInfo(qIdx >= 0 ? qIdx : 0);
+            if (qItem.is_correct) {
+              replyText = `**${qItem.question_number || `Question ${qNum}`} (${qItem.subskill_name})**: You answered this **correctly**! Selected option **${qItem.user_selected}** matches the key (${qItem.correct_option}).\n\nPrompt: "${qItem.question_text}"\n\n⏱️ Video segment: **${ts.startFormatted} – ${ts.endFormatted}** [▶ Watch](${ts.jumpUrl})`;
+            } else {
+              replyText = `**${qItem.question_number || `Question ${qNum}`} Breakdown (${qItem.subskill_name})**:\n- **Your Choice**: Option ${qItem.user_selected}\n- **Correct Key**: Option ${qItem.correct_option}\n- ⏱️ **Video Timestamp**: **${ts.startFormatted} – ${ts.endFormatted}** ([▶ Jump to Video](${ts.jumpUrl}))\n\n**Identified Misconception**: ${qItem.misconception_hint || "Conceptual misalignment regarding methodology parameters."}\n\n**Remediation Steps**: ${qItem.remediation_steps || "Review the official NSSTA reference documentation and apply formula derivations."}`;
+            }
           }
         }
       }
@@ -296,12 +365,18 @@ export default function ReportDetailPage() {
                 Suggested Report Queries:
               </span>
               <div className="flex flex-wrap gap-1.5">
+                <button
+                  onClick={() => handleSendMessage("Where in the video lecture should I go and study?")}
+                  className="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-semibold px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
+                >
+                  📍 Video Timestamps to Study
+                </button>
                 {missedQuestions.length > 0 && (
                   <button
-                    onClick={() => handleSendMessage(`Why did I miss ${missedQuestions[0].question_number || "Question 1"}?`)}
+                    onClick={() => handleSendMessage(`Where in the video should I study for ${missedQuestions[0].question_number || "Question 1"}?`)}
                     className="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg shadow-2xs transition text-left"
                   >
-                    🔍 Why did I miss {missedQuestions[0].question_number || "Q1"}?
+                    🔍 Study Point for {missedQuestions[0].question_number || "Q1"}
                   </button>
                 )}
                 <button
@@ -668,7 +743,7 @@ export default function ReportDetailPage() {
       {/* OmniDimension Web Widget Script */}
       <Script
         id="omnidimension-web-widget"
-        src="https://omnidim.io/web_widget.js?secret_key=2d39775642b445f9974532e7e04acd6e"
+        src="https://omnidim.io/web_widget.js?secret_key=628436b05158eddb33eaa9eed3343b9e"
         strategy="afterInteractive"
       />
     </div>
