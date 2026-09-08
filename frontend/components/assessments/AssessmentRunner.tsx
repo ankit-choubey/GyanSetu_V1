@@ -151,10 +151,8 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
     let savedReportId: number | null = null;
     // Automatically record to the real-time Test Report Ledger
     try {
-      const { appendTestLedgerItem } = await import("@/lib/api/ledger");
-      const userProfile = typeof window !== "undefined" && localStorage.getItem("gyansetu_user") 
-        ? JSON.parse(localStorage.getItem("gyansetu_user") || "{}") 
-        : null;
+      const { appendTestLedgerItem, getActiveOfficerProfile } = await import("@/lib/api/ledger");
+      const activeOfficer = getActiveOfficerProfile();
 
       const dynamicTopic = sourceTitle 
         ? sourceTitle 
@@ -175,12 +173,12 @@ export function AssessmentRunner({ sessionId, tier, onClose }: AssessmentRunnerP
           hour12: true,
         }),
         iso_date: new Date().toISOString(),
-        user_id: userProfile?.id || 1,
-        full_name: userProfile?.full_name || "Shri Ankit Choubey",
-        email: userProfile?.email || "learner@example.com",
-        role_name: userProfile?.role_name || "Statistical Officer",
-        designation: userProfile?.designation || "Statistical Officer",
-        department: userProfile?.department || "National Accounts Division (NAD)",
+        user_id: activeOfficer.id || 1,
+        full_name: activeOfficer.full_name,
+        email: activeOfficer.email,
+        role_name: activeOfficer.role_name,
+        designation: activeOfficer.designation,
+        department: activeOfficer.department,
         competency_id: tier === "easy" ? 1 : tier === "medium" ? 2 : 3,
         competency_name: dynamicTopic,
         tier: tier === "easy" ? "Tier 1: Foundation" : tier === "medium" ? "Tier 2: Application" : "Tier 3: Analysis",

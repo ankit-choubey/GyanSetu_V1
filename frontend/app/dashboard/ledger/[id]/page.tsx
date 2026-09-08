@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import Script from "next/script";
 import { TestLedgerItem } from "@/lib/api/types";
-import { getLocalLedgerItems } from "@/lib/api/ledger";
+import { getLocalLedgerItems, getActiveOfficerProfile } from "@/lib/api/ledger";
 import { generateTestReportDocx } from "@/lib/docx/reportGenerator";
 import { cn } from "@/lib/cn";
 
@@ -49,11 +49,19 @@ export default function ReportDetailPage() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    const activeOfficer = getActiveOfficerProfile();
     const all = getLocalLedgerItems();
     const found = all.find(
       (it) => String(it.numeric_id) === rawId || it.report_id.includes(rawId)
     );
     if (found) {
+      if (found.full_name === "Shri Ankit Choubey" || !found.full_name) {
+        found.full_name = activeOfficer.full_name;
+        found.email = activeOfficer.email;
+        found.designation = activeOfficer.designation;
+        found.department = activeOfficer.department;
+        found.role_name = activeOfficer.role_name;
+      }
       setItem(found);
 
       // Initialize AI greeting grounded to this evaluation report

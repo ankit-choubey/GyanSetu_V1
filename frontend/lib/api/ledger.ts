@@ -3,6 +3,68 @@ import { client } from "./client";
 
 const LOCAL_STORAGE_LEDGER_KEY = "gyansetu_test_report_ledger";
 
+export interface ActiveOfficer {
+  id: number;
+  full_name: string;
+  email: string;
+  designation: string;
+  department: string;
+  role_name: string;
+}
+
+export function getActiveOfficerProfile(): ActiveOfficer {
+  if (typeof window === "undefined") {
+    return {
+      id: 1,
+      full_name: "Utkarsh Singh",
+      email: "utkarsh@example.com",
+      designation: "Junior Statistical Officer (JSO)",
+      department: "National Accounts Division (NAD)",
+      role_name: "Statistical Officer",
+    };
+  }
+  try {
+    const rawAuth = localStorage.getItem("gyansetu_auth_session");
+    if (rawAuth) {
+      const parsed = JSON.parse(rawAuth);
+      if (parsed) {
+        return {
+          id: parsed.id || 1,
+          full_name: parsed.name || parsed.full_name || "Utkarsh Singh",
+          email: parsed.email || "utkarsh@example.com",
+          designation: parsed.designation || "Junior Statistical Officer (JSO)",
+          department: parsed.department || "National Accounts Division (NAD)",
+          role_name: parsed.designation || (parsed.role === "admin" ? "Platform Administrator" : "Statistical Officer"),
+        };
+      }
+    }
+    const rawUser = localStorage.getItem("gyansetu_user");
+    if (rawUser) {
+      const parsed = JSON.parse(rawUser);
+      if (parsed) {
+        return {
+          id: parsed.id || 1,
+          full_name: parsed.name || parsed.full_name || "Utkarsh Singh",
+          email: parsed.email || "utkarsh@example.com",
+          designation: parsed.designation || "Junior Statistical Officer (JSO)",
+          department: parsed.department || "National Accounts Division (NAD)",
+          role_name: parsed.role_name || "Statistical Officer",
+        };
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return {
+    id: 1,
+    full_name: "Utkarsh Singh",
+    email: "utkarsh@example.com",
+    designation: "Junior Statistical Officer (JSO)",
+    department: "National Accounts Division (NAD)",
+    role_name: "Statistical Officer",
+  };
+}
+
 // Pre-seeded baseline reports reflecting system history
 const SEED_LEDGER_ITEMS: TestLedgerItem[] = [
   {
@@ -12,10 +74,10 @@ const SEED_LEDGER_ITEMS: TestLedgerItem[] = [
     timestamp: "05 Sep 2026, 11:30 AM",
     iso_date: "2026-09-05T11:30:00Z",
     user_id: 1,
-    full_name: "Shri Ankit Choubey",
-    email: "learner@example.com",
-    role_name: "Statistical Officer",
-    designation: "Statistical Officer",
+    full_name: "Utkarsh Singh",
+    email: "utkarsh@example.com",
+    role_name: "Junior Statistical Officer (JSO)",
+    designation: "Junior Statistical Officer (JSO)",
     department: "National Accounts Division (NAD)",
     competency_id: 1,
     competency_name: "Sampling Design & Field Methodologies",
@@ -168,27 +230,94 @@ const SEED_LEDGER_ITEMS: TestLedgerItem[] = [
 ];
 
 export function getLocalLedgerItems(): TestLedgerItem[] {
-  if (typeof window === "undefined") return SEED_LEDGER_ITEMS;
+  const activeUser = getActiveOfficerProfile();
+  if (typeof window === "undefined") {
+    return SEED_LEDGER_ITEMS.map((it) => ({
+      ...it,
+      full_name: activeUser.full_name,
+      email: activeUser.email,
+      designation: activeUser.designation,
+      department: activeUser.department,
+      role_name: activeUser.role_name,
+    }));
+  }
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_LEDGER_KEY);
+    let items: TestLedgerItem[] = [];
     if (!raw) {
-      localStorage.setItem(LOCAL_STORAGE_LEDGER_KEY, JSON.stringify(SEED_LEDGER_ITEMS));
-      return SEED_LEDGER_ITEMS;
+      items = SEED_LEDGER_ITEMS.map((it) => ({
+        ...it,
+        full_name: activeUser.full_name,
+        email: activeUser.email,
+        designation: activeUser.designation,
+        department: activeUser.department,
+        role_name: activeUser.role_name,
+      }));
+      localStorage.setItem(LOCAL_STORAGE_LEDGER_KEY, JSON.stringify(items));
+      return items;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : SEED_LEDGER_ITEMS;
+    items = Array.isArray(parsed) && parsed.length > 0 ? parsed : SEED_LEDGER_ITEMS;
+
+    // Automatically harmonize any legacy mock names with the real logged-in officer
+    let hasChanges = false;
+    const harmonized = items.map((it) => {
+      if (
+        !it.full_name ||
+        it.full_name === "Shri Ankit Choubey" ||
+        it.full_name === "Sample Learner"
+      ) {
+        hasChanges = true;
+        return {
+          ...it,
+          full_name: activeUser.full_name,
+          email: activeUser.email,
+          designation: activeUser.designation,
+          department: activeUser.department,
+          role_name: activeUser.role_name,
+        };
+      }
+      return it;
+    });
+
+    if (hasChanges) {
+      localStorage.setItem(LOCAL_STORAGE_LEDGER_KEY, JSON.stringify(harmonized));
+      return harmonized;
+    }
+    return items;
   } catch (e) {
     console.warn("Failed reading test report ledger from localStorage:", e);
-    return SEED_LEDGER_ITEMS;
+    return SEED_LEDGER_ITEMS.map((it) => ({
+      ...it,
+      full_name: activeUser.full_name,
+      email: activeUser.email,
+      designation: activeUser.designation,
+      department: activeUser.department,
+      role_name: activeUser.role_name,
+    }));
   }
 }
 
 export function appendTestLedgerItem(item: Omit<TestLedgerItem, "report_id" | "numeric_id">): TestLedgerItem {
+  const activeUser = getActiveOfficerProfile();
   const current = getLocalLedgerItems();
   const nextNum = current.length + 1;
   const padNum = String(nextNum).padStart(3, "0");
-  const fullItem: TestLedgerItem = {
+
+  const sanitizedItem = {
     ...item,
+    full_name:
+      item.full_name && item.full_name !== "Shri Ankit Choubey" && item.full_name !== "Sample Learner"
+        ? item.full_name
+        : activeUser.full_name,
+    email: item.email && item.email !== "learner@example.com" ? item.email : activeUser.email,
+    designation: item.designation || activeUser.designation,
+    department: item.department || activeUser.department,
+    role_name: item.role_name || activeUser.role_name,
+  };
+
+  const fullItem: TestLedgerItem = {
+    ...sanitizedItem,
     report_id: `Test Report #${padNum}`,
     numeric_id: nextNum,
   };
